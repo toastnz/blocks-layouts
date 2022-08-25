@@ -23,45 +23,45 @@ SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest:
     CmsActionsExtension: Toast\Blocks\Extensions\CmsActionsExtension
 
 Toast\Blocks\TextBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/text.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/text.svg'
 
 Toast\Blocks\AccordionBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/accordion.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/accordion.svg'
 
 Toast\Blocks\ChildLinkBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/link.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/link.svg'
   content_field: 'Content'
 
 Toast\Blocks\ColumnBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/splitblock.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/splitblock.svg'
 
 Toast\Blocks\DownloadBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/download.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/download.svg'
 
 Toast\Blocks\GalleryBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/gallery.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/gallery.svg'
 
 Toast\Blocks\HeroBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/hero.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/hero.svg'
 
 Toast\Blocks\ImageBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/image.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/image.svg'
 
 Toast\Blocks\ImageTextBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/imagetext.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/imagetext.svg'
 
 Toast\Blocks\LinkBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/link.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/link.svg'
 
 Toast\Blocks\NewsBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/news.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/news.svg'
 
 Toast\Blocks\TabbedContentBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/tabbedcontent.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/tabbedcontent.svg'
 
 Toast\Blocks\TestimonialBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/testimonial.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/testimonial.svg'
 
 Toast\Blocks\VideoBlock:
-  block-icon: '[resources]/toastnz/blocks/client/images/block-icons/video.svg'
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/video.svg'
 
