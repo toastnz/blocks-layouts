@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Row-Images-&amp;-text-1" transform="translate(11.000000, 25.900000)" fill-rule="nonzero">
+            <rect id="Rectangle" stroke="#000000" fill="#FFFFFF" x="0" y="-2.84217094e-14" width="24.9" height="17.5"></rect>
+            <path d="M0,13.1 C12.6,-2.3 9.2,15.5 24.6,10" id="Path" stroke="#000000" fill="#FFFFFF"></path>
+            <circle id="Oval" stroke="#000000" fill="#FFFFFF" cx="19.5" cy="5.6" r="2.1"></circle>
+            <rect id="Rectangle" fill="#000000" x="0" y="20.1" width="22.1" height="1"></rect>
+            <rect id="Rectangle" fill="#000000" x="0" y="22.4" width="16.9" height="1"></rect>
+            <rect id="Rectangle" fill="#000000" x="0" y="26.5" width="5.7" height="1"></rect>
+            <rect id="Rectangle" stroke="#000000" fill="#FFFFFF" x="32.6" y="-2.84217094e-14" width="24.9" height="17.5"></rect>
+            <path d="M32.6,13.1 C45.2,-2.3 41.8,15.5 57.2,10" id="Path" stroke="#000000" fill="#FFFFFF"></path>
+            <circle id="Oval" stroke="#000000" fill="#FFFFFF" cx="52" cy="5.6" r="2.1"></circle>
+            <rect id="Rectangle" fill="#000000" x="32.6" y="20.1" width="22.1" height="1"></rect>
+            <rect id="Rectangle" fill="#000000" x="32.6" y="22.4" width="16.9" height="1"></rect>
+            <rect id="Rectangle" fill="#000000" x="32.6" y="26.5" width="5.7" height="1"></rect>
+        </g>
+    </g>
+</svg>

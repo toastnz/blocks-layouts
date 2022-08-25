@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FW-image-&amp;-text" transform="translate(11.000000, 26.000000)" fill-rule="nonzero">
+            <rect id="Rectangle" stroke="#000000" fill="#FFFFFF" x="0" y="0" width="57.9" height="22.5"></rect>
+            <path d="M0.1,16.9 C25,-0.9 27.3,14.8 39.8,14.1 C46.9,13.7 50.5,9.6 57.7,14.1" id="Path" stroke="#000000" fill="#FFFFFF"></path>
+            <circle id="Oval" stroke="#000000" fill="#FFFFFF" cx="48.8" cy="6.7" r="2.7"></circle>
+            <rect id="Rectangle" fill="#000000" x="7.9" y="5.3" width="23.8" height="22.4"></rect>
+            <g id="Group" transform="translate(10.400000, 9.000000)" fill="#FFFFFF">
+                <rect id="Rectangle" x="1.77635684e-15" y="1.77635684e-15" width="17.9" height="1.9"></rect>
+                <rect id="Rectangle" x="1.77635684e-15" y="8" width="18.6" height="1"></rect>
+                <rect id="Rectangle" x="1.77635684e-15" y="9.8" width="14.3" height="1"></rect>
+                <rect id="Rectangle" x="1.77635684e-15" y="11.7" width="17.1" height="1"></rect>
+                <rect id="Rectangle" x="1.77635684e-15" y="13.6" width="6.9" height="1"></rect>
+                <rect id="Rectangle" x="1.77635684e-15" y="3.5" width="13.6" height="1.9"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

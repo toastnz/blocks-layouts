@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60">
+  <g fill="none" fill-rule="evenodd">
+    <rect width="14" height="14" x="3" y="18.5" stroke="#377CFF"/>
+    <rect width="14" height="14" x="23" y="18.5" stroke="#377CFF"/>
+    <rect width="14" height="14" x="43" y="18.5" stroke="#377CFF"/>
+    <path stroke="#377CFF" stroke-linecap="square" d="M3.75 35.75L16.25 35.75M3.75 37.75L12.25 37.75M3.75 39.75L13.75 39.75M3.75 41.75L16.25 41.75M23.75 35.75L36.25 35.75M23.75 37.75L32.25 37.75M23.75 39.75L33.75 39.75M23.75 41.75L36.25 41.75M43.75 35.75L56.25 35.75M43.75 37.75L52.25 37.75M43.75 39.75L53.75 39.75M43.75 41.75L56.25 41.75"/>
+  </g>
+</svg>
