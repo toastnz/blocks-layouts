@@ -82,34 +82,37 @@ class Helper
         
     }
 
-    static function getAvailableBlocksLayouts($block, $src, $imgsrc)
+    static function getAvailableBlocksLayouts($block, $src, $imgsrc, $default = true)
     { 
         $optionset = [];
         // if this is optional directory
         // TODO: merge layouts with other specified folder in yml
         // Scan each directory for files
-        $optionset = self::getLayoutIcons($block, $src, $imgsrc);
+
+        $optionset = self::getLayoutIcons($block, $src, $imgsrc, $default );
 
         return $optionset;
     }
 
 
-    static function getLayoutIcons($block,$src, $imgsrc)
+    static function getLayoutIcons($block,$src, $imgsrc, $default = true)
     {
+       
         $currentTemplateName = strtolower($block->getBlockTemplateName());
         $optionset = [];
         $layouts = [];
         $icons = [];
+        $basePath = BASE_PATH . '/' ;
+        
         $extensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg');
-       
-        if (!file_exists($imgsrc)){
-            $imgsrc = BASE_PATH . $imgsrc;
-        }
-        if (file_exists($src)) {
+
+        if (is_dir($src) && is_dir( $basePath  .$imgsrc)) {     
             // get icons for layouts
+            // if folder not exist in app, fall back to module default
             if ($directory = new DirectoryIterator($imgsrc)){
-                $imgsrc_dir = basename(BASE_PATH .'/'. $imgsrc);
-                $src_dir = basename(BASE_PATH .'/'. $src);
+              
+                $imgsrc_dir = basename( $basePath . $imgsrc);
+                $src_dir = basename( $basePath . $src);
                 foreach ($directory as $fileinfo){
                    
                     if ($fileinfo->isFile()){

@@ -139,10 +139,11 @@ class Block extends DataObject
         $theme = Helper::getThemes();
         // module dir
         $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
-        $module_imgsrc = TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
-       
-        $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc);
-
+        $module_imgsrc =  TOAST_BLOCKS_IMAGE_DIR . '/client/images/layout-icons/default/' ;
+        // $module_imgsrc = BASE_PATH . '/vendor/toastnz/' . TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
+       // get default layouts
+        $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
+   
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
@@ -161,16 +162,20 @@ class Block extends DataObject
             $optionalSrcPath = $layout_src . '/' . $dir . '/';
             $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
          
-            $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath);
+            $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
         }
         
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
-                $layouts = array_merge($layouts, $layout);
+                if ($layout){
+                    // merge alternate layouts with default layout
+                    $layouts = array_merge($layouts, $layout);
+                }
             }
         }   
+        
   
-        if (count($layouts) > 0){
+        if (count($layouts) > 1){
             $tplField = OptionsetField::create(
                 "Template",
                 "Choose a layout",
