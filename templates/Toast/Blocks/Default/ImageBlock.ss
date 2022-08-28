@@ -1,5 +1,5 @@
 <% if $Image %>
-    <section class="default-image content-block--padding {$ExtraClasses} [ js-in-view ]">
+    <section class="default-image {$ExtraClasses} [ js-in-view ]">
         <div class="default-image__wrap">
             <div class="default-image__media">
                 <div class="default-image__image" data-src="{$Image.ScaleMaxWidth(1920).URL}">

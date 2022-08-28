@@ -1,10 +1,22 @@
-<%----------------------------------------------------------------
-Video Block
-----------------------------------------------------------------%>
+<section class="default-video {$ExtraClasses} [ js-in-view ]">
+    <% if $Content %>
+        <div class="default-video__header">
+            <div class="default-video__content">{$Content}</div>
+        </div>
+    <% end_if %>
 
-<section class="videoBlock block">
-    <a class="videoBlock__wrap  [ js-video-modal ]" data-video-id="$Video" data-video-type="youtube">
-        <div href="#" class="videoBlock__wrap__background" style="background-image: url('<% if $ThumbnailID %>$Thumbnail.focusFill(1920,1080).URL<% else %>$Video.ThumbnailURL<% end_if %>');"></div>
-        <div class="videoBlock__wrap__icon">$SVG('play')</div>
-    </a>
+    <div class="default-video__wrap">
+        <div class="default-video__media">
+            <a href="#" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
+                <div href="#" class="default-video__thumbnail" data-src="<% if $ThumbnailID %>{$Thumbnail.focusFill(1920,1080).URL}<% else %>{$Video.ThumbnailURL}<% end_if %>"></div>
+                <div class="default-video__icon">{$SVG('play')}</div>
+            </a>
+
+            <% if $Caption %>
+                <div class="default-video__caption">
+                    <p>{$Caption}</p>
+                </div>
+            <% end_if %>
+        </div>
+    </div>
 </section>

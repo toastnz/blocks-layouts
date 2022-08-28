@@ -1,13 +1,17 @@
-<section class="heroBlock contentBlock">
-    <div class="heroBlock__wrap">
-
-        <% if $BackgroundImage %>
-            <div class="heroBlock__wrap__background" style="background-image: url('{$BackgroundImage.FocusFill(1920,1080).URL}');"></div>
-        <% end_if %>
-
-        <div class="heroBlock__wrap__content">
-            $Content
+<section class="default-hero {$ExtraClasses} [ js-in-view ]">
+    <div class="default-hero__container">
+        <div class="default-hero__wrap <% if $Width=='full' %>full<% end_if %>">
+            <div class="default-hero__content align--{$VerticalPosition}">
+                <div class="default-hero__text">
+                    {$Content}
+                </div>
+            </div>
         </div>
 
+        <% if $BackgroundImage %>
+            <div class="default-hero__background" data-src="{$BackgroundImage.ScaleMaxWidth(1920).URL}">
+                <img src="{$BackgroundImage.ScaleMaxWidth(20).URL}" alt="{$Image.Title.ATT}">
+            </div>
+        <% end_if %>
     </div>
 </section>

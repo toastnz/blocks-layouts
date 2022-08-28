@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="imagetextblock" transform="translate(15.000000, 22.000000)" fill="#000000" fill-rule="nonzero">
+            <g id="Group-2">
+                <rect id="Rectangle" x="0" y="0" width="46.4210526" height="5.14285714"></rect>
+                <rect id="Rectangle" x="0" y="18" width="49" height="2.57142857"></rect>
+                <rect id="Rectangle" x="0" y="23.1428571" width="36.1052632" height="2.57142857"></rect>
+                <rect id="Rectangle" x="0" y="28.2857143" width="46.4210526" height="2.57142857"></rect>
+                <rect id="Rectangle" x="0" y="33.4285714" width="18.0526316" height="2.57142857"></rect>
+                <rect id="Rectangle" x="0" y="7.71428571" width="36.1052632" height="5.14285714"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

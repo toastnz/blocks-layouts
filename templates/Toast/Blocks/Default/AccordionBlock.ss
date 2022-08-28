@@ -1,32 +1,25 @@
-<%------------------------------------------------------------------
-Accordion Block
-------------------------------------------------------------------%>
+<section class="default-accordion {$ExtraClasses} [ js-accordion ]" data-state="{$AccordionDisplay}">
+    <% if $Content %>
+        <div class="default-accordion__header">
+            <div class="default-accordion__content">
+                {$Content}
+            </div>
+        </div>
+    <% end_if %>
 
-<section class="accordionBlock block">
-
-    <div class="accordionBlock__wrap">
-
+    <div class="default-accordion__wrap">
         <% loop $Items %>
-
-            <%------------------------------------------------------------------
-            Accordion Item
-            ------------------------------------------------------------------%>
-
-            <div class="accordionBlock__wrap__item [ js-accordion-item ]">
-
-                <div href="#" class="accordionBlock__wrap__item__heading [ js-accordion-trigger ]">
-                    <h5 class="accordionBlock__wrap__item__heading__title">$Title</h5>
+            <div class="default-accordion-item [ js-accordion--item ]">
+                <div class="default-accordion-item__header [ js-accordion--trigger ]">
+                    <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
                 </div>
 
-                <div class="accordionBlock__wrap__item__content [ js-accordion-target ]">
-                    <div class="accordionBlock__wrap__item__content__inner">
-                        $Content
+                <div class="default-accordion-item__content [ js-accordion--target ]">
+                    <div class="default-accordion-item__wrap">
+                        {$Content}
                     </div>
                 </div>
-
             </div>
-            
         <% end_loop %>
-
     </div>
 </section>

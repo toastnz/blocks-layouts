@@ -1,25 +1,35 @@
-<% if $Tabs %>
-<section class="tabBlock block [ js-tabs ]">
-    <div class="tabBlock__wrap">
-
-        <div class="tabBlock__wrap__tabs">
-            
-            <div class="tabBlock__wrap__tabs__indicator [ js-tabbed-indicator ]"></div>
-            
-            <% loop $Tabs %>
-                <a href="#" class="tabBlock__wrap__tabs__item [ js-tabs-link ] <% if $First %>active<% end_if %>">
-                    <h6>$Title.XML</h6>
-                </a>
-            <% end_loop %>
-        </div>
-
-        <div class="tabBlock__wrap__content">
-            <% loop $Tabs %>
-            <div class="tabBlock__wrap__content__item [ js-tabs-item ] <% if $First %>active<% end_if %>">
-                $Content
+<% if $Tabs.Count %>
+    <section class="default-tabbed-content {$ExtraClasses} [ js-tabs ] [ js-in-view ]">
+        <div class="default-tabbed-content__wrap">
+            <div class="default-tabbed-content__header">
+                <% loop $Tabs.Sort('SortOrder') %>
+                    <div class="default-tab-link">
+                        <button class="default-tab-link__button [ js-tabs--link ]">
+                            <span class="default-tab-link__text">{$Title}</span>
+                        </button>
+                    </div>
+                <% end_loop %>
             </div>
-            <% end_loop %>
+    
+            <div class="default-tabbed-content__main">
+                <% loop $Tabs.Sort('SortOrder') %>
+                    <div class="default-tab-item [ js-tabs--item ]">
+                        <% if $Image %>
+                            <div class="default-tab-item__media">
+                                <div class="default-tab-item__image" data-src="{$Image.ScaleMaxWidth(800).URL}">
+                                    <img src="{$Image.ScaleMaxWidth(20).URL}" alt="{$Image.Title.ATT}">
+                                </div>
+                            </div>
+                        <% end_if %>
+                        
+                        <% if $Content %>
+                            <div class="default-tab-item__main">
+                                {$Content}
+                            </div>
+                        <% end_if %>
+                    </div>
+                <% end_loop %>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 <% end_if %>

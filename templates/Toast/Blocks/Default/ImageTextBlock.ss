@@ -1,4 +1,4 @@
-<section class="default-image-text content-block [ js-in-view ]">
+<section class="default-image-text {$ExtraClasses} [ js-in-view ]">
     <div class="default-image-text__wrap <% if $Width=='full' %>full<% end_if %>">
         <div class="default-image-text__media align-{$ImageAlignment}">
             <% if $Video %>
