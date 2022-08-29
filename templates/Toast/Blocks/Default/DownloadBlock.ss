@@ -1,10 +1,10 @@
 <% if $Items.Count %>
-    <section class="default-download {$ExtraClasses}">
+    <section class="default-download background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
-                        <a href="{$Link}" class="default-download-item" download>
+                        <a href="{$Link}" class="default-download-item background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}" download>
                             <div class="default-download-item__title">
                                 <span>{$Up.Title.XML}</span>
                             </div>

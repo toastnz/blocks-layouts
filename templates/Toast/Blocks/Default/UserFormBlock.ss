@@ -1,7 +1,7 @@
 <% if $Form %>
-    <section class="default-userform {$ExtraClasses}">
-        <div class="default-userform__wrap row">
-            <div class="default-userform__content column">
+    <section class="default-userform background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+        <div class="default-userform__wrap">
+            <div class="default-userform__content">
                 {$Form}
             </div>
         </div>

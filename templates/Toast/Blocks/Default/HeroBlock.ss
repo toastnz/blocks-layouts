@@ -1,4 +1,4 @@
-<section class="default-hero {$ExtraClasses} [ js-in-view ]">
+<section class="default-hero background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
     <div class="default-hero__container">
         <div class="default-hero__wrap <% if $Width=='full' %>full<% end_if %>">
             <div class="default-hero__content align--{$VerticalPosition}">

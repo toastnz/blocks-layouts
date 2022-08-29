@@ -1,4 +1,4 @@
-<section class="default-percentage {$ExtraClasses} [ js-in-view ]" data-equalize="percentage-items">
+<section class="default-percentage background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}" data-equalize="percentage-items">
     <div class="default-percentage__wrap">
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width}">
@@ -10,7 +10,7 @@
                     <img src="{$Icon.URL}" class="default-percentage-item__icon">
                 <% end_if %>
 
-                <div class="default-percentage-item__details">
+                <div class="default-percentage-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
                     <div data-equalize-watch="percentage-items">
                         <span class="default-percentage-item__title">{$Title}</span>
                         <p class="default-percentage-item__summary">{$Summary}</p>
