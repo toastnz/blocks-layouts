@@ -127,8 +127,8 @@ class Block extends DataObject
             ];
 
             $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('BGColour', 'Background Colour',$array),
-                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)
+                ColorPaletteField::create('BGColour', 'Background Colour',$array)->setDescription('Colours can be set up in Site Settings > Customization > Colours'),
+                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)->setDescription('This only applies if default/selected template uses it')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
