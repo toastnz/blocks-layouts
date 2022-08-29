@@ -127,8 +127,8 @@ class Block extends DataObject
             ];
 
             $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('BGColour', 'Background Colour',$array),
-                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)
+                ColorPaletteField::create('BGColour', 'Background Colour',$array)->setDescription('Colours can be set up in Site Settings > Customization > Colours'),
+                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)->setDescription('This only applies if default/selected template uses it')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -237,6 +237,44 @@ class Block extends DataObject
         return $cssFilePath;
 
     }
+
+
+       // Function to calculate if a colour is light or dark
+    public function getLightOrDark($colourTitle = null)
+    {
+        if (!$colourTitle){
+            return '';
+        }
+   
+        $siteConfig = SiteConfig::current_site_config();
+
+        if(!$colours = $siteConfig->ThemeColours()){
+            return '';
+        }
+   
+        if ($colourTitle == 'white') {
+            return 'light';
+        }
+   
+        if ($colourTitle == 'black') {
+            return 'dark';
+        }
+   
+        if($selectedColour = $colours->filter('Title',$colourTitle)){
+            if($selectedColour->exists()){
+                $hex = $selectedColour->first()->getHexColourCode();
+                $hexWithoutHash = str_replace('#', '', $hex);
+                $r = hexdec(substr($hexWithoutHash,0,2));
+                $g = hexdec(substr($hexWithoutHash,2,2));
+                $b = hexdec(substr($hexWithoutHash,4,2));
+                  
+                $yiq = (($r*299)+($g*587)+($b*114))/1000;
+
+                return ($yiq >= 130) ? 'light' : 'dark';
+            }
+        }
+    }
+
 
     public function onBeforeWrite()
     {
