@@ -1,4 +1,4 @@
-<section class="default-link {$ExtraClasses} [ js-in-view ]">
+<section class="default-link background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">
@@ -16,7 +16,7 @@
                         <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-link-item__details">
+                    <div class="default-link-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
                         <div data-equalize-watch="default-links">
                             <% if $Title %>
                                 <span class="default-link-item__title">{$Title.XML}</span>

@@ -1,4 +1,4 @@
-<section class="default-video {$ExtraClasses} [ js-in-view ]">
+<section class="default-video background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-video__header">
             <div class="default-video__content">{$Content}</div>
@@ -13,7 +13,7 @@
             </a>
 
             <% if $Caption %>
-                <div class="default-video__caption">
+                <div class="default-video__caption background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
                     <p>{$Caption}</p>
                 </div>
             <% end_if %>

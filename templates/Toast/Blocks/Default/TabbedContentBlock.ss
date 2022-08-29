@@ -1,5 +1,5 @@
 <% if $Tabs.Count %>
-    <section class="default-tabbed-content {$ExtraClasses} [ js-tabs ] [ js-in-view ]">
+    <section class="default-tabbed-content background-colour--{$AccentColour} {$getLightOrDark($AccentColour)} {$ExtraClasses} [ js-tabs ]">
         <div class="default-tabbed-content__wrap">
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>

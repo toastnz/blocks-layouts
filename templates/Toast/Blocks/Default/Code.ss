@@ -1,7 +1,7 @@
 <% if $Content %>
-    <section class="default-code {$ExtraClasses}">
-        <div class="default-code__wrap row">
-            <div class="default-code__content column">
+    <section class="default-code background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+        <div class="default-code__wrap">
+            <div class="default-code__content background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
                 {$Content}
             </div>
         </div>
