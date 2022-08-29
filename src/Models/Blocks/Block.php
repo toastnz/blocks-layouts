@@ -31,7 +31,7 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\SiteConfig\SiteConfig;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\OptionsetField;
-
+use Heyday\ColorPalette\Fields\ColorPaletteField;
 use SilverStripe\View\Requirements;
 
 class Block extends DataObject
@@ -43,8 +43,10 @@ class Block extends DataObject
     private static $plural_name = 'Blocks';
 
     private static $db = [
-        'Title'     => 'Varchar(255)',
-        'Template'  => 'Varchar'
+        'Title'         => 'Varchar(255)',
+        'Template'      => 'Varchar',
+        'BGColour'      => 'Varchar(10)',
+        'AccentColour'  => 'Varchar(10)',
     ];
 
     private static $casting = [
@@ -116,6 +118,17 @@ class Block extends DataObject
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.')
+            ]);
+
+            $array=[
+                'none'  => 'None',
+                'white' => '#fff',
+                'black' => '#000'
+            ];
+
+            $fields->addFieldsToTab('Root.Main',[
+                ColorPaletteField::create('BGColour', 'Background Colour',$array),
+                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
