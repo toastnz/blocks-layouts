@@ -2,7 +2,7 @@
     <div class="default-hero__container">
         <div class="default-hero__wrap <% if $Width=='full' %>full<% end_if %>">
             <div class="default-hero__content align--{$VerticalPosition}">
-                <div class="default-hero__text background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                <div class="default-hero__text">
                     {$Content}
                 </div>
             </div>

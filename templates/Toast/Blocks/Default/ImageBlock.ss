@@ -8,7 +8,7 @@
             </div>
 
             <% if $Caption %>
-                <div class="default-image__content background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                <div class="default-image__content">
                     <p class="{$TextColour}">{$Caption}</p>
                 </div>
             <% end_if %>

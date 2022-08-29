@@ -13,7 +13,7 @@
             </a>
 
             <% if $Caption %>
-                <div class="default-video__caption background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                <div class="default-video__caption">
                     <p>{$Caption}</p>
                 </div>
             <% end_if %>
