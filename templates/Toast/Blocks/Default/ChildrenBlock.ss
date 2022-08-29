@@ -16,7 +16,7 @@
                         <div class="default-children-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-children-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                    <div class="default-children-item__details background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}">
                         <div data-equalize-watch="default-childrens">
                             <% if $Title %>
                                 <span class="default-children-item__title">{$Title.XML}</span>

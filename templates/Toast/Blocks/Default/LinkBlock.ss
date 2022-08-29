@@ -16,7 +16,7 @@
                         <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-link-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                    <div class="default-link-item__details background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}">
                         <div data-equalize-watch="default-links">
                             <% if $Title %>
                                 <span class="default-link-item__title">{$Title.XML}</span>

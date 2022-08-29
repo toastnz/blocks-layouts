@@ -10,7 +10,7 @@
     <div class="default-accordion__wrap">
         <% loop $Items %>
             <div class="default-accordion-item [ js-accordion--item ]">
-                <div class="default-accordion-item__header background-colour--{$AccentColour} {$getLightOrDark($AccentColour)} [ js-accordion--trigger ]">
+                <div class="default-accordion-item__header background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)} [ js-accordion--trigger ]">
                     <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
                 </div>
 

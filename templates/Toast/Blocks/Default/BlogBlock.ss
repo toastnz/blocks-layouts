@@ -16,7 +16,7 @@
                         <div class="default-blog-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-blog-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                    <div class="default-blog-item__details background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}">
                         <div data-equalize-watch="default-blogs">
                             <% if $Title %>
                                 <span class="default-blog-item__title">{$Title.XML}</span>
