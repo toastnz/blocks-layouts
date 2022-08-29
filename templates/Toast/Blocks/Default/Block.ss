@@ -1,7 +1,7 @@
 <% if $Content %>
-    <section class="text content-block--padding {$ExtraClasses}">
-        <div class="text__wrap row">
-            <div class="text__content column">
+    <section class="default-text {$ExtraClasses}">
+        <div class="default-text__wrap row">
+            <div class="default-text__content column">
                 {$Content}
             </div>
         </div>
