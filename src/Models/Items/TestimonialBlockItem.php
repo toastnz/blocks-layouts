@@ -41,7 +41,6 @@ class TestimonialBlockItem extends BlockItem
     ];
 
     private static $owns = [
-        'Icon',
         'Image',
     ];
 
