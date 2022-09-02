@@ -45,8 +45,8 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
-        'BGColour'      => 'Varchar(10)',
-        'AccentColour'  => 'Varchar(10)',
+        'BGColour'      => 'Varchar(30)',
+        'AccentColour'  => 'Varchar(30)',
     ];
 
     private static $casting = [
