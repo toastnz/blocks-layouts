@@ -10,7 +10,7 @@
                     <img src="{$Icon.URL}" class="default-percentage-item__icon">
                 <% end_if %>
 
-                <div class="default-percentage-item__details background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+                <div class="default-percentage-item__details background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}">
                     <div data-equalize-watch="percentage-items">
                         <span class="default-percentage-item__title">{$Title}</span>
                         <p class="default-percentage-item__summary">{$Summary}</p>

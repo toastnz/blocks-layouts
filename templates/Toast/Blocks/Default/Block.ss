@@ -1,7 +1,7 @@
 <% if $Content %>
     <section class="default-text background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
         <div class="default-text__wrap">
-            <div class="default-text__content background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}">
+            <div class="default-text__content">
                 {$Content}
             </div>
         </div>

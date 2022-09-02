@@ -4,7 +4,7 @@
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
-                        <a href="{$Link}" class="default-download-item background-colour--{$AccentColour} {$getLightOrDark($AccentColour)}" download>
+                        <a href="{$Link}" class="default-download-item background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}" download>
                             <div class="default-download-item__title">
                                 <span>{$Up.Title.XML}</span>
                             </div>

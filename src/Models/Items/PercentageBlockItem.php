@@ -61,9 +61,9 @@ class PercentageBlockItem extends BlockItem
 
     public function canCreate($member = null, $context = []) {
         // if there are more than 4 items in the block, don't allow new items to be created
-        if ($this->Parent()->Items()->Count() >= 4) {
-           return false;
-        }
+        //if ($this->Parent()->Items()->Count() >= 4) {
+        //   return false;
+        //}
         return parent::canCreate($member);
     }
 }
