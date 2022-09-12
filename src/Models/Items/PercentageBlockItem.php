@@ -11,6 +11,7 @@ use SilverStripe\Forms\TextareaField;
 use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
 class PercentageBlockItem extends BlockItem
 {
@@ -19,7 +20,7 @@ class PercentageBlockItem extends BlockItem
     private static $db = [
         'SortOrder' => 'Int',
         'Title' => 'Varchar(255)',
-        'Summary' => 'Text',
+        'Summary' => 'HTMLText',
         'Width' => 'Enum("25, 33, 50, 66, 75, 100", "50")'
     ];
 
@@ -49,7 +50,7 @@ class PercentageBlockItem extends BlockItem
                 UploadField::create('Image', 'Thumbnail')
                     ->setFolderName('Uploads/Blocks'),
                 TextField::create('Title', 'Title'),
-                TextareaField::create('Summary', 'Summary'),
+                HTMLEditorField::create('Summary', 'Summary'),
                 DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
                 LinkField::create('LinkID', 'Link'),
             ]);
