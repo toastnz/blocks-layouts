@@ -1,4 +1,4 @@
-<section class="default-accordion {$ExtraClasses} background-colour--{$BGColour} {$getLightOrDark($BGColour)} [ js-accordion ]" data-state="{$AccordionDisplay}">
+<section class="default-accordion {$ExtraClasses} background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} [ js-accordion ]" data-state="{$AccordionDisplay}">
     <% if $Content %>
         <div class="default-accordion__header">
             <div class="default-accordion__content">
@@ -10,7 +10,7 @@
     <div class="default-accordion__wrap">
         <% loop $Items %>
             <div class="default-accordion-item [ js-accordion--item ]">
-                <div class="default-accordion-item__header background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)} [ js-accordion--trigger ]">
+                <div class="default-accordion-item__header background-colour--{$Top.AccentColourClassName} {$Top.getLightOrDark($Top.AccentColourClassName)} [ js-accordion--trigger ]">
                     <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
                 </div>
 

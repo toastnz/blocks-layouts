@@ -1,4 +1,4 @@
-<section class="default-hero background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+<section class="default-hero background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses}">
     <div class="default-hero__container">
         <div class="default-hero__wrap <% if $Width=='full' %>full<% end_if %>">
             <div class="default-hero__content align--{$VerticalPosition}">

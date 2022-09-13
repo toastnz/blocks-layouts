@@ -1,4 +1,4 @@
-<section class="default-children background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+<section class="default-children background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-children__header">
             <div class="default-children__content">
@@ -16,7 +16,7 @@
                         <div class="default-children-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-children-item__details background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)}">
+                    <div class="default-children-item__details background-colour--{$Top.AccentColourClassName} {$Top.getLightOrDark($Top.AccentColourClassName)}">
                         <div data-equalize-watch="default-childrens">
                             <% if $Title %>
                                 <span class="default-children-item__title">{$Title.XML}</span>

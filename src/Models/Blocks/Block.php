@@ -240,9 +240,9 @@ class Block extends DataObject
 
 
        // Function to calculate if a colour is light or dark
-    public function getLightOrDark($colourTitle = null)
+    public function getLightOrDark($string = null)
     {
-        if (!$colourTitle){
+        if (!$string){
             return '';
         }
    
@@ -252,15 +252,16 @@ class Block extends DataObject
             return '';
         }
    
-        if ($colourTitle == 'white') {
+        if ($string == 'white') {
             return 'light';
         }
    
-        if ($colourTitle == 'black') {
+        if ($string == 'black') {
             return 'dark';
         }
    
-        if($selectedColour = $colours->filter('Title',$colourTitle)){
+        if($selectedColour = $colours->filter('ColourClassName',$string)){
+        
             if($selectedColour->exists()){
                 $hex = $selectedColour->first()->getHexColourCode();
                 $hexWithoutHash = str_replace('#', '', $hex);
@@ -271,6 +272,39 @@ class Block extends DataObject
                 $yiq = (($r*299)+($g*587)+($b*114))/1000;
 
                 return ($yiq >= 130) ? 'light' : 'dark';
+            }
+        }
+    }
+
+    public function BGColourClassName(){
+        $colour = $this->getField('BGColour');
+   
+        if ($colour){
+            $siteConfig = SiteConfig::current_site_config();
+
+            if(!$colours = $siteConfig->ThemeColours()){
+                return '';
+            }
+            if($selectedColour = $colours->filter('Title',$colour)){
+                if($selectedColour->exists()){
+                    return $selectedColour->first()->ColourClassName;
+                }
+            }
+        }
+    }
+    public function AccentColourClassName(){
+        $colour = $this->getField('AccentColour');
+   
+        if ($colour){
+            $siteConfig = SiteConfig::current_site_config();
+
+            if(!$colours = $siteConfig->ThemeColours()){
+                return '';
+            }
+            if($selectedColour = $colours->filter('Title',$colour)){
+                if($selectedColour->exists()){
+                    return $selectedColour->first()->ColourClassName;
+                }
             }
         }
     }

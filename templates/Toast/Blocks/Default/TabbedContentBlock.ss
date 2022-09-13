@@ -1,10 +1,10 @@
 <% if $Tabs.Count %>
-    <section class="default-tabbed-content background-colour--{$BGColour} {$getLightOrDark($BGColour)} {$ExtraClasses} [ js-tabs ]">
+    <section class="default-tabbed-content background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses} [ js-tabs ]">
         <div class="default-tabbed-content__wrap">
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>
                     <div class="default-tab-link">
-                        <button class="default-tab-link__button background-colour--{$Top.AccentColour} {$Top.getLightOrDark($Top.AccentColour)} [ js-tabs--link ]">
+                        <button class="default-tab-link__button background-colour--{$Top.AccentColourClassName} {$Top.getLightOrDark($Top.AccentColourClassName)} [ js-tabs--link ]">
                             <span class="default-tab-link__text">{$Title}</span>
                         </button>
                     </div>
