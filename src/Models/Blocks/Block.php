@@ -246,7 +246,7 @@ class Block extends DataObject
                return '';
            }
    
-           $string = Helper::getColourClassName($string);
+           $string = $this->getColourClassName($string);
       
            $siteConfig = SiteConfig::current_site_config();
    
@@ -277,6 +277,10 @@ class Block extends DataObject
                }
            }
        }
+    
+    public function getColourClassName($string = null ){
+        return Helper::getColourClassName($string);
+    }
 
 
     public function onBeforeWrite()
