@@ -1,5 +1,5 @@
 <% if $Image %>
-    <section class="default-image background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses}">
+    <section class="default-image background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$ExtraClasses}">
         <div class="default-image__wrap">
             <div class="default-image__media">
                 <div class="default-image__image" data-src="{$Image.ScaleMaxWidth(1920).URL}">

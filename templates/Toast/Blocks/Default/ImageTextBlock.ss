@@ -1,4 +1,4 @@
-<section class="default-image-text background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses}">
+<section class="default-image-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$ExtraClasses}">
     <div class="default-image-text__wrap <% if $Width=='full' %>full<% end_if %>">
         <div class="default-image-text__media align-{$ImageAlignment}">
             <% if $Video %>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="default-image-text__content">
-            <div class="default-image-text__text background-colour--{$AccentColourClassName} {$getLightOrDark($AccentColourClassName)}">
+            <div class="default-image-text__text background-colour--{$getColourClassName($AccentColour)} {$Top.getLightOrDark($AccentColour)}">
 
                 {$Content}
 

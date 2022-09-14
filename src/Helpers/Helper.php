@@ -1,170 +1,533 @@
 <?php
 
-namespace Toast\Blocks\Helpers;
+namespace Toast\Blocks;
 
-use SilverStripe\Core\Environment;
-use SilverStripe\Security\Security;
-use SilverStripe\Security\Permission;
+
+use Page;
+use ReflectionClass;
+use SilverStripe\ORM\DB;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
-use Toast\Tasks\GenerateThemeCssFileTask;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Core\Config\Config;
-use DirectoryIterator;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Security\Permission;
+use SilverStripe\Versioned\Versioned;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\Subsites\Model\Subsite;
-use SilverStripe\Subsites\State\SubsiteState;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_Base;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\CMS\Controllers\CMSPageEditController;
+use SilverStripe\View\SSViewer;
+use SilverStripe\SiteConfig\SiteConfig;
+use Toast\Blocks\Helpers\Helper;
+use SilverStripe\Forms\OptionsetField;
+use Heyday\ColorPalette\Fields\ColorPaletteField;
+use SilverStripe\View\Requirements;
 
-class Helper 
+class Block extends DataObject
 {
-    static function getAvailableBlocks()
+    private static $table_name = 'Blocks_Block';
+
+    private static $singular_name = 'Block';
+
+    private static $plural_name = 'Blocks';
+
+    private static $db = [
+        'Title'         => 'Varchar(255)',
+        'Template'      => 'Varchar',
+        'BGColour'      => 'Varchar(30)',
+        'AccentColour'  => 'Varchar(30)',
+    ];
+
+    private static $casting = [
+        'Icon' => 'HTMLText'
+    ];
+
+    private static $summary_fields = [
+        'IconForCMS'        => 'Type',
+        'Title'             => 'Title',
+        'ContentSummary'    => 'Content',
+        'Template'          => 'Template'
+    ];
+
+    private static $searchable_fields = [
+        'Title'
+    ];
+
+    private static $extensions = [
+        Versioned::class
+    ];
+
+    private static $versioned_gridfield_extensions = true;
+
+    public function getIconForCMS()
     {
-        $availableBlocks = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'available_blocks');
-        if (!file_exists(BASE_PATH . '/' . $availableBlocks)) {
-            return ;
-        }
-        return $availableBlocks;
+        $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
+
+        return DBField::create_field('HTMLText', '
+            <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
+                <img style="width:100%;height:100%;display:inline-block !important" src="' . $icon . '">
+            </div>
+            <span style="font-weight:bold;color:#377cff;display:block;line-height:10px;text-align:center;margin:0px 0 0;padding:0;font-size:10px;text-transform:uppercase;">' . $this->i18n_singular_name() . '</span>
+        ');
+
     }
 
-    static function getLayoutSrc()
+    public function IconForCMS()
     {
-        $availableBlocks = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_src');
-
-        if (!file_exists(BASE_PATH . '/' . $availableBlocks)) {
-            return ;
-        }
-
-        return $availableBlocks;
+        return $this->getIconForCMS();
     }
 
-    static function getLayoutIconSrc()
+    public function forTemplate()
     {
-        $availableBlocks = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src');
-        if (!file_exists(BASE_PATH . '/' . $availableBlocks)) {
-            return ;
-        }
-        return $availableBlocks;
-    }
-
+        $template = $this->Template;
   
-    static function getThemeColoursArray(){
-
-        $array=[];
-        $array['none'] = 'none';
-        $array['white'] = '#fff';
-        $array['black'] = '#000';
-        $siteConfig = SiteConfig::current_site_config();
-        if ($colours = $siteConfig->ThemeColours()->map('Title','Colour')){
-            foreach($colours as $key => $colour){
-                // convert string to lowercase and replace whitespaces with hyphen
-                $classTitle = strtolower(str_replace(" ","-",$key));
-                $array[$classTitle] = '#' . $colour;
-            }
-                // return $array;
+        $this->extend('updateBlockTemplate', $template);
+        // load css file if exists in directory specified in config yml
+        if ($cssFilePath = $this->getCSSFile()){
+            Requirements::css($cssFilePath);
         }
-        if (class_exists(Subsite::class)){
-            if(self::isSubsite()){
-                $subsite = Subsite::currentSubsite();
-                if ($colours = $subsite->ThemeColours()->map('Title','Colour')){
-                    foreach($colours as $key => $colour){
-                        // convert string to lowercase and replace whitespaces with hyphen
-                        if ($colour){
-                            $classTitle = strtolower(str_replace(" ","-",$key));
-                            $array[$classTitle] = '#' . $colour;
-                        }
-                    }
+        return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
+    }
+
+    public function getCMSFields()
+    {
+        $this->beforeUpdateCMSFields(function ($fields) {
+
+            if ($this->ID) {
+                $fields->addFieldsToTab('Root.More', [
+                    LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']')
+                ]);
+            }
+
+            $fields->removeByName([
+                'Template'
+            ]);
+
+            $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Title', 'Title')
+                    ->setDescription('Title used for internal reference only and does not appear on the site.')
+            ]);
+
+            $array=[
+                'none'  => 'None',
+                'white' => '#fff',
+                'black' => '#000'
+            ];
+
+            $fields->addFieldsToTab('Root.Main',[
+                ColorPaletteField::create('BGColour', 'Background Colour',$array)->setDescription('Colours can be set up in Site Settings > Customization > Colours'),
+                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)->setDescription('This only applies if default/selected template uses it')
+            ]);
+
+            if ($layoutOptions = $this->getBlockLayouts()){
+                
+                   // Templates tab
+                   // Add default 
+                $fields->addFieldToTab('Root.Templates', $layoutOptions);
+            }
+
+        });
+
+        return parent::getCMSFields();
+    }
+
+    public function getBlockLayouts()
+    {
+        // scan the app directory for block layouts and return them as an array
+        $layouts = [];
+        $optionalLayouts = [];
+        $baseFolder = Director::baseFolder();
+        $theme = Helper::getThemes();
+        // module dir
+        $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
+        $module_imgsrc =  TOAST_BLOCKS_IMAGE_DIR . '/client/images/layout-icons/default/' ;
+        // $module_imgsrc = BASE_PATH . '/vendor/toastnz/' . TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
+       // get default layouts
+        $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
+   
+        // alternate layouts if specified
+        if ($layout_src = Helper::getLayoutSrc()){
+            $layout_src = BASE_PATH . '/' . $layout_src;
+            // get layout dir from yml
+            if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+                return ;
+            }
+        }
+       
+        
+        $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
+        foreach ($dirs as $dir) { 
+             if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+                return ;
+            }
+            $optionalSrcPath = $layout_src . '/' . $dir . '/';
+            $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
+         
+            $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
+        }
+        
+        if (count($optionalLayouts) > 0){
+            foreach($optionalLayouts as $layout){
+                if ($layout){
+                    // merge alternate layouts with default layout
+                    $layouts = array_merge($layouts, $layout);
+                }
+            }
+        }   
+        
+  
+        if (count($layouts) > 1){
+            $tplField = OptionsetField::create(
+                "Template",
+                "Choose a layout",
+                $layouts,
+                $this->Template
+            )->addExtraClass('stacked toast-block-layouts');
+
+            return $tplField;
+        }
+        return ;
+    }
+
+    public function getLayoutDirs(){
+        if ($layout_src = Helper::getLayoutSrc()){
+            $layout_src = BASE_PATH . '/' . $layout_src;
+            $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
+            $output = [];
+            foreach ($dirs as $dir) { 
+                $output[] = strtolower($dir);
+            }
+            return $output;
+        }
+    }
+
+    public function getCSSFile()
+    {
+        $cssFilePath = null;
+        if($cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir')){
+             // check block template dir for css file
+            $template =explode('\\', $this->Template);
+            // layoutname is always going to be in the pos 2 of the array
+            if(isset($template[2])){
+                $layoutName = strtolower($template[2]);
+                $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+                if (file_exists($cssFilePath)){
+                    // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+                    $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
                     
                 }
             }
-        }  
-        return $array;
-        
-    }
+            
+        }
 
-    static function getAvailableBlocksLayouts($block, $src, $imgsrc, $default = true)
-    { 
-        $optionset = [];
-        // if this is optional directory
-        // TODO: merge layouts with other specified folder in yml
-        // Scan each directory for files
+        $this->extend('updateBlockTemplateCSS', $cssFilePath);
 
-        $optionset = self::getLayoutIcons($block, $src, $imgsrc, $default );
+        return $cssFilePath;
 
-        return $optionset;
     }
 
 
-    static function getLayoutIcons($block,$src, $imgsrc, $default = true)
+       // Function to calculate if a colour is light or dark
+    public function getLightOrDark($string = null)
     {
-       
-        $currentTemplateName = strtolower($block->getBlockTemplateName());
-        $optionset = [];
-        $layouts = [];
-        $icons = [];
-        $basePath = BASE_PATH . '/' ;
-        
-        $extensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg');
+        if (!$string){
+            return '';
+        }
 
-        if (is_dir($src) && is_dir( $basePath  .$imgsrc)) {     
-            // get icons for layouts
-            // if folder not exist in app, fall back to module default
-            if ($directory = new DirectoryIterator($imgsrc)){
-              
-                $imgsrc_dir = basename( $basePath . $imgsrc);
-                $src_dir = basename( $basePath . $src);
-                foreach ($directory as $fileinfo){
-                   
-                    if ($fileinfo->isFile()){
-                        $imgfilename = $fileinfo->getFilename();
-                        $extension = strtolower(pathinfo($imgfilename, PATHINFO_EXTENSION));
-                        // Only add to our available icons if it's an extension we're after
-                        if (in_array($extension, $extensions)){					
-                            $imgfilename = pathinfo($imgfilename)['filename'];
-                            $icons[$imgsrc.$fileinfo->getFilename()] = $imgfilename;
+        $string = Helper::getColourClassName($string);
+   
+        $siteConfig = SiteConfig::current_site_config();
+
+        if(!$colours = $siteConfig->ThemeColours()){
+            return '';
+        }
+   
+        if ($string == 'white') {
+            return 'light';
+        }
+   
+        if ($string == 'black') {
+            return 'dark';
+        }
+   
+        if($selectedColour = $colours->filter('ColourClassName',$string)){
+        
+            if($selectedColour->exists()){
+                $hex = $selectedColour->first()->getHexColourCode();
+                $hexWithoutHash = str_replace('#', '', $hex);
+                $r = hexdec(substr($hexWithoutHash,0,2));
+                $g = hexdec(substr($hexWithoutHash,2,2));
+                $b = hexdec(substr($hexWithoutHash,4,2));
+                  
+                $yiq = (($r*299)+($g*587)+($b*114))/1000;
+
+                return ($yiq >= 130) ? 'light' : 'dark';
+            }
+        }
+    }
+
+    public function getColourClassName($title = null)
+    {
+        return Helper::getColourClassName($title);
+    }
+
+
+    public function onBeforeWrite()
+    {
+        if (!$this->Template){
+            $this->Template =  $this->getTemplateClass();
+        }
+         parent::onBeforeWrite();
+     
+    }
+
+    public function getTemplateClass()
+    {
+        return 'Toast\Blocks\\Default\\' . $this->getBlockTemplateName();
+    }
+
+    public function populateDefaults()
+	{
+        if (!$this->Template){
+            $this->Template =  $this->getTemplateClass();
+        }
+		parent::populateDefaults();
+	}
+
+    public function getContentSummary()
+    {
+        return DBField::create_field(DBHTMLText::class, '');
+    }
+
+    public function getTitle()
+    {
+        if ($this->ID) {
+            return $this->getField('Title') ?: $this->i18n_singular_name();
+        } else {
+            return $this->getField('Title');
+        }
+    }
+
+    public function getApiURL()
+    {
+        return Controller::join_links(Controller::curr()->AbsoluteLink(), 'Block', $this->ID);
+    }
+
+    public function getLink($action = null)
+    {
+        $parent = $this->getParentPage();
+
+        if ($parent && $parent->exists()) {
+            return $parent->Link($action) . '#' . $this->getHtmlID();
+        }
+
+        $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
+            ->first();
+
+        if ($parent && $parent->exists()) {
+            return $parent->Link($action) . '#' . $this->getHtmlID();
+        }
+
+        return '';
+    }
+
+    public function Link($action = null)
+    {
+        return $this->getLink($action);
+    }
+
+    public function getAbsoluteLink($action = null)
+    {
+        return Controller::join_links(Director::absoluteBaseURL(), $this->Link($action));
+    }
+
+    public function AbsoluteLink($action = null)
+    {
+        return $this->getAbsoluteLink($action);
+    }
+
+    public function getBlockTemplateName()
+    {
+        $reflect = new ReflectionClass($this);
+
+        $templateName = $reflect->getShortName() ?: '';
+
+        return $templateName;
+    }
+
+    public function getHtmlID()
+    {
+        $reflect = new ReflectionClass($this);
+
+        $templateName = $reflect->getShortName() ?: $this->ClassName;
+
+        return $templateName . '_' . $this->ID;
+    }
+
+    public function getDisplayTitle()
+    {
+        $title = $this->Title;
+
+        $parent = $this->getParentPage();
+
+        if ($parent && $parent->exists()) {
+            $title .= ' (on page ' . $parent->Title . ')';
+        }
+
+        return $title;
+    }
+
+    public function canView($member = null)
+    {
+        if ($member && Permission::checkMember($member, ["ADMIN", "SITETREE_VIEW_ALL"])) {
+            return true;
+        }
+
+        $extended = $this->extendedCan('canView', $member);
+
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    }
+
+    public function canEdit($member = null)
+    {
+        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    }
+
+    public function canDelete($member = null)
+    {
+        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    }
+
+    public function canCreate($member = null, $context = [])
+    {
+        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    }
+
+    public function canDeleteFromLive($member = null)
+    {
+        $extended = $this->extendedCan('canDeleteFromLive', $member);
+
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->canPublish($member);
+    }
+
+    public function canPublish($member = null)
+    {
+        if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
+            $member = Member::currentUser();
+        }
+
+        if ($member && Permission::checkMember($member, "ADMIN")) {
+            return true;
+        }
+
+        $extended = $this->extendedCan('canPublish', $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        return $this->canEdit($member);
+    }
+
+    public function isPublished()
+    {
+        if ($this->isNew()) {
+            return false;
+        }
+
+        return (DB::prepared_query("SELECT \"ID\" FROM \"Blocks_Block_Live\" WHERE \"ID\" = ?", [$this->ID])->value())
+            ? true
+            : false;
+    }
+
+    public function isNew()
+    {
+        if (empty($this->ID)) {
+            return true;
+        }
+
+        if (is_numeric($this->ID)) {
+            return false;
+        }
+
+        return stripos($this->ID, 'new') === 0;
+    }
+
+    public function getParentPage()
+    {
+        if ($controller = Controller::curr()) {
+            if (!$controller instanceof CMSPageEditController) {
+                try {
+                    if ($data = $controller->data()) {
+                        if ($data->ID) {
+                            return SiteTree::get()->byID($data->ID);
                         }
                     }
-                } 
-                
-                foreach (glob($src . "*.ss") as $filename) {
-                    if ($name = pathinfo($filename)['filename']){
-                            $name = strtolower($name);
-                    }
-                    $className = 'Toast\Blocks\\' . $src_dir . '\\' . pathinfo($filename)['filename'];
-                    // if this block is in the icon array value, add it to the optionset
-                    if ($name == $currentTemplateName && in_array($name, array_values($icons))) {
-                        // get the index 
-                        $index = array_search($name, array_values($icons));
-                        // array of keys in the img src array
-                        $filepath_keys   = array_keys( $icons );
-                        // assign img path 
-                        $matchedBlockImgSrcPath = $filepath_keys[$index];
-                        $thumbnail = '<img src="' . $matchedBlockImgSrcPath . '" />';
-                        $html = '<div class="blockThumbnail">' . $thumbnail . '</div><strong class="title" title="Template file: ' . $filename . '">'.$imgsrc_dir.'</strong>';
-                        $optionset[$className] = DBField::create_field(DBHTMLText::class, $html);
-                    }
-                }   
+                } catch (\Exception $e) {                    
+                }
             }
-             
-		}
-        return $optionset;
+        }
     }
 
-    static function getThemes()
+    public function doArchive()
     {
-        // display all themes in the themes folder
-        $themes = [];
-        if (is_dir(THEMES_PATH)) {
-            foreach (scandir(THEMES_PATH) as $theme) {
-                if ($theme[0] == '.') {
-                    continue;
-                }
-                $theme = strtok($theme, '_');
-                $themes[] = $theme;
-            }
-            ksort($themes);
+        $this->invokeWithExtensions('onBeforeArchive', $this);
+
+        $thisID = $this->ID;
+
+        if (!$this->isPublished() || $this->doUnpublish()) {
+            $this->delete();
+
+            DB::prepared_query("DELETE FROM \"Page_ContentBlocks\" WHERE \"Blocks_BlockID\" = ?", [$thisID]);
+
+            $this->invokeWithExtensions('onAfterArchive', $this);
+
+            return true;
         }
-        return $themes;
+
+        return false;
+    }
+
+    public function canArchive($member = null)
+    {
+        if (!$member) {
+            $member = Member::currentUser();
+        }
+
+        $extended = $this->extendedCan('canArchive', $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+
+        if (!$this->canDelete($member)) {
+            return false;
+        }
+
+        if ($this->ExistsOnLive && !$this->canDeleteFromLive($member)) {
+            return false;
+        }
+
+        return true;
     }
 
 }

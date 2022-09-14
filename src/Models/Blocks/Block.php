@@ -240,74 +240,43 @@ class Block extends DataObject
 
 
        // Function to calculate if a colour is light or dark
-    public function getLightOrDark($string = null)
-    {
-        if (!$string){
-            return '';
-        }
+       public function getLightOrDark($string = null)
+       {
+           if (!$string){
+               return '';
+           }
    
-        $siteConfig = SiteConfig::current_site_config();
-
-        if(!$colours = $siteConfig->ThemeColours()){
-            return '';
-        }
+           $string = Helper::getColourClassName($string);
+      
+           $siteConfig = SiteConfig::current_site_config();
    
-        if ($string == 'white') {
-            return 'light';
-        }
+           if(!$colours = $siteConfig->ThemeColours()){
+               return '';
+           }
+      
+           if ($string == 'white') {
+               return 'light';
+           }
+      
+           if ($string == 'black') {
+               return 'dark';
+           }
+      
+           if($selectedColour = $colours->filter('ColourClassName',$string)){
+           
+               if($selectedColour->exists()){
+                   $hex = $selectedColour->first()->getHexColourCode();
+                   $hexWithoutHash = str_replace('#', '', $hex);
+                   $r = hexdec(substr($hexWithoutHash,0,2));
+                   $g = hexdec(substr($hexWithoutHash,2,2));
+                   $b = hexdec(substr($hexWithoutHash,4,2));
+                     
+                   $yiq = (($r*299)+($g*587)+($b*114))/1000;
    
-        if ($string == 'black') {
-            return 'dark';
-        }
-   
-        if($selectedColour = $colours->filter('ColourClassName',$string)){
-        
-            if($selectedColour->exists()){
-                $hex = $selectedColour->first()->getHexColourCode();
-                $hexWithoutHash = str_replace('#', '', $hex);
-                $r = hexdec(substr($hexWithoutHash,0,2));
-                $g = hexdec(substr($hexWithoutHash,2,2));
-                $b = hexdec(substr($hexWithoutHash,4,2));
-                  
-                $yiq = (($r*299)+($g*587)+($b*114))/1000;
-
-                return ($yiq >= 130) ? 'light' : 'dark';
-            }
-        }
-    }
-
-    public function BGColourClassName(){
-        $colour = $this->getField('BGColour');
-   
-        if ($colour){
-            $siteConfig = SiteConfig::current_site_config();
-
-            if(!$colours = $siteConfig->ThemeColours()){
-                return '';
-            }
-            if($selectedColour = $colours->filter('Title',$colour)){
-                if($selectedColour->exists()){
-                    return $selectedColour->first()->ColourClassName;
-                }
-            }
-        }
-    }
-    public function AccentColourClassName(){
-        $colour = $this->getField('AccentColour');
-   
-        if ($colour){
-            $siteConfig = SiteConfig::current_site_config();
-
-            if(!$colours = $siteConfig->ThemeColours()){
-                return '';
-            }
-            if($selectedColour = $colours->filter('Title',$colour)){
-                if($selectedColour->exists()){
-                    return $selectedColour->first()->ColourClassName;
-                }
-            }
-        }
-    }
+                   return ($yiq >= 130) ? 'light' : 'dark';
+               }
+           }
+       }
 
 
     public function onBeforeWrite()

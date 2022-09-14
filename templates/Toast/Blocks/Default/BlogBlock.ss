@@ -1,4 +1,4 @@
-<section class="default-blog background-colour--{$BGColourClassName} {$getLightOrDark($BGColourClassName)} {$ExtraClasses}">
+<section class="default-blog background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-blog__header">
             <div class="default-blog__content">
@@ -16,7 +16,7 @@
                         <div class="default-blog-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
-                    <div class="default-blog-item__details background-colour--{$Top.AccentColourClassName} {$Top.getLightOrDark($Top.AccentColourClassName)}">
+                    <div class="default-blog-item__details background-colour--{$getColourClassName($Top.AccentColour)} {$Top.getLightOrDark($Top.AccentColour)}">
                         <div data-equalize-watch="default-blogs">
                             <% if $Title %>
                                 <span class="default-blog-item__title">{$Title.XML}</span>
