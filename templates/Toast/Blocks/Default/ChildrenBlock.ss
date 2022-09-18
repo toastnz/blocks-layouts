@@ -1,4 +1,4 @@
-<section class="default-children background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour} {$ExtraClasses}">
+<section class="default-children background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-children__header">
             <div class="default-children__content">

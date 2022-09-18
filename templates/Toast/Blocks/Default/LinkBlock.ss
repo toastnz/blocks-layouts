@@ -1,4 +1,4 @@
-<section class="default-link background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$ExtraClasses}">
+<section class="default-link background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">

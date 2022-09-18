@@ -1,4 +1,4 @@
-<section class="default-video background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+<section class="default-video background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-video__header">
             <div class="default-video__content">{$Content}</div>

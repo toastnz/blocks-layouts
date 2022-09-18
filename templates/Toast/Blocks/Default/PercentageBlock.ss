@@ -1,4 +1,4 @@
-<section class="default-percentage background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$ExtraClasses}" data-equalize="percentage-items">
+<section class="default-percentage background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}" data-equalize="percentage-items">
     <div class="default-percentage__wrap">
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width}">

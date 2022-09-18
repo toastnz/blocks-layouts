@@ -1,4 +1,4 @@
-<section class="default-image-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$ExtraClasses}">
+<section class="default-image-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$IncludeClasses} {$ExtraClasses}">
     <div class="default-image-text__wrap <% if $Width=='full' %>full<% end_if %>">
         <div class="default-image-text__media align-{$ImageAlignment}">
             <% if $Video %>

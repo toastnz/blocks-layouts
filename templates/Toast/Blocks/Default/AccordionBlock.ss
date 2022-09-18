@@ -1,4 +1,4 @@
-<section class="default-accordion {$ExtraClasses} background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} [ js-accordion ]" data-state="{$AccordionDisplay}">
+<section class="default-accordion {$IncludeClasses} {$ExtraClasses} background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} [ js-accordion ]" data-state="{$AccordionDisplay}">
     <% if $Content %>
         <div class="default-accordion__header">
             <div class="default-accordion__content">

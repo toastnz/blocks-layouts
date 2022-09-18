@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section class="default-download background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$ExtraClasses}">
+    <section class="default-download background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
