@@ -5,6 +5,8 @@ namespace Toast\Blocks;
 use Toast\Blocks\Block;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
+use Sheadawson\Linkable\Models\Link;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
@@ -19,10 +21,12 @@ class HeroBlock extends Block
 
     private static $db = [
         'Content' => 'HTMLText',
-        'FullWidth' => 'Boolean'
+        'FullWidth' => 'Boolean',
+        'ContentAlignment' => 'Varchar(30)',
     ];
 
     private static $has_one = [
+        'CustomLink' => Link::class,
         'BackgroundImage' => Image::class
     ];
 
@@ -35,6 +39,8 @@ class HeroBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
+                LinkField::create('CustomLinkID', 'Link'),
                 HTMLEditorField::create('Content', 'Content')->setRows(5),
                 CheckboxField::create('FullWidth', 'Extend content to use full width'),
                 UploadField::create('BackgroundImage', 'Background Image')
