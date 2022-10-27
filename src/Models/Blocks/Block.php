@@ -127,8 +127,8 @@ class Block extends DataObject
             ];
 
             $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('BGColour', 'Background Colour',$array),
-                ColorPaletteField::create('AccentColour', 'Accent Colour',$array)->setDescription('This only applies if default/selected template uses it')
+                ColorPaletteField::create('BGColour', 'Primary Colour',$array),
+                ColorPaletteField::create('AccentColour', 'Secondary Colour',$array)->setDescription('This only applies if default/selected template uses it')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -141,6 +141,14 @@ class Block extends DataObject
         });
 
         return parent::getCMSFields();
+    }
+
+    public function getPrimaryColour(){
+        return $this->BGColour;
+    }
+
+    public function getSecondaryColour(){
+        return $this->AccentColour;
     }
 
     public function getBlockLayouts()
