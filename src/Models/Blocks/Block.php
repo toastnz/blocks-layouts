@@ -225,19 +225,20 @@ class Block extends DataObject
     {
         $cssFilePath = null;
         if($cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir')){
-             // check block template dir for css file
-            $template =explode('\\', $this->Template);
-            // layoutname is always going to be in the pos 2 of the array
-            if(isset($template[2])){
-                $layoutName = strtolower($template[2]);
-                $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                if (file_exists($cssFilePath)){
-                    // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                    $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                    
-                }
-            }
-            
+            if($this->Template){
+                // check block template dir for css file
+               $template =explode('\\', $this->Template);
+               // layoutname is always going to be in the pos 2 of the array
+               if(isset($template[2])){
+                   $layoutName = strtolower($template[2]);
+                   $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+                   if (file_exists($cssFilePath)){
+                       // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+                       $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+                       
+                   }
+               }
+           }
         }
 
         $this->extend('updateBlockTemplateCSS', $cssFilePath);
