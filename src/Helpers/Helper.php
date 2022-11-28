@@ -195,5 +195,57 @@ class Helper
         }
     }
 
+    static function getColourForTemplate($title = null)
+    {
+        if(!$title){
+            return 'white light';
+        }
+
+        $classname = self::getColourClassName($title);
+        $lightOrDark = self::getLightOrDark($title);
+        if ($classname){
+            return $classname . ' '. $lightOrDark;
+        }
+    }
+
+    // Function to calculate if a colour is light or dark
+    static function getLightOrDark($string = null)
+    {
+        if (!$string){
+            return '';
+        }
+
+        $string = self::getColourClassName($string);
+   
+        $siteConfig = SiteConfig::current_site_config();
+
+        if(!$colours = $siteConfig->ThemeColours()){
+            return '';
+        }
+   
+        if ($string == 'white') {
+            return 'light';
+        }
+   
+        if ($string == 'black') {
+            return 'dark';
+        }
+   
+        if($selectedColour = $colours->filter('ColourClassName',$string)){
+        
+            if($selectedColour->exists()){
+                $hex = $selectedColour->first()->getHexColourCode();
+                $hexWithoutHash = str_replace('#', '', $hex);
+                $r = hexdec(substr($hexWithoutHash,0,2));
+                $g = hexdec(substr($hexWithoutHash,2,2));
+                $b = hexdec(substr($hexWithoutHash,4,2));
+                  
+                $yiq = (($r*299)+($g*587)+($b*114))/1000;
+
+                return ($yiq >= 130) ? 'light' : 'dark';
+            }
+        }
+    }
+
 
 }
