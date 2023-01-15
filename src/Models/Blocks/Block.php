@@ -72,6 +72,10 @@ class Block extends DataObject
 
     public function getIconForCMS()
     {
+        if(self::config()->get('block-icon') == null){
+            return;
+        }
+        
         $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
