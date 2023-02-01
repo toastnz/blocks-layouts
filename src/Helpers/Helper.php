@@ -139,7 +139,16 @@ class Helper
                         $filepath_keys   = array_keys( $icons );
                         // assign img path 
                         $matchedBlockImgSrcPath = $filepath_keys[$index];
-                        $thumbnail = '<img src="' . $matchedBlockImgSrcPath . '" />';
+                    
+                        // If the matchedBlockImgSrcPath is a .svg file
+                        if (pathinfo($matchedBlockImgSrcPath, PATHINFO_EXTENSION) == 'svg') {
+                            // Get the file contents from the matchedBlockImgSrcPath
+                            $svg = file_get_contents($matchedBlockImgSrcPath);
+                            $thumbnail = $svg;
+                        } else {
+                            $thumbnail = '<img src="' . $matchedBlockImgSrcPath . '" />';
+                        }
+                    
                         $html = '<div class="blockThumbnail">' . $thumbnail . '</div><strong class="title" title="Template file: ' . $filename . '">'.$imgsrc_dir.'</strong>';
                         $optionset[$className] = DBField::create_field(DBHTMLText::class, $html);
                     }
