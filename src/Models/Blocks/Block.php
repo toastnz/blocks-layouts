@@ -262,6 +262,9 @@ class Block extends DataObject
         return Helper::getColourClassName($string);
     }
 
+    public function getColourForTemplate($string = null ){
+        return Helper::getColourForTemplate($string);
+    }
 
     public function onBeforeWrite()
     {
