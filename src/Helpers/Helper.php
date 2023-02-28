@@ -220,6 +220,9 @@ class Helper
     // Function to calculate if a colour is light or dark
     static function getLightOrDark($string = null)
     {
+
+        $defaultValue = self::getDefaultValueForYIQ() ?: 130 ;
+
         if (!$string){
             return '';
         }
@@ -251,10 +254,14 @@ class Helper
                   
                 $yiq = (($r*299)+($g*587)+($b*114))/1000;
 
-                return ($yiq >= 130) ? 'light' : 'dark';
+                return ( $yiq >= $defaultValue ) ? 'light' : 'dark';
             }
         }
     }
 
+    static function getDefaultValueForYIQ()
+    {
+        return Config::inst()->get(Block::class,'default_value_yiq') ?: [];
+    }
 
 }
