@@ -6,7 +6,7 @@
             </div>
         </div>
     <% end_if %>
-    
+
     <div class="default-link__wrap lg-up-{$Columns}" data-equalize="default-links">
         <% loop $Items.Sort('SortOrder') %>
             <div class="default-link-item">
@@ -26,7 +26,7 @@
                                 <p class="default-link-item__summary">{$Summary.XML}</p>
                             <% end_if %>
                         </div>
-    
+
                         <span class="default-link-item__button">{$Link.Title}</span>
                     </div>
                 </a>
