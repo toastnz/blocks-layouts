@@ -34,7 +34,21 @@ IconDirectory="$Icons"
 # Function to enter a new block name
 function enter_block_name {
     read -p "Enter the name of the new block: " block
-    block=$(to_camel_case "$block")
+
+    # Split the block name by spaces into an array
+    block=($block)
+    # Loop through the array and capitalise each word
+    for ((i=0; i<${#block[@]}; i++)); do
+        # Capitalise the first letter of the word
+        block[$i]="$(tr '[:lower:]' '[:upper:]' <<< ${block[$i]:0:1})${block[$i]:1}"
+    done
+
+    # Convert the array back into a string
+    block="${block[@]}"
+    
+    # Remove spaces from the block name
+    block=$(echo $block | sed 's/ //g')
+    # block=$(to_camel_case "$block")
     if [[ ! $block =~ Block$ ]]; then
         block="$block""Block"
     fi
@@ -70,9 +84,20 @@ BlockFile="$Blocks/$block.php"
 if [ ! -f "$TemplateFile" ]; then
     touch "$TemplateFile"
 
-    BlockName=$(from_camel_to_sentence_case "$block");
-    LowerBlockName=$(echo $block | tr '[:upper:]' '[:lower:]');
-    LowerBlockNameWithoutBlock=$(echo $LowerBlockName | sed 's/block$//');
+    # Remove 'Block' from the end of the block name
+    LowerBlockNameWithoutBlock=$(echo $block | sed 's/Block$//');
+    # Insert a hyphen before each capital letter
+    LowerBlockNameWithoutBlock=$(echo $LowerBlockNameWithoutBlock | sed 's/\([A-Z]\)/-\1/g' | sed 's/^-//g');
+    # lower case the block name
+    LowerBlockNameWithoutBlock=$(echo $LowerBlockNameWithoutBlock | tr '[:upper:]' '[:lower:]');
+
+
+    # BlockName=$(from_camel_to_sentence_case "$block");
+
+    # LowerBlockName=$(echo $block | tr '[:upper:]' '[:lower:]');
+    # LowerBlockNameWithoutBlock=$(echo $LowerBlockName | sed 's/block$//');
+
+    # # 
 
     TemplateName=$(from_camel_to_sentence_case "$template");
     LowerTemplateName=$(echo $template | tr '[:upper:]' '[:lower:]');
@@ -80,7 +105,7 @@ if [ ! -f "$TemplateFile" ]; then
     # The default html we want is like this <section id="{$HTMLID}" class="default-showcase [ js-showcase ] background-colour--{$getColourForTemplate($PrimaryColour)} {$IncludeClasses} {$ExtraClasses}">
 
     # Write some default content to the template file
-    echo "<section id=\"{\$HTMLID}\" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] background-colour--{\$getColourForTemplate(\$PrimaryColour)} {\$IncludeClasses} {\$ExtraClasses}\">
+    echo "<section id=\"{\$HTMLID}\" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] background-colour--{\$getColour(\$PrimaryColour, 'class, brightness')} {\$IncludeClasses} {\$ExtraClasses}\">
 
 </section>" > "$TemplateFile"
 

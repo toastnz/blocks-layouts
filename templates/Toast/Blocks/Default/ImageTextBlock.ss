@@ -1,19 +1,19 @@
-<section class="default-image-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-image-text [ js-default-image-text ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-image-text__wrap <% if $Width=='full' %>full<% end_if %>">
         <div class="default-image-text__media align-{$ImageAlignment}">
             <% if $Video %>
                 <div class="default-image-text__video" data-video-modal="{$Video.IframeURL}" data-src="{$Image.ScaleWidth(1200).URL}">
-                    <img src="{$Image.ScaleWidth(120).URL}" alt="{$Image.Title}">
+                    <img src="{$Image.ScaleWidth(12).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                 </div>
             <% else %>
                 <div class="default-image-text__image" data-src="{$Image.ScaleWidth(1200).URL}">
-                    <img src="{$Image.ScaleWidth(120).URL}" alt="{$Image.Title}">
+                    <img src="{$Image.ScaleWidth(12).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                 </div>
             <% end_if %>
         </div>
 
         <div class="default-image-text__content">
-            <div class="default-image-text__text background-colour--{$getColourClassName($AccentColour)} {$Top.getLightOrDark($AccentColour)}">
+            <div class="default-image-text__text background-colour--{$getColour($SecondaryColour, 'class, brightness')}">
 
                 {$Content}
 

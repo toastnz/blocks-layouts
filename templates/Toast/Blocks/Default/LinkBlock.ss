@@ -1,4 +1,4 @@
-<section class="default-link background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)}  {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-link [ js-default-link ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">
@@ -6,17 +6,17 @@
             </div>
         </div>
     <% end_if %>
-
+    
     <div class="default-link__wrap lg-up-{$Columns}" data-equalize="default-links">
         <% loop $Items.Sort('SortOrder') %>
             <div class="default-link-item">
                 <a href="{$Link.LinkURL}" class="default-link-item__link">
                     <div class="default-link-item__media" data-src="{$Image.FocusFill(500,600).URL}">
-                        <img src="{$Image.FocusFill(5,6).URL}" alt="{$Image.AltText}" />
+                        <img src="{$Image.Fill(5,6).URL}" width="5" height="6" loading="lazy" alt="{$Image.Title.ATT}">
                         <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
-
-                    <div class="default-link-item__details background-colour--{$getColourClassName($Top.AccentColour)} {$Top.getLightOrDark($Top.AccentColour)}">
+    
+                    <div class="default-link-item__details background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')}">
                         <div data-equalize-watch="default-links">
                             <% if $Title %>
                                 <span class="default-link-item__title">{$Title.XML}</span>
@@ -26,7 +26,7 @@
                                 <p class="default-link-item__summary">{$Summary.XML}</p>
                             <% end_if %>
                         </div>
-
+    
                         <span class="default-link-item__button">{$Link.Title}</span>
                     </div>
                 </a>

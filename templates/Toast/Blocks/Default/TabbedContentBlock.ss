@@ -1,10 +1,10 @@
 <% if $Tabs.Count %>
-    <section class="default-tabbed-content background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses} [ js-tabs ]">
+    <section id="{$HTMLID}" class="default-tabbed-content [ js-default-tabbed-content ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-tabbed-content__wrap">
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>
                     <div class="default-tab-link">
-                        <button class="default-tab-link__button background-colour--{$getColourClassName($Top.AccentColour)} {$Top.getLightOrDark($Top.AccentColour)} [ js-tabs--link ]">
+                        <button class="default-tab-link__button background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')} [ js-tabs--link ]">
                             <span class="default-tab-link__text">{$Title}</span>
                         </button>
                     </div>
@@ -17,7 +17,7 @@
                         <% if $Image %>
                             <div class="default-tab-item__media">
                                 <div class="default-tab-item__image" data-src="{$Image.ScaleMaxWidth(800).URL}">
-                                    <img src="{$Image.ScaleMaxWidth(20).URL}" alt="{$Image.Title.ATT}">
+                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(8).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                                 </div>
                             </div>
                         <% end_if %>

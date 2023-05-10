@@ -1,22 +1,22 @@
 <% if $Items.Count %>
-    <section class="default-download background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-download [ js-default-download ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
-                        <a href="{$Link}" class="default-download-item background-colour--{$getColourClassName($Top.AccentColour)} {$Top.getLightOrDark($Top.AccentColour)}" download>
+                        <a href="{$Link}" class="default-download-item background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')}" download>
                             <div class="default-download-item__title">
                                 <span>{$Up.Title.XML}</span>
                             </div>
-    
+        
                             <div class="default-download-item__description">
                                 <span>{$Up.Summary.XML}</span>
                             </div>
-    
+        
                             <div class="default-download-item__info">
                                 <span>{$Extension.upperCase} {$Size}</span>
                             </div>
-    
+        
                             <div class="default-download-item__icon">
                                 <span></span>
                             </div>

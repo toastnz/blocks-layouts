@@ -1,5 +1,5 @@
 <% if $Content %>
-    <section class="default-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-text [ js-default-text ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-text__wrap">
             <div class="default-text__content">
                 {$Content}
