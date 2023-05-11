@@ -11,6 +11,7 @@ use SilverStripe\ORM\FieldType\DBField;
 use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use Axllent\FormFields\FieldType\VideoLink;
+use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class MediaTextBlock extends Block
