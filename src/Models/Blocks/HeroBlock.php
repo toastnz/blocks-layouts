@@ -22,7 +22,6 @@ class HeroBlock extends Block
 
     private static $db = [
         'Content' => 'HTMLText',
-        'FullWidth' => 'Boolean',
         'ContentAlignment' => 'Varchar(30)',
     ];
 
@@ -43,7 +42,6 @@ class HeroBlock extends Block
                 DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
                 LinkField::create('CustomLinkID', 'Link'),
                 HTMLEditorField::create('Content', 'Content')->setRows(5),
-                CheckboxField::create('FullWidth', 'Extend content to use full width'),
                 UploadField::create('BackgroundImage', 'Background Image')
                     ->setFolderName('Uploads/Blocks')
             ]);
