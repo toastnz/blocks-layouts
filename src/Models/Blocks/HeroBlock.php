@@ -22,6 +22,7 @@ class HeroBlock extends Block
 
     private static $db = [
         'Content' => 'HTMLText',
+        'ContentPosition' => 'Varchar(10)',
         'ContentAlignment' => 'Varchar(30)',
     ];
 
@@ -39,11 +40,12 @@ class HeroBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                DropdownField::create('ContentPosition', 'Content position', ['left' => 'left', 'right' => 'right']),
                 DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
-                LinkField::create('CustomLinkID', 'Link'),
-                HTMLEditorField::create('Content', 'Content')->setRows(5),
+                HTMLEditorField::create('Content', 'Content')->setRows(10),
                 UploadField::create('BackgroundImage', 'Background Image')
-                    ->setFolderName('Uploads/Blocks')
+                    ->setFolderName('Uploads/Blocks'),
+                LinkField::create('CustomLinkID', 'Link'),
             ]);
 
         });
