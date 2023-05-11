@@ -139,7 +139,10 @@ class Block extends DataObject
                 
                    // Templates tab
                    // Add default 
-                $fields->addFieldToTab('Root.Templates', $layoutOptions);
+                // $fields->addFieldToTab('Root.Templates', $layoutOptions);
+
+                // Add the $layoutOptions to the Main tab, AFTER the Title field
+                $fields->insertAfter('Title', $layoutOptions);
             }
 
         });
@@ -197,20 +200,16 @@ class Block extends DataObject
                     $layouts = array_merge($layouts, $layout);
                 }
             }
-        }   
-        
-  
-        if (count($layouts) > 1){
-            $tplField = OptionsetField::create(
-                "Template",
-                "Choose a layout",
-                $layouts,
-                $this->Template
-            )->addExtraClass('stacked toast-block-layouts');
-
-            return $tplField;
         }
-        return ;
+
+        $tplField = OptionsetField::create(
+            "Template",
+            "Choose a layout",
+            $layouts,
+            $this->Template
+        )->addExtraClass('toast-block-layouts');
+
+        return $tplField;
     }
 
     public function getLayoutDirs(){
