@@ -40,11 +40,11 @@ class HeroBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('ContentPosition', 'Content position', ['left' => 'left', 'right' => 'right']),
-                DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
-                HTMLEditorField::create('Content', 'Content')->setRows(10),
                 UploadField::create('BackgroundImage', 'Background Image')
                     ->setFolderName('Uploads/Blocks'),
+                DropdownField::create('ContentPosition', 'Content position', ['left' => 'left', 'right' => 'right']),
+                DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
+                HTMLEditorField::create('Content', 'Content'),
                 LinkField::create('CustomLinkID', 'Link'),
             ]);
 
