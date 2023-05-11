@@ -46,7 +46,7 @@ class AccordionBlock extends Block
                 'first-open' => 'First Open'
             ];
 
-            $fields->insertBefore('Items', HTMLEditorField::create('Content'));
+            $fields->addFieldToTab('Root.Main', HTMLEditorField::create('Content'));
             $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
 
             if ($this->ID) {
@@ -60,7 +60,7 @@ class AccordionBlock extends Block
 
                 $fields->addFieldToTab('Root.Main', $grid);
             } else {
-                $fields->addFieldToTab('Root.Main', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
+                $fields->insertAfter('AccordionDisplay', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
             }
         });
 
