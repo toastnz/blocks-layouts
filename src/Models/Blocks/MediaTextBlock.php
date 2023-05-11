@@ -3,14 +3,15 @@
 namespace Toast\Blocks;
 
 use SilverStripe\Assets\Image;
-use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use Axllent\FormFields\FieldType\VideoLink;
+use SilverStripe\AssetAdmin\Forms\UploadField;
 
-class ImageTextBlock extends Block
+class MediaTextBlock extends Block
 {
     private static $table_name = 'Blocks_ImageTextBlock';
 
@@ -20,11 +21,13 @@ class ImageTextBlock extends Block
 
     private static $db = [
         'Content' => 'HTMLText',
-        'Alignment' => 'Enum("standard,reversed", "standard")'
+        'Video' => VideoLink::class,
+        'MediaAlignment'    => 'Enum("left,right", "left")',
     ];
 
     private static $has_one = [
-        'Image' => Image::class
+        'Image' => Image::class,
+        'CTALink' => Link::class
     ];
 
     private static $owns = [
@@ -36,8 +39,13 @@ class ImageTextBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                DropdownField::create('MediaAlignment', 'Media Position', $this->owner->dbObject('MediaAlignment')->enumValues()),
+                VideoLinkField::create('Video')
+                    ->showPreview(500)
+                    ->setDescription('This will replace the image on this block'),
                 UploadField::create('Image', 'Image')
-                    ->setFolderName('Uploads/Blocks')
+                    ->setFolderName('Uploads/Blocks'),
+                LinkField::create('CTALinkID', 'Link'),
             ]);
 
         });
