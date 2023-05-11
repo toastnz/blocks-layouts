@@ -1,4 +1,4 @@
-<div id="{$HTMLID}">
+<div id="{$HTMLID}" style="display: none;">
     <br>
     <strong>{$HTMLID}</strong>
     <br>
