@@ -13,11 +13,11 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class MediaTextBlock extends Block
 {
-    private static $table_name = 'Blocks_ImageTextBlock';
+    private static $table_name = 'Blocks_MediaTextBlock';
 
-    private static $singular_name = 'Image & Text';
+    private static $singular_name = 'Media & Text';
 
-    private static $plural_name = 'Image & Text';
+    private static $plural_name = 'Media & Text';
 
     private static $db = [
         'Content' => 'HTMLText',
