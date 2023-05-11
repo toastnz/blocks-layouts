@@ -5,6 +5,7 @@ namespace Toast\Blocks;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\GroupedList;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\AccordionItem;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;

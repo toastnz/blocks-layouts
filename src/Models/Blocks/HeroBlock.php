@@ -4,9 +4,9 @@ namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
 use SilverStripe\Assets\Image;
+use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
-use Sheadawson\Linkable\Models\Link;
 use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
