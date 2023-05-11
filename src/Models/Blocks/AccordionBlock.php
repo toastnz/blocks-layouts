@@ -21,6 +21,11 @@ class AccordionBlock extends Block
     private static $singular_name = 'Accordion';
     
     private static $plural_name = 'Accordions';
+
+    private static $db = [
+        'Content' => 'HTMLText',
+        'AccordionDisplay' => 'Enum("all-closed,all-open, first-open", "all-closed")',
+    ];
     
     private static $has_many = [
         'Items' => AccordionItem::class
@@ -31,6 +36,16 @@ class AccordionBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->removeByName('Items');
+            $fields->removeByName('AccordionDisplay');
+
+            $array = [
+                'all-closed' => 'Closed',
+                'all-open' => 'Open',
+                'first-open' => 'First Open'
+            ];
+
+            $fields->insertBefore('Items', HTMLEditorField::create('Content'));
+            $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
 
             if ($this->ID) {
                 $config = GridFieldConfig_RelationEditor::create(50)
@@ -45,7 +60,6 @@ class AccordionBlock extends Block
             } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
             }
-
         });
 
         return parent::getCMSFields();
