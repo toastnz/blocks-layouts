@@ -4,9 +4,11 @@ namespace Toast\Blocks;
 
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
+use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\FieldType\DBField;
+use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use Axllent\FormFields\FieldType\VideoLink;
 use SilverStripe\AssetAdmin\Forms\UploadField;
