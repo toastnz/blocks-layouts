@@ -31,7 +31,6 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\SiteConfig\SiteConfig;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\OptionsetField;
-use Heyday\ColorPalette\Fields\ColorPaletteField;
 use SilverStripe\View\Requirements;
 
 class Block extends DataObject
@@ -45,8 +44,6 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
-        'PrimaryColour'      => 'Varchar(30)',
-        'SecondaryColour'  => 'Varchar(30)',
     ];
 
     private static $casting = [
@@ -84,7 +81,6 @@ class Block extends DataObject
             </div>
             <span style="font-weight:bold;color:#377cff;display:block;line-height:10px;text-align:center;margin:0px 0 0;padding:0;font-size:10px;text-transform:uppercase;">' . $this->i18n_singular_name() . '</span>
         ');
-
     }
 
     public function IconForCMS()
@@ -122,15 +118,6 @@ class Block extends DataObject
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.')
-            ]);
-
-            $array=[
-                'none'  => 'None',
-            ];
-
-            $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('PrimaryColour', 'Primary Colour', $array),
-                ColorPaletteField::create('SecondaryColour', 'Secondary Colour', $array)->setDescription('This only applies if default/selected template uses it')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
