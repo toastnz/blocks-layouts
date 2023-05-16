@@ -13,7 +13,6 @@ use SilverStripe\Blog\Model\Blog;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use Heyday\ColorPalette\Fields\ColorPaletteField;
 use SilverStripe\SiteConfig\SiteConfig;
 use Toast\Helpers\Helper;
 
@@ -56,12 +55,6 @@ class ChildrenBlock extends Block
                 HTMLEditorField::create('Content', 'Content'),
                 $grid
             ]);
-
-            // if ($array = Helper::getThemeColoursArray()){
-            //     $fields->insertAfter('Columns',ColorPaletteField::create('BGColour', 'Background Colour',$array)
-            //         ->setDescription('Colours added from Site Settings'));
-            // }
-
         }else{
             $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
         }

@@ -13,7 +13,6 @@ use SilverStripe\Blog\Model\Blog;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use Heyday\ColorPalette\Fields\ColorPaletteField;
 use SilverStripe\SiteConfig\SiteConfig;
 use Toast\Helpers\Helper;
 
