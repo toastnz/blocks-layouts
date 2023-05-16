@@ -45,8 +45,8 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
-        'BGColour'      => 'Varchar(30)',
-        'AccentColour'  => 'Varchar(30)',
+        'PrimaryColour'      => 'Varchar(30)',
+        'SecondaryColour'  => 'Varchar(30)',
     ];
 
     private static $casting = [
@@ -126,21 +126,14 @@ class Block extends DataObject
 
             $array=[
                 'none'  => 'None',
-                'white' => '#fff',
-                'black' => '#000'
             ];
 
             $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('BGColour', 'Primary Colour',$array),
-                ColorPaletteField::create('AccentColour', 'Secondary Colour',$array)->setDescription('This only applies if default/selected template uses it')
+                ColorPaletteField::create('PrimaryColour', 'Primary Colour', $array),
+                ColorPaletteField::create('SecondaryColour', 'Secondary Colour', $array)->setDescription('This only applies if default/selected template uses it')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
-                
-                   // Templates tab
-                   // Add default 
-                // $fields->addFieldToTab('Root.Templates', $layoutOptions);
-
                 // Add the $layoutOptions to the Main tab, AFTER the Title field
                 $fields->insertAfter('Title', $layoutOptions);
             }
@@ -148,14 +141,6 @@ class Block extends DataObject
         });
 
         return parent::getCMSFields();
-    }
-
-    public function getPrimaryColour(){
-        return $this->BGColour;
-    }
-
-    public function getSecondaryColour(){
-        return $this->AccentColour;
     }
 
     public function getBlockLayouts()
@@ -248,21 +233,6 @@ class Block extends DataObject
 
         return $cssFilePath;
 
-    }
-
-
-       // Function to calculate if a colour is light or dark
-    public function getLightOrDark($string = null)
-    {
-        return Helper::getLightOrDark($string);
-    }
-    
-    public function getColourClassName($string = null ){
-        return Helper::getColourClassName($string);
-    }
-
-    public function getColourForTemplate($string = null ){
-        return Helper::getColourForTemplate($string);
     }
 
     public function onBeforeWrite()
