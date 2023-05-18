@@ -47,41 +47,6 @@ class Helper
         return $availableBlocks;
     }
 
-  
-    // static function getThemeColoursArray(){
-
-    //     $array=[];
-        
-    //     $array = self::getDefaultColours();
-        
-    //     $siteConfig = SiteConfig::current_site_config();
-    //     if ($colours = $siteConfig->ThemeColours()->map('Title','Colour')){
-    //         foreach($colours as $key => $colour){
-    //             // convert string to lowercase and replace whitespaces with hyphen
-    //             $classTitle = strtolower(str_replace(" ","-",$key));
-    //             $array[$classTitle] = '#' . $colour;
-    //         }
-    //             // return $array;
-    //     }
-    //     if (class_exists(Subsite::class)){
-    //         if(self::isSubsite()){
-    //             $subsite = Subsite::currentSubsite();
-    //             if ($colours = $subsite->ThemeColours()->map('Title','Colour')){
-    //                 foreach($colours as $key => $colour){
-    //                     // convert string to lowercase and replace whitespaces with hyphen
-    //                     if ($colour){
-    //                         $classTitle = strtolower(str_replace(" ","-",$key));
-    //                         $array[$classTitle] = '#' . $colour;
-    //                     }
-    //                 }
-                    
-    //             }
-    //         }
-    //     }  
-    //     return $array;
-        
-    // }
-
     static function getAvailableBlocksLayouts($block, $src, $imgsrc, $default = true)
     { 
         $optionset = [];
