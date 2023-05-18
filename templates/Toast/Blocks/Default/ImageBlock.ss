@@ -1,5 +1,5 @@
 <% if $Image %>
-    <section id="{$HTMLID}" class="default-image [ js-default-image ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-image [ js-default-image ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-image__wrap">
             <div class="default-image__media">
                 <picture class="default-image__image">

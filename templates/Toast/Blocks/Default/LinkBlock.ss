@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-link [ js-default-link ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">
@@ -16,7 +16,7 @@
                         <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
     
-                    <div class="default-link-item__details background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')}">
+                    <div class="default-link-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                         <div data-equalize-watch="default-links">
                             <% if $Title %>
                                 <span class="default-link-item__title">{$Title.XML}</span>

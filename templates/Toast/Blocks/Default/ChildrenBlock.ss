@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-children [ js-default-children ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-children [ js-default-children ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-children__header">
                 <div class="default-children__content">
@@ -17,7 +17,7 @@
                             <div class="default-children-item__icon" data-src="{$Icon.URL}"></div>
                         </div>
         
-                        <div class="default-children-item__details background-colour--{$getColour($SecondaryColour, 'class, brightness')}">
+                        <div class="default-children-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                             <div data-equalize-watch="{$Top.HTMLID}">
                                 <% if $Title %>
                                     <span class="default-children-item__title">{$Title.XML}</span>

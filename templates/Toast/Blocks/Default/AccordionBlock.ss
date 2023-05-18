@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-accordion [ js-default-accordion ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-accordion [ js-default-accordion ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-accordion__header">
                 <div class="default-accordion__content">
@@ -11,7 +11,7 @@
         <div class="default-accordion__wrap">
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-accordion-item [ js-accordion--item ]">
-                    <div class="default-accordion-item__header background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')} [ js-accordion--trigger ]">
+                    <div class="default-accordion-item__header background-colour--{$Top.SecondaryColour.getColourClasses} [ js-accordion--trigger ]">
                         <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
                     </div>
     

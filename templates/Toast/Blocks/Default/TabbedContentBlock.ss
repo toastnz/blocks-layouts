@@ -1,10 +1,10 @@
 <% if $Tabs.Count %>
-    <section id="{$HTMLID}" class="default-tabbed-content [ js-default-tabbed-content ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-tabbed-content [ js-default-tabbed-content ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-tabbed-content__wrap">
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>
                     <div class="default-tab-link">
-                        <button class="default-tab-link__button background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')} [ js-tabs--link ]">
+                        <button class="default-tab-link__button background-colour--{$Top.SecondaryColour.getColourClasses} [ js-tabs--link ]">
                             <span class="default-tab-link__text">{$Title}</span>
                         </button>
                     </div>

@@ -1,5 +1,5 @@
 <% if $Posts.Count %>
-    <section id="{$HTMLID}" class="default-blog [ js-default-blog ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-blog__header">
                 <div class="default-blog__content">
@@ -18,7 +18,7 @@
                             <div class="default-blog-item__icon" data-src="{$Icon.URL}"></div>
                         </div>
     
-                        <div class="default-blog-item__details background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')}">
+                        <div class="default-blog-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                             <div data-equalize-watch="{$Top.HTMLID}">
                                 <% if $Title %>
                                     <span class="default-blog-item__title">{$Title.XML}</span>

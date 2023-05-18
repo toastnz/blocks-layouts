@@ -1,5 +1,5 @@
 <% if $Form %>
-    <section id="{$HTMLID}" class="default-user-form [ js-default-user-form ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-user-form [ js-default-user-form ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-userform__wrap">
             <div class="default-userform__content">
                 {$Form}

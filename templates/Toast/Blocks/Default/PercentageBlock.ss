@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$getColour($PrimaryColour, 'class, brightness')} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-percentage__wrap">
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width}">
@@ -10,7 +10,7 @@
                     <img src="{$Icon.URL}" class="default-percentage-item__icon">
                 <% end_if %>
 
-                <div class="default-percentage-item__details background-colour--{$getColour($Top.SecondaryColour, 'class, brightness')}">
+                <div class="default-percentage-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                     <div data-equalize-watch="percentage-items">
                         <span class="default-percentage-item__title">{$Title}</span>
                         <p class="default-percentage-item__summary">{$Summary}</p>
