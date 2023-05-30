@@ -9,7 +9,7 @@
         <% end_if %>
     
         <div class="default-blog__wrap lg-up-{$Columns}" data-equalize="{$HTMLID}">
-            <% loop $Posts.Sort('SortOrder') %>
+            <% loop $Posts %>
                 <div class="default-blog-item">
                     <a href="{$Link}" class="default-blog-item__link">
                         <div class="default-blog-item__media" data-src="{$Image.FocusFill(500,600).URL}">
