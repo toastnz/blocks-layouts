@@ -151,19 +151,20 @@ class Block extends DataObject
             if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
                 return ;
             }
+            $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
+            foreach ($dirs as $dir) { 
+                 if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+                    return ;
+                }
+                $optionalSrcPath = $layout_src . '/' . $dir . '/';
+                $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
+             
+                $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
+            }
         }
        
         
-        $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-        foreach ($dirs as $dir) { 
-             if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                return ;
-            }
-            $optionalSrcPath = $layout_src . '/' . $dir . '/';
-            $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-         
-            $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
-        }
+       
         
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
