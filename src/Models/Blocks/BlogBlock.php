@@ -81,7 +81,7 @@ class BlogBlock extends Block
             }
         }
         
-        return $this->BlogPosts()->limit($limit);
+        return $this->BlogPosts()->sort('SortOrder')->limit($limit);
     }
  
 }
