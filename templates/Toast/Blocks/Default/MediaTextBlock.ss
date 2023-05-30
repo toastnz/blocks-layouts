@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$SecondaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-media-text__wrap <% if $Width=='full' %>full<% end_if %>">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
@@ -13,7 +13,7 @@
         </div>
 
         <div class="default-media-text__content">
-            <div class="default-media-text__text background-colour--{$SecondaryColour.getColourClasses}">
+            <div class="default-media-text__text background-colour--{$PrimaryColour.getColourClasses}">
 
                 {$Content}
 
