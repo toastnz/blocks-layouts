@@ -8,6 +8,7 @@ use ReflectionClass;
 use SilverStripe\ORM\DB;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
+use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -327,6 +328,22 @@ class Block extends DataObject
         }
 
         return $title;
+    }
+
+    public function getImageFocusPosition($imageid = null)
+    {
+        // If we don't have an image, return nothing
+        if (!$imageid) return;
+        // get image by id
+        if(!$image = Image::get()->byID($imageid)) return;
+        // Make sure the image is an instance of Image
+        if (!$image instanceof Image) return;
+        // Make sure there is a focus point
+        if (!$image->FocusPoint) return;
+
+        // Get the image focus point
+        $focusPoint = $image->FocusPoint;
+        return $focusPoint->PercentageX() . '% ' . $focusPoint->PercentageY() . '%';
     }
 
     public function canView($member = null)
