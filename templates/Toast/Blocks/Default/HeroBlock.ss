@@ -9,8 +9,8 @@
         </div>
     
         <% if $BackgroundImage %>
-            <div class="default-hero__background" data-src="{$BackgroundImage.ScaleMaxWidth(1920).URL}">
-                <img class="" src="{$BackgroundImage.ScaleMaxWidth(192).URL}" width="{$BackgroundImage.getWidth()}" height="{$BackgroundImage.getHeight()}" loading="lazy" alt="{$BackgroundImage.Title.ATT}">
+            <div class="default-hero__background" data-src="{$BackgroundImage.ScaleMaxWidth(1920).URL}" style="background-position: {$getImageFocusPosition($BackgroundImage.ID)}">
+                <img src="{$BackgroundImage.ScaleMaxWidth(192).URL}" width="{$BackgroundImage.getWidth()}" height="{$BackgroundImage.getHeight()}" loading="lazy" alt="{$BackgroundImage.Title.ATT}">
             </div>
         <% end_if %>
     </div>

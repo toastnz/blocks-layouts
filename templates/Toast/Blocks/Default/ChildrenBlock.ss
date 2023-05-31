@@ -12,7 +12,7 @@
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-children-item">
                     <a href="{$Link.LinkURL}" class="default-children-item__link">
-                        <div class="default-children-item__media" data-src="{$Image.FocusFill(500,600).URL}">
+                        <div class="default-children-item__media" data-src="{$Image.FocusFill(500,600).URL}" style="background-position: {$getImageFocusPosition($Image.ID)}">
                             <img src="{$Image.Fill(5,6).URL}" width="5" height="6" loading="lazy" alt="{$Image.Title.ATT}">
                             <div class="default-children-item__icon" data-src="{$Icon.URL}"></div>
                         </div>

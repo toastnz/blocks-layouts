@@ -8,7 +8,7 @@
     <div class="default-video__wrap">
         <div class="default-video__media">
             <a href="#" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
-                <div href="#" class="default-video__thumbnail" data-src="<% if $ThumbnailID %>{$Thumbnail.focusFill(1920,1080).URL}<% else %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
+                <div href="#" class="default-video__thumbnail" data-src="<% if $ThumbnailID %>{$Thumbnail.FocusFill(1920,1080).URL}<% else %>{$Video.ThumbnailURL('large')}<% end_if %>" style="background-position: {$getImageFocusPosition($Thumbnail.ID)}"></div>
                 <div class="default-video__icon">{$SVG('play')}</div>
             </a>
 
