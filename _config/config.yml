@@ -44,7 +44,7 @@ Toast\Blocks\HeroBlock:
 Toast\Blocks\ImageBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/image.svg'
 
-Toast\Blocks\ImageTextBlock:
+Toast\Blocks\MediaTextBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/imagetext.svg'
 
 Toast\Blocks\LinkBlock:
