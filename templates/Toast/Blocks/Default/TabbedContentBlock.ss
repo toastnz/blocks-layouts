@@ -4,7 +4,7 @@
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>
                     <div class="default-tab-link">
-                        <button class="default-tab-link__button background-colour--{$Top.SecondaryColour.getColourClasses} [ js-tabs--link ]">
+                        <button class="default-tab-link__button background-colour--{$Top.SecondaryColour.getColourClasses} [ js-default-tabbed-content__link ]">
                             <span class="default-tab-link__text">{$Title}</span>
                         </button>
                     </div>
@@ -13,7 +13,7 @@
     
             <div class="default-tabbed-content__main">
                 <% loop $Tabs.Sort('SortOrder') %>
-                    <div class="default-tab-item [ js-tabs--item ]">
+                    <div class="default-tab-item [ js-default-tabbed-content__item ]">
                         <% if $Image %>
                             <div class="default-tab-item__media">
                                 <div class="default-tab-item__image" data-src="{$Image.ScaleMaxWidth(800).URL}" style="background-position: {$Top.getImageFocusPosition($Image.ID)}">
