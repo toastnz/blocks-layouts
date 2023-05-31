@@ -16,7 +16,7 @@
                     <div class="default-tab-item [ js-tabs--item ]">
                         <% if $Image %>
                             <div class="default-tab-item__media">
-                                <div class="default-tab-item__image" data-src="{$Image.ScaleMaxWidth(800).URL}" style="background-position: {$getImageFocusPosition($Image.ID)}">
+                                <div class="default-tab-item__image" data-src="{$Image.ScaleMaxWidth(800).URL}" style="background-position: {$Top.getImageFocusPosition($Image.ID)}">
                                     <img loading="lazy" src="{$Image.ScaleMaxWidth(8).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                                 </div>
                             </div>
