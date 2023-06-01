@@ -68,3 +68,6 @@ Toast\Blocks\UserFormBlock:
 Toast\Blocks\VideoBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/video.svg'
 
+Toast\Blocks\SliderBlock:
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/slider.svg'
+
