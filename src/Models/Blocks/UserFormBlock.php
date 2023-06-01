@@ -6,6 +6,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\UserForms\Model\UserDefinedForm;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Control\Controller;
 use SilverStripe\UserForms\Form\UserForm;
 
@@ -17,9 +18,17 @@ class UserFormBlock extends Block
     
     private static $plural_name = 'User forms';
 
+    private static $db = [
+        'Content' => 'HTMLText'
+    ];
+
     public function getCMSFields()
     {        
         $this->beforeUpdateCMSFields(function ($fields) {
+
+            $fields->addFieldsToTab('Root.Main', [
+                HTMLEditorField::create('Content', 'Content')
+            ])->setDescription('Form will render automatically on the page.');
 
             $fields->insertAfter('Title',
                 LiteralField::create('', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
@@ -38,7 +47,7 @@ class UserFormBlock extends Block
                 $form = UserForm::create($controller, 'Form_' . $page->ID);
                 $form->setFormAction(Controller::join_links($page->Link(), 'Form'));
                 $controller->generateConditionalJavascript();
-                return $form;        
+                return $form;
             }
         }
     }
