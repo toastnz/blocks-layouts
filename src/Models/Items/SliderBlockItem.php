@@ -1,6 +1,6 @@
 <?php
 
-namespace Toast\Models\Blocks\Items;
+use Toast\Blocks\Items;
 
 use SilverStripe\ORM\DB;
 use Toast\Blocks\SliderBlock;
