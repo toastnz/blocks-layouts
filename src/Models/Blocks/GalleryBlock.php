@@ -5,6 +5,7 @@ namespace Toast\Blocks;
 use Toast\Blocks\Block;
 use Toast\Blocks\Items\GalleryBlockItem;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
