@@ -27,8 +27,8 @@ class UserFormBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                HTMLEditorField::create('Content', 'Content')
-            ])->setDescription('Form will render automatically on the page.');
+                HTMLEditorField::create('Content', 'Content')->setDescription('Form will render automatically on the page.')
+            ]);
 
             $fields->insertAfter('Title',
                 LiteralField::create('', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
