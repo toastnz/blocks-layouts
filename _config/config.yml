@@ -71,3 +71,6 @@ Toast\Blocks\VideoBlock:
 Toast\Blocks\SliderBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/slider.svg'
 
+Toast\Blocks\GalleryBlock:
+  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/gallery.svg'
+
