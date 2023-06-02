@@ -105,7 +105,7 @@ if [ ! -f "$TemplateFile" ]; then
     # The default html we want is like this <section id="{$HTMLID}" class="default-showcase [ js-showcase ] background-colour--{$getColourForTemplate($PrimaryColour)} {$IncludeClasses} {$ExtraClasses}">
 
     # Write some default content to the template file
-    echo "<section id=\"{\$HTMLID}\" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] background-colour--{\$getColour(\$PrimaryColour, 'class, brightness')} {\$IncludeClasses} {\$ExtraClasses}\">
+    echo "<section id=\"{\$HTMLID}\" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] background-colour--{\\$PrimaryColour.ColourClasses)} {\$IncludeClasses} {\$ExtraClasses}\">
 
 </section>" > "$TemplateFile"
 
