@@ -7,17 +7,14 @@
         </div>
     <% end_if %>
 
-    <div class="default-slider__wrap" data-equalize="{$HTMLID}__items">
+    <div class="default-slider__wrap" data-equalize="{$HTMLID}__media">
         <div class="default-slider__container">
             <div class="[ js-default-slider__container ]">
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image || $Video %>
                         <div class="default-slider-item">
-                            <div class="default-slider-item__header" data-equalize-watch="{$Top.HTMLID}__items">
-                                {$Content}
-                            </div>
     
-                            <div class="default-slider-item__media colour--{$Top.SecondaryColour.getColourClasses}}" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %>>
+                            <div class="default-slider-item__media colour--{$Top.SecondaryColour.getColourClasses}}" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-equalize-watch="{$Top.HTMLID}__media">
                                 <% if $Video %>
                                     {$SVG('play')}
                                 <% end_if %>

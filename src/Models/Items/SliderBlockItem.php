@@ -11,14 +11,12 @@ use SilverStripe\Forms\TextareaField;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
 class SliderBlockItem extends DataObject
 {
     private static $table_name = 'SliderBlockItem';
 
     private static $db = [
-        'Content'       => 'HTMLText',
         'Video'         => VideoLink::class,
         'SortOrder'     => 'Int'
     ];
@@ -48,10 +46,6 @@ class SliderBlockItem extends DataObject
 
         $fields->addFieldsToTab('Root.Main',
         [
-            HTMLEditorField::create(
-                'Content',
-                'Content'
-            ),
             UploadField::create(
                 'Image',
                 'Image'
