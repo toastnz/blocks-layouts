@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-gallery [ js-default-gallery ] background-colour--{$getColourForTemplate($PrimaryColour)} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-gallery [ js-default-gallery ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-gallery__header">
             <div class="default-gallery__content">
