@@ -7,7 +7,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
-use Toast\Blocks\Items\ContentTabBlockItem;
+use Toast\Blocks\Items\TabbedContentBlockItem;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -22,7 +22,7 @@ class TabbedContentBlock extends Block
     private static $plural_name = 'Tabbed Content';
 
     private static $has_many = [
-        'Tabs' => ContentTabBlockItem::class
+        'Tabs' => TabbedContentBlockItem::class
     ];
 
     public function getCMSFields()
