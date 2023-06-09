@@ -200,7 +200,7 @@ class Block extends DataObject
         }   
         
   
-        if (count($layouts) > 1){
+        if (count($layouts) > 0){
             $tplField = OptionsetField::create(
                 "Template",
                 "Choose a layout",
