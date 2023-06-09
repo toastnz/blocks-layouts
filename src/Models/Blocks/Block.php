@@ -148,25 +148,24 @@ class Block extends DataObject
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
+            // NOTE: I have commented this out as this is what I believe was causing templates to not display for me.
             // get layout dir from yml
-            if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                return ;
-            }
+            // if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+            //     return;
+            // }
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
             foreach ($dirs as $dir) { 
                  if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                    return ;
+                    // NOTE: I have updated this return to a continue as this is what I believe was causing templates to not display for me.
+                    continue;
                 }
                 $optionalSrcPath = $layout_src . '/' . $dir . '/';
                 $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-             
+
                 $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
             }
         }
-       
-        
-       
-        
+
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
                 if ($layout){
