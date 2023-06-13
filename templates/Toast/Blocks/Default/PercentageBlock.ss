@@ -12,11 +12,11 @@
 
                 <div class="default-percentage-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                     <div data-equalize-watch="{$Top.HTMLID}__items">
-                        <span class="default-percentage-item__title">{$Title}</span>
+                        <span class="default-percentage-item__title">{$Title.XML}</span>
                         <div class="default-percentage-item__summary">{$Summary}</div>
                     </div>
                     <% if $LinkID %>
-                        <a href="{$Link.LinkURL}" class="default-percentage-item__link" {$TargetAttr}>{$Link.Title}</a>
+                        <a href="{$Link.LinkURL}" class="default-percentage-item__link" {$Link.TargetAttr}>{$Link.Title}</a>
                     <% end_if %>
                 </div>
             </div>
