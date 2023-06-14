@@ -28,12 +28,6 @@ In your `Layout/Page.ss` template, add the following:
 
 ## Configuration
 
-### Override the YIQ value for getLightOrDark function
-```yaml
-Toast\Blocks\Block:
-  default_value_yiq: 130
-```
-
 ### Add / remove available block classes
 
 ```yaml

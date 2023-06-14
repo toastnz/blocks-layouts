@@ -8,6 +8,7 @@ use ReflectionClass;
 use SilverStripe\ORM\DB;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
+use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -31,7 +32,6 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\SiteConfig\SiteConfig;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\OptionsetField;
-use Heyday\ColorPalette\Fields\ColorPaletteField;
 use SilverStripe\View\Requirements;
 
 class Block extends DataObject
@@ -45,8 +45,6 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
-        'BGColour'      => 'Varchar(30)',
-        'AccentColour'  => 'Varchar(30)',
     ];
 
     private static $casting = [
@@ -84,7 +82,6 @@ class Block extends DataObject
             </div>
             <span style="font-weight:bold;color:#377cff;display:block;line-height:10px;text-align:center;margin:0px 0 0;padding:0;font-size:10px;text-transform:uppercase;">' . $this->i18n_singular_name() . '</span>
         ');
-
     }
 
     public function IconForCMS()
@@ -124,35 +121,14 @@ class Block extends DataObject
                     ->setDescription('Title used for internal reference only and does not appear on the site.')
             ]);
 
-            $array=[
-                'none'  => 'None',
-                'white' => '#fff',
-                'black' => '#000'
-            ];
-
-            $fields->addFieldsToTab('Root.Main',[
-                ColorPaletteField::create('BGColour', 'Primary Colour',$array),
-                ColorPaletteField::create('AccentColour', 'Secondary Colour',$array)->setDescription('This only applies if default/selected template uses it')
-            ]);
-
             if ($layoutOptions = $this->getBlockLayouts()){
-                
-                   // Templates tab
-                   // Add default 
-                $fields->addFieldToTab('Root.Templates', $layoutOptions);
+                // Add the $layoutOptions to the Main tab, AFTER the Title field
+                $fields->insertAfter('Title', $layoutOptions);
             }
 
         });
 
         return parent::getCMSFields();
-    }
-
-    public function getPrimaryColour(){
-        return $this->BGColour;
-    }
-
-    public function getSecondaryColour(){
-        return $this->AccentColour;
     }
 
     public function getBlockLayouts()
@@ -172,24 +148,24 @@ class Block extends DataObject
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
+            // NOTE: I have commented this out as this is what I believe was causing templates to not display for me.
             // get layout dir from yml
-            if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                return ;
+            // if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+            //     return;
+            // }
+            $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
+            foreach ($dirs as $dir) { 
+                 if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
+                    // NOTE: I have updated this return to a continue as this is what I believe was causing templates to not display for me.
+                    continue;
+                }
+                $optionalSrcPath = $layout_src . '/' . $dir . '/';
+                $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
+
+                $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
             }
         }
-       
-        
-        $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-        foreach ($dirs as $dir) { 
-             if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                return ;
-            }
-            $optionalSrcPath = $layout_src . '/' . $dir . '/';
-            $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-         
-            $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
-        }
-        
+
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
                 if ($layout){
@@ -197,20 +173,16 @@ class Block extends DataObject
                     $layouts = array_merge($layouts, $layout);
                 }
             }
-        }   
-        
-  
-        if (count($layouts) > 0){
-            $tplField = OptionsetField::create(
-                "Template",
-                "Choose a layout",
-                $layouts,
-                $this->Template
-            )->addExtraClass('stacked toast-block-layouts');
-
-            return $tplField;
         }
-        return ;
+
+        $tplField = OptionsetField::create(
+            "Template",
+            "Choose a layout",
+            $layouts,
+            $this->Template
+        )->addExtraClass('toast-block-layouts');
+
+        return $tplField;
     }
 
     public function getLayoutDirs(){
@@ -249,21 +221,6 @@ class Block extends DataObject
 
         return $cssFilePath;
 
-    }
-
-
-       // Function to calculate if a colour is light or dark
-    public function getLightOrDark($string = null)
-    {
-        return Helper::getLightOrDark($string);
-    }
-    
-    public function getColourClassName($string = null ){
-        return Helper::getColourClassName($string);
-    }
-
-    public function getColourForTemplate($string = null ){
-        return Helper::getColourForTemplate($string);
     }
 
     public function onBeforeWrite()
@@ -370,6 +327,22 @@ class Block extends DataObject
         }
 
         return $title;
+    }
+
+    public function getImageFocusPosition($imageid = null)
+    {
+        // If we don't have an image, return nothing
+        if (!$imageid) return;
+        // get image by id
+        if(!$image = Image::get()->byID($imageid)) return;
+        // Make sure the image is an instance of Image
+        if (!$image instanceof Image) return;
+        // Make sure there is a focus point
+        if (!$image->FocusPoint) return;
+
+        // Get the image focus point
+        $focusPoint = $image->FocusPoint;
+        return $focusPoint->PercentageX() . '% ' . $focusPoint->PercentageY() . '%';
     }
 
     public function canView($member = null)
@@ -510,6 +483,21 @@ class Block extends DataObject
         }
 
         return true;
+    }
+
+    public function getPage() {
+        $currentController = Controller::curr();
+        $parent = \Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->owner->ID)
+            ->where('"Page_ContentBlocks"."PageID" = ' . $currentController->ID)
+            ->first();
+
+        // get the page that has this block
+        if ($parent && $parent->exists()) {
+            return $parent;
+        }
+
+        return;
     }
 
 }

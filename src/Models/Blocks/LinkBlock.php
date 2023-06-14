@@ -20,6 +20,7 @@ class LinkBlock extends Block
     private static $plural_name = 'Links';
 
     private static $db = [
+        'Content' => 'HTMLText',
         'Columns' => 'Enum("2, 3, 4", "2")'
     ];
 
@@ -34,7 +35,8 @@ class LinkBlock extends Block
             $fields->removeByName('Items');
 
             $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('Columns', 'How many columns across', singleton('Toast\Blocks\LinkBlock')->dbObject('Columns')->enumValues()),
+                HTMLEditorField::create('Content', 'Content'),
+                DropdownField::create('Columns', 'Number of columns', singleton('Toast\Blocks\LinkBlock')->dbObject('Columns')->enumValues()),
             ]);
 
             if ($this->ID) {

@@ -1,9 +1,4 @@
-<% if $Content %>
-    <section class="default-text background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
-        <div class="default-text__wrap">
-            <div class="default-text__content">
-                {$Content}
-            </div>
-        </div>
-    </section>
-<% end_if %>
+<div id="{$HTMLID}" style="display: none;">
+    <strong>{$HTMLID}</strong>
+    You are seeing this content because the block you have added does not have template file.
+</div>

@@ -1,18 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="80px" height="80px" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Artboard</title>
-    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group" transform="translate(8.000000, 22.000000)">
-            <rect id="Rectangle" fill="#000000" x="0" y="0" width="64" height="9"></rect>
-            <path d="M60,2 L60,4 L62,4 L62,5 L60,5 L60,7 L59,7 L59,5 L57,5 L57,4 L59,4 L59,2 L60,2 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-        </g>
-        <g id="Group-Copy" transform="translate(8.000000, 36.000000)">
-            <rect id="Rectangle" fill="#000000" x="0" y="0" width="64" height="9"></rect>
-            <path d="M60,2 L60,4 L62,4 L62,5 L60,5 L60,7 L59,7 L59,5 L57,5 L57,4 L59,4 L59,2 L60,2 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-        </g>
-        <g id="Group-Copy-2" transform="translate(8.000000, 50.000000)">
-            <rect id="Rectangle" fill="#000000" x="0" y="0" width="64" height="9"></rect>
-            <path d="M60,2 L60,4 L62,4 L62,5 L60,5 L60,7 L59,7 L59,5 L57,5 L57,4 L59,4 L59,2 L60,2 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-        </g>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80"><g fill="#000" fill-rule="nonzero"><path d="M10 22h100v9H10z" opacity=".5"/><path d="M106 24v2h2v1h-2v2h-1v-2h-2v-1h2v-2z"/><path d="M10 36h100v9H10z" opacity=".5"/><path d="M106 38v2h2v1h-2v2h-1v-2h-2v-1h2v-2z"/><path d="M10 50h100v9H10z" opacity=".5"/><path d="M106 52v2h2v1h-2v2h-1v-2h-2v-1h2v-2z"/></g></svg>

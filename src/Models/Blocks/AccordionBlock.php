@@ -5,10 +5,12 @@ namespace Toast\Blocks;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\GroupedList;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\AccordionItem;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -21,6 +23,11 @@ class AccordionBlock extends Block
     private static $singular_name = 'Accordion';
     
     private static $plural_name = 'Accordions';
+
+    private static $db = [
+        'Content' => 'HTMLText',
+        'AccordionDisplay' => 'Enum("all-closed,all-open, first-open", "all-closed")',
+    ];
     
     private static $has_many = [
         'Items' => AccordionItem::class
@@ -31,6 +38,16 @@ class AccordionBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->removeByName('Items');
+            $fields->removeByName('AccordionDisplay');
+
+            $array = [
+                'all-closed' => 'Closed',
+                'all-open' => 'Open',
+                'first-open' => 'First Open'
+            ];
+
+            $fields->addFieldToTab('Root.Main', HTMLEditorField::create('Content'));
+            $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
 
             if ($this->ID) {
                 $config = GridFieldConfig_RelationEditor::create(50)
@@ -43,9 +60,8 @@ class AccordionBlock extends Block
 
                 $fields->addFieldToTab('Root.Main', $grid);
             } else {
-                $fields->addFieldToTab('Root.Main', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
+                $fields->insertAfter('AccordionDisplay', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
             }
-
         });
 
         return parent::getCMSFields();

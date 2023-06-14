@@ -1,37 +1,35 @@
-<%------------------------------------------------------------------
-Testimonial block
-------------------------------------------------------------------%>
-
-<% if $Testimonials.Count %>
-    <section class="testimonialBlock contentBlock">
+<% if $Items.Count %>
+    <section id="{$HTMLID}" class="default-testimonial [ js-default-testimonial ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+        <div class="default-testimonial__wrap">
+            <div class="default-testimonial__list">
+                <div class="[ js-default-testimonial__container ]">
+                    <% loop $Items.Sort('SortOrder') %>
+                        <div class="default-testimonial-item">
+                            <div class="default-testimonial-item__wrap">
+                                <div class="default-testimonial-item__content">
+                                    <b>"</b>
+                                    <p>{$Summary}</p>
+                                    <b>"</b>
+                                </div>
         
-        <div class="testimonialBlock__wrap">
-
-            <%------------------------------------------------------------------
-            Testimonial slider
-            ------------------------------------------------------------------%>
-            <div class="<% if $ShowSlider %>[ js-slider--testimonials ] slider<% else %>stack<% end_if %>">
-                <% loop $Testimonials %>
-
-                    <%------------------------------------------------------------------
-                    Testimonial item
-                    ------------------------------------------------------------------%>
-                    <div class="testimonialBlock__wrap__item item">
-
-                        <div class="testimonialBlock__wrap__item__quote">
-                            <p>{$Testimonial.XML}</p>
+                                <div class="default-testimonial-item__details">
+                                    <% if $Image %>
+                                        <img class="default-testimonial-item__image" src="{$Image.FocusFill(100,100).URL}" width="100" height="100" loading="lazy" alt="{$Image.Title.ATT}">
+                                    <% end_if %>
+        
+                                    <% if $Name %>
+                                        <span class="default-testimonial-item__name">{$Name}</span>
+                                    <% end_if %>
+        
+                                    <% if $Position %>
+                                        <span class="default-testimonial-item__position">{$Position}</span>
+                                    <% end_if %>
+                                </div>
+                            </div>
                         </div>
-                        <div class="testimonialBlock__wrap__item__credit">
-                            <% if $Up.ShowNameAndLocation %>
-                                <p><span>{$Title.XML}<% if $Location %>,<% end_if %></span> {$Location.XML}</p>
-                            <% end_if %>
-                        </div>
-                    </div>
-                <% end_loop %>
-
+                    <% end_loop %>
+                </div>
             </div>
-
         </div>
-
     </section>
 <% end_if %>

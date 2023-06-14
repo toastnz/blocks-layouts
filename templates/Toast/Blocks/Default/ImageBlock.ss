@@ -1,15 +1,18 @@
 <% if $Image %>
-    <section class="default-image background-colour--{$getColourClassName($BGColour)} {$getLightOrDark($BGColour)} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-image [ js-default-image ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-image__wrap">
             <div class="default-image__media">
-                <div class="default-image__image" data-src="{$Image.ScaleMaxWidth(1920).URL}">
-                    <img src="{$Image.ScaleMaxWidth(192).URL}" alt="{$Image.Title.ATT}">
-                </div>
+                <picture class="default-image__image">
+                    <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                    <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
+                    <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
+                    <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                </picture>
             </div>
-
+        
             <% if $Caption %>
                 <div class="default-image__content">
-                    <p class="{$TextColour}">{$Caption}</p>
+                    <p>{$Caption}</p>
                 </div>
             <% end_if %>
         </div>

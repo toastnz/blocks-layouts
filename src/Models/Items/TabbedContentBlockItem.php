@@ -3,6 +3,7 @@
 namespace Toast\Blocks\Items;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use Toast\Blocks\TabbedContentBlock;
@@ -10,9 +11,10 @@ use SilverStripe\Forms\TextareaField;
 use SilverStripe\Security\Permission;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
-class ContentTabBlockItem extends BlockItem
+class TabbedContentBlockItem extends BlockItem
 {
     private static $table_name = 'Blocks_ContentTab';
 
@@ -29,7 +31,8 @@ class ContentTabBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Parent' => TabbedContentBlock::class
+        'Image'  => Image::class,
+        'Parent' => TabbedContentBlock::class,
     ];
 
     private static $summary_fields = [
@@ -43,6 +46,10 @@ class ContentTabBlockItem extends BlockItem
 
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title'),
+                UploadField::create(
+                    'Image',
+                    'Image'
+                )->setFolderName('Uploads/Media'),
                 HTMLEditorField::create('Content', 'Content')
                     ->setRows(15)
             ]);
