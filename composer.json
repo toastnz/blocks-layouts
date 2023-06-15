@@ -27,15 +27,15 @@
     }
   ],
   "require": {
-    "php": ">=7.4",
-    "silverstripe/cms": "^4.3",
-    "silverstripe/framework": "^4.3",
+    "php": ">=8.1",
+    "silverstripe/cms": "^5",
+    "silverstripe/framework": "^5",
     "composer/installers": "*",
-    "symbiote/silverstripe-gridfieldextensions": "^3.1",
-    "toastnz/linkable": "^2",
+    "symbiote/silverstripe-gridfieldextensions": "^4",
+    "toastnz/linkable": "^3",
     "undefinedoffset/sortablegridfield": "^2.0.4",
     "axllent/silverstripe-form-fields": "^1.5",
-    "silverstripe/userforms": "^5.5"
+    "silverstripe/userforms": "^6"
   },
   "extra": {
     "resources-dir": "resources",
