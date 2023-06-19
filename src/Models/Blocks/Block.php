@@ -7,13 +7,17 @@ use Page;
 use ReflectionClass;
 use SilverStripe\ORM\DB;
 use SilverStripe\Forms\Tab;
-use SilverStripe\Forms\TabSet;
 use SilverStripe\Assets\Image;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\View\SSViewer;
 use SilverStripe\ORM\DataObject;
+use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
+use SilverStripe\Security\Security;
+use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -21,18 +25,17 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Core\Manifest\ModuleResource;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
-use SilverStripe\View\SSViewer;
-use SilverStripe\SiteConfig\SiteConfig;
-use Toast\Blocks\Helpers\Helper;
-use SilverStripe\Forms\OptionsetField;
-use SilverStripe\View\Requirements;
 
 class Block extends DataObject
 {
@@ -73,8 +76,7 @@ class Block extends DataObject
         if(self::config()->get('block-icon') == null){
             return;
         }
-        
-        $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
+        $icon = str_replace('[resources]', TOAST_RESOURCES_DIR , self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
             <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
@@ -136,36 +138,25 @@ class Block extends DataObject
         // scan the app directory for block layouts and return them as an array
         $layouts = [];
         $optionalLayouts = [];
-        $baseFolder = Director::baseFolder();
+        $baseFolder = BASE_PATH;
         $theme = Helper::getThemes();
         // module dir
         $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
-        $module_imgsrc =  TOAST_BLOCKS_IMAGE_DIR . '/client/images/layout-icons/default/' ;
-        // $module_imgsrc = BASE_PATH . '/vendor/toastnz/' . TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
+        $module_imgsrc = BASE_PATH . '/' . TOAST_BLOCKS_IMAGE_DIR ;
        // get default layouts
         $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
-   
+
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
-            // NOTE: I have commented this out as this is what I believe was causing templates to not display for me.
-            // get layout dir from yml
-            // if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-            //     return;
-            // }
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
             foreach ($dirs as $dir) { 
-                 if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                    // NOTE: I have updated this return to a continue as this is what I believe was causing templates to not display for me.
-                    continue;
-                }
+                $layout_imgsrc = Helper::getLayoutIconSrc();
                 $optionalSrcPath = $layout_src . '/' . $dir . '/';
                 $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-
                 $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
             }
         }
-
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
                 if ($layout){
@@ -389,7 +380,7 @@ class Block extends DataObject
     public function canPublish($member = null)
     {
         if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
         }
 
         if ($member && Permission::checkMember($member, "ADMIN")) {
@@ -466,7 +457,7 @@ class Block extends DataObject
     public function canArchive($member = null)
     {
         if (!$member) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
         }
 
         $extended = $this->extendedCan('canArchive', $member);
