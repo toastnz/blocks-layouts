@@ -71,13 +71,13 @@ class Helper
         
         $extensions = array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg');
 
-        if (is_dir($src) && is_dir( $basePath  .$imgsrc)) {     
+        if (is_dir($src) && is_dir( $imgsrc)) {     
             // get icons for layouts
             // if folder not exist in app, fall back to module default
             if ($directory = new DirectoryIterator($imgsrc)){
               
-                $imgsrc_dir = basename( $basePath . $imgsrc);
-                $src_dir = basename( $basePath . $src);
+                $imgsrc_dir = basename($imgsrc);
+                $src_dir = basename($src);
                 foreach ($directory as $fileinfo){
                    
                     if ($fileinfo->isFile()){
