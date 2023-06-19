@@ -41,10 +41,11 @@ class Helper
     static function getLayoutIconSrc()
     {
         $availableBlocks = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src');
-        if (!file_exists(BASE_PATH . '/' . $availableBlocks)) {
+      
+        if (!file_exists(Director::baseFolder() . '/' . $availableBlocks)) {
             return ;
         }
-        return $availableBlocks;
+        return Director::baseFolder() . '/' . $availableBlocks;
     }
 
     static function getAvailableBlocksLayouts($block, $src, $imgsrc, $default = true)
