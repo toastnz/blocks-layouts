@@ -38,7 +38,6 @@
     "silverstripe/userforms": "^6"
   },
   "extra": {
-    "resources-dir": "resources",
     "expose": [
         "client/images"
     ]
