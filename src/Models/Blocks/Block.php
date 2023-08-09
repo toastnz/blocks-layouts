@@ -175,14 +175,16 @@ class Block extends DataObject
             }
         }
 
-        $tplField = OptionsetField::create(
-            "Template",
-            "Choose a layout",
-            $layouts,
-            $this->Template
-        )->addExtraClass('toast-block-layouts');
-
-        return $tplField;
+         if (count($layouts) > 0){
+            $tplField = OptionsetField::create(
+                "Template",
+                "Choose a layout",
+                $layouts,
+                $this->Template
+            )->addExtraClass('toast-block-layouts');
+            return $tplField;
+        }
+        return ;
     }
 
     public function getLayoutDirs(){
