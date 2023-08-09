@@ -20,13 +20,14 @@ class CodeBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        
+        $this->beforeUpdateCMSFields(function ($fields) {
+            $fields->addFieldsToTab('Root.Main', [
+                TextareaField::create('Content', 'Code')
+            ]);
+        });
 
-        $fields->addFieldsToTab('Root.Main', [
-            TextareaField::create('Content', 'Code')
-        ]);
-
-        return $fields;
+        return parent::getCMSFields();
     }
 
     public function getContentSummary()

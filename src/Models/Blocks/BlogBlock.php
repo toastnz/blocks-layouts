@@ -43,33 +43,34 @@ class BlogBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function ($fields) {
 
-        $config = GridFieldConfig_RelationEditor::create(4);
-        $config->removeComponentsByType(GridFieldAddNewButton::class)
-         ->addComponent(GridFieldOrderableRows::create('SortOrder'));
-         
-        $fields->removeByName(['BlogPosts']);
-        
-        if ($this->exists()) {
-
-            $siteConfig = SiteConfig::current_site_config();
-
-            $grid = GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config);
-
-            $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
-                DropdownField::create('BlogID', 'Blog', Blog::get()->map('ID', 'Title'))->setEmptyString('--Please select a blog--'),
-                LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
-                HTMLEditorField::create('Content', 'Content'),
-                $grid
-            ]);
+            $config = GridFieldConfig_RelationEditor::create(4);
+            $config->removeComponentsByType(GridFieldAddNewButton::class)
+            ->addComponent(GridFieldOrderableRows::create('SortOrder'));
             
-        }else{
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
-        }
+            $fields->removeByName(['BlogPosts']);
+            
+            if ($this->exists()) {
 
-        return $fields;
+                $siteConfig = SiteConfig::current_site_config();
+
+                $grid = GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config);
+
+                $fields->addFieldsToTab('Root.Main', [
+                    DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
+                    DropdownField::create('BlogID', 'Blog', Blog::get()->map('ID', 'Title'))->setEmptyString('--Please select a blog--'),
+                    LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
+                    HTMLEditorField::create('Content', 'Content'),
+                    $grid
+                ]);
+                
+            }else{
+                $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
+            }
+        });
+
+        return parent::getCMSFields();
     }
 
     public function getPosts($limit = 3)

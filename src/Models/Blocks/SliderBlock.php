@@ -28,18 +28,19 @@ class SliderBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
-        if ($this->exists()) {
-            $config = GridFieldConfig_RecordEditor::create();
-            $config->addComponent(GridFieldOrderableRows::create('SortOrder'));
-             $grid = GridField::create('Items', 'Items', $this->Items(), $config);
-             $fields->addFieldsToTab('Root.Main', [
-                $grid
-            ]);
-        }else{
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
-        }
-        return $fields;
+        $this->beforeUpdateCMSFields(function ($fields) {
+            if ($this->exists()) {
+                $config = GridFieldConfig_RecordEditor::create();
+                $config->addComponent(GridFieldOrderableRows::create('SortOrder'));
+                $grid = GridField::create('Items', 'Items', $this->Items(), $config);
+                $fields->addFieldsToTab('Root.Main', [
+                    $grid
+                ]);
+            }else{
+                $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
+            }
+        });
+        return parent::getCMSFields();
     }
 
 }

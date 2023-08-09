@@ -39,27 +39,27 @@ class ChildrenBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function ($fields) {
 
-        $config = GridFieldConfig_RelationEditor::create(4);
-        $config->removeComponentsByType(GridFieldAddNewButton::class)
-         ->addComponent(GridFieldOrderableRows::create('SortOrder'));
-         
-        $fields->removeByName(['Children']);
-        
-        if ($this->exists()) {
-            $grid = GridField::create('Children', 'Child Pages', $this->Children(), $config);
+            $config = GridFieldConfig_RelationEditor::create(4);
+            $config->removeComponentsByType(GridFieldAddNewButton::class)
+            ->addComponent(GridFieldOrderableRows::create('SortOrder'));
+            
+            $fields->removeByName(['Children']);
+            
+            if ($this->exists()) {
+                $grid = GridField::create('Children', 'Child Pages', $this->Children(), $config);
 
-            $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
-                HTMLEditorField::create('Content', 'Content'),
-                $grid
-            ]);
-        }else{
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
-        }
-
-        return $fields;
+                $fields->addFieldsToTab('Root.Main', [
+                    DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
+                    HTMLEditorField::create('Content', 'Content'),
+                    $grid
+                ]);
+            }else{
+                $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
+            }
+        });
+        return parent::getCMSFields();
     }
 
     public function getChildPages()
