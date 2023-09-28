@@ -37,26 +37,26 @@ class SliderBlockItem extends DataObject
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+       $this->beforeUpdateCMSFields(function ($fields) {
 
-        $fields->removeByName([
-           'SortOrder',
-            'SliderBlockID'
-        ]);
-
-        $fields->addFieldsToTab('Root.Main',
-        [
-            UploadField::create(
-                'Image',
-                'Image'
-            )->setFolderName('Uploads/Media'),
-            VideoLinkField::create(
-                'Video',
-                'Video'
-            )->showPreview('100%')
-        ]);
-
-        return $fields;
+            $fields->removeByName([
+                'SortOrder',
+                'SliderBlockID'
+            ]);
+    
+            $fields->addFieldsToTab('Root.Main',
+            [
+                UploadField::create(
+                    'Image',
+                    'Image'
+                )->setFolderName('Uploads/Media'),
+                VideoLinkField::create(
+                    'Video',
+                    'Video'
+                )->showPreview('100%')
+            ]);
+        });
+        return parent::getCMSFields();
     }
 
 
