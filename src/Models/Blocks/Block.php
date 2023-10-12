@@ -73,7 +73,7 @@ class Block extends DataObject
         if(self::config()->get('block-icon') == null){
             return;
         }
-        
+
         $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
@@ -92,11 +92,13 @@ class Block extends DataObject
     public function forTemplate()
     {
         $template = $this->Template;
-  
+
         $this->extend('updateBlockTemplate', $template);
         // load css file if exists in directory specified in config yml
         if ($cssFilePath = $this->getCSSFile()){
-            Requirements::css($cssFilePath);
+            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
+                Requirements::css($cssFilePath);
+            }
         }
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
     }
@@ -144,7 +146,7 @@ class Block extends DataObject
         // $module_imgsrc = BASE_PATH . '/vendor/toastnz/' . TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
        // get default layouts
         $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
-   
+
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
@@ -154,7 +156,7 @@ class Block extends DataObject
             //     return;
             // }
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-            foreach ($dirs as $dir) { 
+            foreach ($dirs as $dir) {
                  if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
                     // NOTE: I have updated this return to a continue as this is what I believe was causing templates to not display for me.
                     continue;
@@ -192,7 +194,7 @@ class Block extends DataObject
             $layout_src = BASE_PATH . '/' . $layout_src;
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
             $output = [];
-            foreach ($dirs as $dir) { 
+            foreach ($dirs as $dir) {
                 $output[] = strtolower($dir);
             }
             return $output;
@@ -213,7 +215,7 @@ class Block extends DataObject
                    if (file_exists($cssFilePath)){
                        // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
                        $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                       
+
                    }
                }
            }
@@ -231,7 +233,7 @@ class Block extends DataObject
             $this->Template =  $this->getTemplateClass();
         }
          parent::onBeforeWrite();
-     
+
     }
 
     public function getTemplateClass()
@@ -440,7 +442,7 @@ class Block extends DataObject
                             return SiteTree::get()->byID($data->ID);
                         }
                     }
-                } catch (\Exception $e) {                    
+                } catch (\Exception $e) {
                 }
             }
         }
