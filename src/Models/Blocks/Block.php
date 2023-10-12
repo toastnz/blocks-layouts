@@ -94,11 +94,13 @@ class Block extends DataObject
     public function forTemplate()
     {
         $template = $this->Template;
-  
+
         $this->extend('updateBlockTemplate', $template);
         // load css file if exists in directory specified in config yml
         if ($cssFilePath = $this->getCSSFile()){
-            Requirements::css($cssFilePath);
+            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
+                Requirements::css($cssFilePath);
+            }
         }
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
     }
@@ -150,7 +152,7 @@ class Block extends DataObject
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-            foreach ($dirs as $dir) { 
+            foreach ($dirs as $dir) {
                 $layout_imgsrc = Helper::getLayoutIconSrc();
                 $optionalSrcPath = $layout_src . '/' . $dir . '/';
                 $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
@@ -181,7 +183,7 @@ class Block extends DataObject
             $layout_src = BASE_PATH . '/' . $layout_src;
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
             $output = [];
-            foreach ($dirs as $dir) { 
+            foreach ($dirs as $dir) {
                 $output[] = strtolower($dir);
             }
             return $output;
@@ -202,7 +204,7 @@ class Block extends DataObject
                    if (file_exists($cssFilePath)){
                        // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
                        $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                       
+
                    }
                }
            }
@@ -220,7 +222,7 @@ class Block extends DataObject
             $this->Template =  $this->getTemplateClass();
         }
          parent::onBeforeWrite();
-     
+
     }
 
     public function getTemplateClass()
@@ -429,7 +431,7 @@ class Block extends DataObject
                             return SiteTree::get()->byID($data->ID);
                         }
                     }
-                } catch (\Exception $e) {                    
+                } catch (\Exception $e) {
                 }
             }
         }
