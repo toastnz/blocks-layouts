@@ -45,7 +45,7 @@ class ChildrenBlock extends Block
             $config->removeComponentsByType(GridFieldAddNewButton::class)
             ->addComponent(GridFieldOrderableRows::create('Sort'));
             
-            $fields->removeByName(['Children']);
+            $fields->removeByName(['ChildPages']);
             
             if ($this->exists()) {
                 $grid = GridField::create('ChildPages', 'Child Pages', $this->ChildPages(), $config);
@@ -53,7 +53,7 @@ class ChildrenBlock extends Block
                 $fields->addFieldsToTab('Root.Main', [
                     DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
                     HTMLEditorField::create('Content', 'Content'),
-                    $grid
+                    // $grid
                 ]);
             }else{
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
