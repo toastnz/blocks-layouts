@@ -9,7 +9,7 @@
         <% end_if %>
         
         <div class="default-children__wrap lg-up-{$Columns}" data-equalize="{$HTMLID}">
-            <% loop $Items.Sort('SortOrder') %>
+            <% loop $Items.Sort('Sort') %>
                 <div class="default-children-item">
                     <a href="{$Link.LinkURL}" class="default-children-item__link">
                         <div class="default-children-item__media" data-src="{$Image.FocusFill(500,600).URL}" style="background-position: {$Top.getImageFocusPosition($Image.ID)}">

@@ -28,12 +28,12 @@ class ChildrenBlock extends Block
     ];
 
     private static $many_many = [
-        'Children' => \Page::class
+        'ChildPages' => \Page::class
     ];
 
     private static $many_many_extraFields = [
-        'Children' => [
-            'SortOrder' => 'Int'
+        'ChildPages' => [
+            'Sort' => 'Int'
         ]
     ];
 
@@ -43,12 +43,12 @@ class ChildrenBlock extends Block
 
             $config = GridFieldConfig_RelationEditor::create(4);
             $config->removeComponentsByType(GridFieldAddNewButton::class)
-            ->addComponent(GridFieldOrderableRows::create('SortOrder'));
+            ->addComponent(GridFieldOrderableRows::create('Sort'));
             
             $fields->removeByName(['Children']);
             
             if ($this->exists()) {
-                $grid = GridField::create('Children', 'Child Pages', $this->Children(), $config);
+                $grid = GridField::create('ChildPages', 'Child Pages', $this->ChildPages(), $config);
 
                 $fields->addFieldsToTab('Root.Main', [
                     DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
@@ -62,16 +62,17 @@ class ChildrenBlock extends Block
         return parent::getCMSFields();
     }
 
-    public function getChildPages()
+    public function getItems()
     {
-       
-        if (!$this->Children()->exists()){
-            if( $this->ParentID ){
-                return SiteTree::get()->filter(["ID" => $this->ParentID ]);
+      
+        if ($this->ChildPages()->count() == 0 ){
+            if( $parentPage = $this->getParentPage()){
+                // get all the pages under this parent page
+                return SiteTree::get()->filter(["ParentID" => $parentPage->ID ]);
             }
         }
         
-        return $this->Children();
+        return $this->ChildPages();
     }
  
 }
