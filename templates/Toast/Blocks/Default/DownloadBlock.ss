@@ -1,5 +1,13 @@
 <% if $Items.Count %>
     <section id="{$HTMLID}" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+        <% if $Content %>
+            <div class="default-download__header">
+                <div class="default-download__content">
+                    {$Content}
+                </div>
+            </div>
+        <% end_if %>
+
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
