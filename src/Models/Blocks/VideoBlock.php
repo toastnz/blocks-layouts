@@ -39,18 +39,16 @@ class VideoBlock extends Block
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-
             $fields->addFieldsToTab('Root.Main', [
+                HTMLEditorField::create('Content', 'Content'),
+                TextField::create('Caption', 'Caption'),
+                CheckboxField::create('OpenInModal', 'Open Video In Modal'),
                 VideoLinkField::create('Video')
                 ->showPreview(500),
                 UploadField::create('Thumbnail', 'Override default thumbnail')
                 ->setFolderName('Uploads/Blocks')
                 ->setDescription('Will automatically use YouTube / Vimeo thumbnail if this image is not uploaded. Ideal size: 960x540'),
-                TextField::create('Caption', 'Caption'),
-                HTMLEditorField::create('Content', 'Content'),
-                CheckboxField::create('OpenInModal', 'Open Video In Modal')
             ]);
-
         });
 
         return parent::getCMSFields();
@@ -69,6 +67,4 @@ class VideoBlock extends Block
     {
         return DBField::create_field(DBHTMLText::class, $this->Video);
     }
-
-
 }
