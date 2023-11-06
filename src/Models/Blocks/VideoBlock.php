@@ -22,10 +22,10 @@ class VideoBlock extends Block
     private static $plural_name = 'Videos';
 
     private static $db = [
-        'Video' => VideoLink::class,
-        'Caption' => 'Varchar(255)',
         'Content' => 'HTMLText',
+        'Caption' => 'Varchar(255)',
         'OpenInModal' => 'Boolean',
+        'Video' => VideoLink::class,
     ];
 
     private static $has_one = [
