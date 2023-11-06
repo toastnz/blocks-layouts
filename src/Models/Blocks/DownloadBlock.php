@@ -8,6 +8,7 @@ use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\FieldType\DBField;
 use Toast\Blocks\Items\DownloadBlockItem;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -19,9 +20,13 @@ class DownloadBlock extends Block
     private static $table_name = 'Blocks_DownloadBlock';
 
     private static $singular_name = 'Download';
- 
+
     private static $plural_name = 'Downloads';
- 
+
+    private static $db = [
+        'Content' => 'HTMLText'
+    ];
+
     private static $has_many = [
         'Items' => DownloadBlockItem::class
     ];
@@ -32,12 +37,16 @@ class DownloadBlock extends Block
 
             $fields->removeByName('Items');
 
+            $fields->addFieldsToTab('Root.Main', [
+                HTMLEditorField::create('Content', 'Content')
+            ]);
+
             if ($this->ID) {
                 $config = GridFieldConfig_RelationEditor::create(50)
                     ->removeComponentsByType(GridFieldAddExistingAutoCompleter::class)
                     ->removeComponentsByType(GridFieldDeleteAction::class)
                     ->addComponents(new GridFieldDeleteAction())
-                    ->addComponents(GridFieldOrderableRows::create('SortOrder'));                
+                    ->addComponents(GridFieldOrderableRows::create('SortOrder'));
                 $grid = GridField::create('Items', 'Files', $this->Items(), $config);
                 $fields->addFieldToTab('Root.Main', $grid);
 
