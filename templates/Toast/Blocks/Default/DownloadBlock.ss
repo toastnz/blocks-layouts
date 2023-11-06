@@ -1,23 +1,25 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
-                        <a href="{$Link}" class="default-download-item background-colour--{$Top.SecondaryColour.getColourClasses}" download>
-                            <div class="default-download-item__title">
+                        <a href="{$Link}" class="default-download-item" download="{$Up.Title.ATT}">
+                            <div class="default-download-item__background background-colour--{$Top.SecondaryColour.ColourClasses}"></div>
+
+                            <div class="default-download-item__title background-colour--{$Top.SecondaryColour.ColourClasses}">
                                 <span>{$Up.Title.XML}</span>
                             </div>
-        
-                            <div class="default-download-item__description">
+
+                            <div class="default-download-item__description background-colour--{$Top.SecondaryColour.ColourClasses}">
                                 <span>{$Up.Summary.XML}</span>
                             </div>
-        
-                            <div class="default-download-item__info">
+
+                            <div class="default-download-item__info background-colour--{$Top.SecondaryColour.ColourClasses}">
                                 <span>{$Extension.upperCase} {$Size}</span>
                             </div>
-        
-                            <div class="default-download-item__icon">
+
+                            <div class="default-download-item__icon background-colour--{$Top.SecondaryColour.ColourClasses}">
                                 <span></span>
                             </div>
                         </a>
