@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80"><g fill="#000" fill-rule="nonzero"><g transform="translate(10.335 8)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g><g transform="translate(10.335 43)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g><g transform="translate(45.335 8)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g><g transform="translate(45.335 43)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g><g transform="translate(80.335 8)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g><g transform="translate(80.335 43)"><path d="M0 0h29v29H0z" opacity=".3"/><path d="M0 15.397c3.31-.282 7.764.78 13.359 3.187 5.594 2.405 10.807 3.068 15.641 1.99V29H0V15.397Z"/><circle cx="21.608" cy="7.392" r="3.98"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120px" height="80px" viewBox="0 0 120 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.3">
+        <rect id="Rectangle" fill="#000000" x="11" y="8" width="30" height="30" rx="2"></rect>
+        <rect id="Rectangle-Copy-3" fill="#000000" x="11" y="42" width="30" height="30" rx="2"></rect>
+        <rect id="Rectangle-Copy" fill="#000000" x="45" y="8" width="30" height="30" rx="2"></rect>
+        <rect id="Rectangle-Copy-4" fill="#000000" x="45" y="42" width="30" height="30" rx="2"></rect>
+        <rect id="Rectangle-Copy-2" fill="#000000" x="79" y="8" width="30" height="30" rx="2"></rect>
+        <rect id="Rectangle-Copy-5" fill="#000000" x="79" y="42" width="30" height="30" rx="2"></rect>
+    </g>
+</svg>
