@@ -9,7 +9,7 @@
         <% end_if %>
 
         <div class="default-children__wrap lg-up-{$Columns}" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}_Text">
-            <% loop $Items.Sort('SortOrder') %>
+            <% loop $Items %>
                 <div class="default-children-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" class="default-children-item__link">
                         <div class="default-children-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
