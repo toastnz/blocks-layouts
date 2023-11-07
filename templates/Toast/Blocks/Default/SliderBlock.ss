@@ -14,15 +14,17 @@
                     <% if $Image || $Video %>
                         <div class="default-slider-item">
 
-                            <div class="default-slider-item__media" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-equalize-watch="{$Top.HTMLID}__media">
+                            <div class="default-slider-item__media" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-equalize-watch="{$Top.HTMLID}__media">
                                 <% if $Video %>
+                                    <div class="default-slider-item__aspect" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
                                     <div class="default-slider-item__icon"></div>
-                                <% end_if %>
-
-                                <% if $Image %>
-                                    <img src="{$Image.ScaleMaxWidth(10).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
-                                <% else %>
-                                    <div class="default-slider-item__aspect"></div>
+                                <% else_if $Image %>
+                                    <picture>
+                                        <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                                        <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
+                                        <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
+                                        <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" alt="{$Image.Title.ATT}">
+                                    </picture>
                                 <% end_if %>
                             </div>
                         </div>
