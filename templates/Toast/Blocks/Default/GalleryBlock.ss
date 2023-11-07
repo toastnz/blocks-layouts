@@ -18,8 +18,8 @@
                             <% end_if %>
 
                             <% if $Video %>
-                                <div class="default-gallery-item__video {$Top.SecondaryColour.ColourClasses}">
-                                    <div class="default-gallery-item__icon"></div>
+                                <div class="default-gallery-item__video">
+                                    <div class="default-gallery-item__iconcolour--{$Top.SecondaryColour.ColourClasses}"></div>
                                 </div>
                             <% end_if %>
                         </div>
@@ -28,7 +28,7 @@
             <% end_loop %>
         </div>
 
-        <div class="default-gallery-modal [ js-default-gallery__modal ]">
+        <div class="default-gallery-modal colour--{$Top.SecondaryColour.ColourClasses} [ js-default-gallery__modal ]">
             <div class="[ js-default-gallery__slider ]">
                 <% loop $Items.Sort('SortOrder') %>
                     <div class="default-gallery-modal__item">
@@ -42,8 +42,8 @@
                                 </picture>
 
                                 <% if $Video %>
-                                    <div class="default-gallery-modal__video colour--{$Top.SecondaryColour.ColourClasses}" data-video="{$Video.IframeURL}">
-                                        <div class="default-gallery-item__icon"></div>
+                                    <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}">
+                                        <div class="default-gallery-item__icon colour--{$Top.SecondaryColour.ColourClasses}"></div>
                                     </div>
                                 <% end_if %>
                             </div>
