@@ -20,14 +20,13 @@ class PercentageBlockItem extends BlockItem
     private static $db = [
         'SortOrder' => 'Int',
         'Title' => 'Varchar(255)',
-        'Summary' => 'HTMLText',
+        'Summary' => 'Text',
         'Width' => 'Enum("25, 33, 50, 66, 75, 100", "50")'
     ];
 
     private static $has_one = [
         'Link'   => Link::class,
         'Image'  => Image::class,
-        'Icon'   => File::class,
         'Parent' => PercentageBlock::class
     ];
 
@@ -35,7 +34,6 @@ class PercentageBlockItem extends BlockItem
         'Title' => 'Title',
     ];
     private static $owns = [
-        'Icon',
         'Image',
     ];
 
@@ -44,13 +42,10 @@ class PercentageBlockItem extends BlockItem
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                UploadField::create('Icon', 'SVG Icon')
-                    ->setAllowedExtensions(['svg'])
-                    ->setFolderName('Uploads/Blocks'),
                 UploadField::create('Image', 'Thumbnail')
                     ->setFolderName('Uploads/Blocks'),
                 TextField::create('Title', 'Title'),
-                HTMLEditorField::create('Summary', 'Summary'),
+                TextareaField::create('Summary', 'Summary'),
                 DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
                 LinkField::create('LinkID', 'Link'),
             ]);
