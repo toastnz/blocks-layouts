@@ -19,7 +19,7 @@
 
                             <% if $Video %>
                                 <div class="default-gallery-item__video">
-                                    <div class="default-gallery-item__iconcolour--{$Top.SecondaryColour.ColourClasses}"></div>
+                                    <div class="default-gallery-item__icon colour--{$Top.SecondaryColour.ColourClasses}"></div>
                                 </div>
                             <% end_if %>
                         </div>
