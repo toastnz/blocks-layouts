@@ -19,7 +19,7 @@
 
                             <% if $Video %>
                                 <div class="default-gallery-item__video {$Top.SecondaryColour.ColourClasses}">
-                                    {$SVG('play')}
+                                    <div class="default-gallery-item__icon"></div>
                                 </div>
                             <% end_if %>
                         </div>
@@ -40,10 +40,10 @@
                                     <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
                                     <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                                 </picture>
-        
+
                                 <% if $Video %>
                                     <div class="default-gallery-modal__video colour--{$Top.SecondaryColour.ColourClasses}" data-video="{$Video.IframeURL}">
-                                        {$SVG('play')}
+                                        <div class="default-gallery-item__icon"></div>
                                     </div>
                                 <% end_if %>
                             </div>
