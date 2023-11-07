@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80"><g fill="#000" fill-rule="nonzero" transform="translate(14 17)"><path d="M0 0h91v47H0z" opacity=".3"/><path d="M0 24.954c10.389-.457 24.363 1.264 41.918 5.164C59.474 34.016 75.832 35.091 91 33.343V47H0V24.954Z" opacity=".6"/><ellipse cx="78.988" cy="11.98" opacity=".6" rx="6.468" ry="6.451"/></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120px" height="80px" viewBox="0 0 120 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.302618118">
+        <g id="videoblock" transform="translate(10.000000, 12.000000)" fill="#000000" fill-rule="nonzero">
+            <g id="Group">
+                <path d="M98,0 C99.1045695,0 100,0.8954305 100,2 L100,54 C100,55.1045695 99.1045695,56 98,56 L2,56 C0.8954305,56 0,55.1045695 0,54 L0,2 C0,0.8954305 0.8954305,0 2,0 L98,0 Z" id="Video"></path>
+            </g>
+        </g>
+    </g>
+</svg>
