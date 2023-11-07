@@ -12,7 +12,7 @@
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
-                        <a href="{$Link}" class="default-download-item" download="{$Up.Title.ATT}">
+                        <a href="{$Link}" class="default-download-item [ js-in-view ]" download="{$Up.Title.ATT}">
                             <div class="default-download-item__background background-colour--{$Top.SecondaryColour.ColourClasses}"></div>
 
                             <div class="default-download-item__title background-colour--{$Top.SecondaryColour.ColourClasses}">
