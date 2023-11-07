@@ -16,8 +16,9 @@
                             <div class="default-slider-item__layout" data-equalize-watch="{$Top.HTMLID}__media">
                                 <div class="default-slider-item__media">
                                     <% if $Video %>
-                                        <div class="default-slider-item__aspect" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
-                                        <div class="default-slider-item__icon"></div>
+                                        <div class="default-slider-item__aspect" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>">
+                                            <div class="default-slider-item__icon"></div>
+                                        </div>
                                     <% else_if $Image %>
                                         <picture>
                                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
