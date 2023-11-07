@@ -10,7 +10,7 @@
 
         <div class="default-accordion__wrap">
             <% loop $Items.Sort('SortOrder') %>
-                <div class="default-accordion-item [ js-default-accordion__item ]">
+                <div class="default-accordion-item [ js-default-accordion__item js-in-view ]">
                     <div class="default-accordion-item__header background-colour--{$Top.SecondaryColour.ColourClasses} [ js-default-accordion__trigger ]">
                         <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
                     </div>
