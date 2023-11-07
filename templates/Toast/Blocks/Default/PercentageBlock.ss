@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-percentage__wrap" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}__Text">
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
@@ -8,13 +8,14 @@
                     </div>
                 <% end_if %>
 
-                <div class="default-percentage-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
+                <div class="default-percentage-item__details">
                     <div data-equalize-watch="{$Top.HTMLID}__Text">
                         <span class="default-percentage-item__title">{$Title.XML}</span>
-                        <div class="default-percentage-item__summary">{$Summary}</div>
+                        <p class="default-percentage-item__summary">{$Summary}</p>
                     </div>
+
                     <% if $LinkID %>
-                        <a href="{$Link.LinkURL}" class="default-percentage-item__link" {$Link.TargetAttr}>{$Link.Title}</a>
+                        <a href="{$Link.LinkURL}" class="default-percentage-item__link colour--{$Top.SecondaryColour.ColourClasses}" {$Link.TargetAttr}>{$Link.Title}</a>
                     <% end_if %>
                 </div>
             </div>
