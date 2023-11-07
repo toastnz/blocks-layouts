@@ -13,10 +13,10 @@
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image || $Video %>
                         <div class="default-slider-item">
-                            <div class="default-slider-item__layout">
-                                <div class="default-slider-item__media" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-equalize-watch="{$Top.HTMLID}__media">
+                            <div class="default-slider-item__layout" data-equalize-watch="{$Top.HTMLID}__media">
+                                <div class="default-slider-item__media">
                                     <% if $Video %>
-                                        <div class="default-slider-item__aspect" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
+                                        <div class="default-slider-item__aspect" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
                                         <div class="default-slider-item__icon"></div>
                                     <% else_if $Image %>
                                         <picture>
