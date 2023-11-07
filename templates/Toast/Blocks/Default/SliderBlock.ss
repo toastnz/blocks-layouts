@@ -16,7 +16,7 @@
 
                             <div class="default-slider-item__media" data-src="<% if $Image %>{$Image.ScaleMaxWidth(1000).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>" <% if $Video %>data-video="{$Video.IframeURL}"<% end_if %> data-equalize-watch="{$Top.HTMLID}__media">
                                 <% if $Video %>
-                                    {$SVG('play')}
+                                    <div class="default-slider-item__icon"></div>
                                 <% end_if %>
 
                                 <% if $Image %>
