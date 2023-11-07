@@ -22,7 +22,6 @@ class VideoBlock extends Block
     private static $plural_name = 'Videos';
 
     private static $db = [
-        'Content' => 'HTMLText',
         'Caption' => 'Varchar(255)',
         'OpenInModal' => 'Boolean',
         'Video' => VideoLink::class,
@@ -40,7 +39,6 @@ class VideoBlock extends Block
     {
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->addFieldsToTab('Root.Main', [
-                HTMLEditorField::create('Content', 'Content'),
                 TextField::create('Caption', 'Caption'),
                 CheckboxField::create('OpenInModal', 'Open Video In Modal'),
                 VideoLinkField::create('Video')
