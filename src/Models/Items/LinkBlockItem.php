@@ -24,7 +24,6 @@ class LinkBlockItem extends BlockItem
     private static $has_one = [
         'Link'   => Link::class,
         'Image'  => Image::class,
-        'Icon'   => File::class,
         'Parent' => LinkBlock::class
     ];
 
@@ -32,7 +31,6 @@ class LinkBlockItem extends BlockItem
         'Title' => 'Title',
     ];
     private static $owns = [
-        'Icon',
         'Image',
     ];
 
@@ -41,9 +39,6 @@ class LinkBlockItem extends BlockItem
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                UploadField::create('Icon', 'SVG Icon')
-                    ->setAllowedExtensions(['svg'])
-                    ->setFolderName('Uploads/Blocks'),
                 UploadField::create('Image', 'Thumbnail')
                     ->setFolderName('Uploads/Blocks'),
                 TextField::create('Title', 'Title'),

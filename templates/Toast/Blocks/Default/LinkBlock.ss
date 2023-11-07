@@ -13,7 +13,6 @@
                 <a href="{$Link.LinkURL}" class="default-link-item__link">
                     <div class="default-link-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
                         <img src="{$Image.ScaleWidth(8).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
-                        <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
 
                     <div class="default-link-item__details">
