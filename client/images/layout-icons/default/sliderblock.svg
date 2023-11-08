@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80"><g fill="#000" fill-rule="nonzero"><g transform="translate(22 21)"><path d="M0 0h76v39H0z" opacity=".3"/><path d="M0 21.059c8.676-.372 20.347 1.028 35.009 4.202C49.67 28.433 63.332 29.308 76 27.885V39H0V21.059Z" opacity=".6"/><circle cx="65.5" cy="9.5" r="5.5" opacity=".6"/></g><path d="M106 25h61v31h-61z" opacity=".3"/><path d="M106 41.739c6.964-.296 16.33.818 28.099 3.34 11.768 2.522 22.734 3.217 32.901 2.086V56h-61V41.739Z" opacity=".6"/><g transform="translate(-47 25)"><path d="M0 0h61v31H0z" opacity=".3"/><path d="M0 16.739c6.964-.296 16.33.818 28.099 3.34C39.867 22.601 50.833 23.296 61 22.165V31H0V16.739Z" opacity=".6"/><ellipse cx="52.572" cy="7.551" opacity=".6" rx="4.414" ry="4.372"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120px" height="80px" viewBox="0 0 120 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.3">
+        <rect id="Rectangle" fill="#000000" x="25" y="16" width="70" height="48" rx="2"></rect>
+        <rect id="Rectangle-Copy" fill="#000000" x="103" y="21" width="55.4166667" height="38" rx="2"></rect>
+        <rect id="Rectangle-Copy-2" fill="#000000" x="-39" y="21" width="55.4166667" height="38" rx="2"></rect>
+    </g>
+</svg>
