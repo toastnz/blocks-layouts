@@ -1,5 +1,5 @@
 <section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$SecondaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
-    <div class="default-media-text__wrap <% if $Width=='full' %>full<% end_if %>">
+    <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
                 <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}" data-src="{$Image.ScaleWidth(1200).URL}" style="background-position: {$getImageFocusPosition($Image.ID)}">
@@ -13,12 +13,12 @@
         </div>
 
         <div class="default-media-text__content">
-            <div class="default-media-text__text background-colour--{$PrimaryColour.getColourClasses}">
+            <div class="default-media-text__text">
 
                 {$Content}
 
                 <% if $CTALink %>
-                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link">{$CTALink.Title}</a>
+                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link colour--{$PrimaryColour.getColourClasses}">{$CTALink.Title}</a>
                 <% end_if %>
             </div>
         </div>
