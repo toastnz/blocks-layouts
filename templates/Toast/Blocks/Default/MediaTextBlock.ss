@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$SecondaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
@@ -18,7 +18,7 @@
                 {$Content}
 
                 <% if $CTALink %>
-                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link colour--{$PrimaryColour.getColourClasses}">{$CTALink.Title}</a>
+                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link colour--{$SecondaryColour.ColourClasses}">{$CTALink.Title}</a>
                 <% end_if %>
             </div>
         </div>
