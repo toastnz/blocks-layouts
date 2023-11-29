@@ -53,9 +53,6 @@ Toast\Blocks\LinkBlock:
 Toast\Blocks\PercentageBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/splittext.svg'
 
-Toast\Blocks\TabbedContentBlock:
-  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/tabbedcontent.svg'
-
 Toast\Blocks\TestimonialBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/testimonial.svg'
 
@@ -73,4 +70,3 @@ Toast\Blocks\SliderBlock:
 
 Toast\Blocks\GalleryBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/gallery.svg'
-
