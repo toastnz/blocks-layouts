@@ -18,7 +18,7 @@
                 {$Content}
 
                 <% if $CTALink %>
-                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link colour--{$SecondaryColour.ColourClasses}">{$CTALink.Title}</a>
+                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button {$getButtonClasses($PrimaryColour.ID, 'primary')}">{$CTALink.Title}</a>
                 <% end_if %>
             </div>
         </div>

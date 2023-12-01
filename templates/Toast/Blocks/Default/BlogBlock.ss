@@ -27,7 +27,7 @@
                                 <% end_if %>
                             </div>
 
-                            <span class="default-children-item__button colour--{$Top.SecondaryColour.ColourClasses}">Read more</span>
+                            <span class="default-children-item__button button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}">Read more</span>
                         </div>
                     </a>
                 </div>

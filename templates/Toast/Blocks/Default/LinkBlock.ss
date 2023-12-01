@@ -27,7 +27,7 @@
                                 <% end_if %>
                             </div>
 
-                            <span class="default-link-item__button colour--{$Top.SecondaryColour.ColourClasses}">{$Link.Title}</span>
+                            <span class="default-link-item__button button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}">{$Link.Title}</span>
                         </div>
                     </a>
                 </div>
