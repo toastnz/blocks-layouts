@@ -18,7 +18,11 @@
                 {$Content}
 
                 <% if $CTALink %>
-                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button {$getButtonClasses($PrimaryColour.ID, 'primary')}">{$CTALink.Title}</a>
+                    <% if $SecondaryColour.ID && $SecondaryColour.ID != $PrimaryColour.ID %>
+                        <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button colour--{$SecondaryColour.ColourClasses}">{$CTALink.Title}</a>
+                    <% else %>
+                        <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button {$getButtonClasses($PrimaryColour.ID, 'primary')}">{$CTALink.Title}</a>
+                    <% end_if %>
                 <% end_if %>
             </div>
         </div>

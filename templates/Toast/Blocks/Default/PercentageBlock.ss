@@ -15,7 +15,11 @@
                     </div>
 
                     <% if $LinkID %>
-                        <a href="{$Link.LinkURL}" class="default-percentage-item__link button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}" {$Link.TargetAttr}>{$Link.Title}</a>
+                        <% if $Top.SecondaryColour.ID && $Top.SecondaryColour.ID != $Top.PrimaryColour.ID %>
+                            <a href="{$Link.LinkURL}" class="default-percentage-item__link button colour--{$Top.SecondaryColour.ColourClasses}" {$Link.TargetAttr}>{$Link.Title}</a>
+                        <% else %>
+                            <a href="{$Link.LinkURL}" class="default-percentage-item__link button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}" {$Link.TargetAttr}>{$Link.Title}</a>
+                        <% end_if %>
                     <% end_if %>
                 </div>
             </div>

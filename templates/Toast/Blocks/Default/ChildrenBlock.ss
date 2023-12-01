@@ -27,7 +27,11 @@
                                 <% end_if %>
                             </div>
 
-                            <span class="default-children-item__button button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}">Read more</span>
+                            <% if $Top.SecondaryColour.ID && $Top.SecondaryColour.ID != $Top.PrimaryColour.ID %>
+                                <span class="default-children-item__button button colour--{$Top.SecondaryColour.ColourClasses}">Read more</span>
+                            <% else %>
+                                <span class="default-children-item__button button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}">Read more</span>
+                            <% end_if %>
                         </div>
                     </a>
                 </div>
