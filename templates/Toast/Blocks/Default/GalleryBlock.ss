@@ -14,7 +14,7 @@
                     <button class="default-gallery-item__action background-colour--{$Top.SecondaryColour.ColourClasses} [ js-default-gallery__action ] <% if $Video %>has-video<% end_if %>">
                         <div class="default-gallery-item__media" data-src="<% if $Image %>{$Image.FocusFill(800,800).URL}<% else_if $Video %>{$Video.ThumbnailURL('large')}<% end_if %>">
                             <% if $Image %>
-                                <img src="{$Image.Fill(8,8).URL}" width="8" height="8" loading="lazy" alt="{$Image.Title.ATT}">
+                                <img src="{$Image.Fill(800,800).URL}" width="800" height="800" loading="lazy" alt="{$Image.Title.ATT}">
                             <% end_if %>
 
                             <% if $Video %>
