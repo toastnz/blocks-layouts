@@ -42,7 +42,7 @@ class HeroBlock extends Block
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('BackgroundImage', 'Background Image')
                     ->setFolderName('Uploads/Blocks'),
-                DropdownField::create('ContentPosition', 'Content position', ['left' => 'left', 'right' => 'right']),
+                DropdownField::create('ContentPosition', 'Content position', ['left' => 'left', 'center' => 'center', 'right' => 'right']),
                 DropdownField::create('ContentAlignment', 'Content alignment', ['top' => 'top', 'center' => 'center', 'bottom' => 'bottom']),
                 HTMLEditorField::create('Content', 'Content'),
                 LinkField::create('CustomLinkID', 'Link'),
