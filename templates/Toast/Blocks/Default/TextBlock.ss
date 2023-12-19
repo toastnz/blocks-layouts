@@ -3,7 +3,7 @@
         <div class="default-text__wrap">
             <% if $Heading %>
                 <div class="default-text__content">
-                    <h2 class="default-text__heading">{$Heading.XML}</h2>
+                    <h2 class="default-text__heading colour--{$SecondaryColour.getColourClasses}">{$Heading.XML}</h2>
                 </div>
             <% end_if %>
 
