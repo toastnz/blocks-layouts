@@ -103,7 +103,7 @@ class Block extends DataObject
                 // get the resource url path for this css 
                 $cssFilePathWithHash = ModuleResourceLoader::singleton()->resolveURL($cssFilePath);
                 // Requirements::css($cssFilePathWithHash);
-                Requirements::insertHeadTags('<link rel="preload" href="' . $cssFilePathWithHash . '" as="style" onload="this.onload=null;this.rel=\'preload\'">');
+                Requirements::insertHeadTags('<link rel="preload" href="' . $cssFilePathWithHash . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">');
                 Requirements::insertHeadTags('<noscript><link rel="preload" href="' . $cssFilePathWithHash . '"></noscript>');
             }
         }
