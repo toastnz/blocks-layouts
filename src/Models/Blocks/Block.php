@@ -99,7 +99,12 @@ class Block extends DataObject
         // load css file if exists in directory specified in config yml
         if ($cssFilePath = $this->getCSSFile()){
             if (file_exists(BASE_PATH . '/' . $cssFilePath)){
-                Requirements::css($cssFilePath);
+                // Requirements::css($cssFilePath);
+                // get the resource url path for this css 
+                $cssFilePathWithHash = ModuleResourceLoader::singleton()->resolveURL($cssFilePath);
+                Requirements::css($cssFilePathWithHash);
+                Requirements::insertHeadTags('<link rel="preload" href="' . $cssFilePathWithHash . '" as="style" onload="this.onload=null;this.rel=\'preload\'">');
+                Requirements::insertHeadTags('<noscript><link rel="preload" href="' . $cssFilePathWithHash . '"></noscript>');
             }
         }
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
