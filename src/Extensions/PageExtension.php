@@ -10,6 +10,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\View\Requirements;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
@@ -54,15 +55,15 @@ class PageExtension extends DataExtension
 
             $config->getComponentByType(GridFieldDetailForm::class)
                 ->setItemRequestClass(VersionedGridFieldItemRequest::class)
-                ->setItemEditFormCallback(function ($form, $itemRequest) use ($self) {                    
+                ->setItemEditFormCallback(function ($form, $itemRequest) use ($self) {
                     if (!$itemRequest->record->exists()) {
                         $nextSortOrder = $self->ContentBlocks()->max('SortOrder') + 1;
                         $form->Fields()->add(HiddenField::create('ManyMany[SortOrder]', 'Sort Order', $nextSortOrder));
                     }
-                });    
+                });
 
             $multiClass = new GridFieldAddNewMultiClass();
-            
+
             $multiClass->setClasses(Config::inst()->get(PageExtension::class, 'available_blocks'));
 
             $config->addComponent($multiClass);
@@ -84,7 +85,23 @@ class PageExtension extends DataExtension
         }
     }
 
+    public function getBlockStyles()
+    {
+        $styles = [];
+        $blocks = $this->owner->ContentBlocks();
 
+        foreach ($blocks as $block) {
+            $cssFile = $block->getCSSFile();
+
+            if ($cssFile && !in_array($cssFile, $styles)) {
+                $styles[] = $cssFile;
+            }
+        }
+
+        if (!empty($styles)) {
+            Requirements::combine_files('blocks.css', $styles);
+        }
+    }
 }
 
 class PageControllerExtension extends Extension
