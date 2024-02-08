@@ -87,8 +87,10 @@ class PageExtension extends DataExtension
 
     public function getBlockStyles()
     {
-        $styles = [];
+        $baseFolder = Director::baseFolder();
         $blocks = $this->owner->ContentBlocks();
+
+        $styles = [];
 
         foreach ($blocks as $block) {
             $cssFile = $block->getCSSFile();
@@ -99,6 +101,13 @@ class PageExtension extends DataExtension
         }
 
         if (!empty($styles)) {
+            // With the first cssFile, we want to load it directly to the page as critical css
+            $firstCssFile = array_shift($styles);
+            Requirements::customCSS(file_get_contents($baseFolder . '/' . $firstCssFile));
+        }
+
+        if (!empty($styles)) {
+            // Now load the rest of the css files as a single file
             Requirements::combine_files('blocks.css', $styles);
         }
     }
