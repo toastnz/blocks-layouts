@@ -10,7 +10,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\View\Requirements;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
@@ -85,23 +84,7 @@ class PageExtension extends DataExtension
         }
     }
 
-    public function getBlockStyles()
-    {
-        $styles = [];
-        $blocks = $this->owner->ContentBlocks();
 
-        foreach ($blocks as $block) {
-            $cssFile = $block->getCSSFile();
-
-            if ($cssFile && !in_array($cssFile, $styles)) {
-                $styles[] = $cssFile;
-            }
-        }
-
-        if (!empty($styles)) {
-            Requirements::combine_files('blocks.css', $styles);
-        }
-    }
 }
 
 class PageControllerExtension extends Extension
