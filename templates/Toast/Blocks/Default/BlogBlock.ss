@@ -13,7 +13,7 @@
                 <div class="default-blog-item [ js-in-view ]">
                     <a href="{$Link}" class="default-blog-item__link">
                         <div class="default-blog-item__media" data-src="{$FeaturedImage.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <img src="{$FeaturedImage.ScaleWidth(8).URL}" width="{$FeaturedImage.getWidth()}" height="{$FeaturedImage.getHeight()}" loading="lazy" alt="{$FeaturedImage.Title.ATT}">
+                            <img src="{$FeaturedImage.ScaleMaxWidth(800).URL}" width="{$FeaturedImage.getWidth()}" height="{$FeaturedImage.getHeight()}" loading="lazy" alt="{$FeaturedImage.Title.ATT}">
                         </div>
 
                         <div class="default-blog-item__details">

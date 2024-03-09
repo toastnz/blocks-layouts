@@ -13,7 +13,7 @@
                 <div class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
                         <div class="default-link-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <img src="{$Image.ScaleWidth(8).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                            <img src="{$Image.ScaleMaxWidth(800).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                         </div>
 
                         <div class="default-link-item__details">

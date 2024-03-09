@@ -4,7 +4,7 @@
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
                 <% if $Image %>
                     <div class="default-percentage-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                        <img loading="lazy" src="{$Image.ScaleWidth(8).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                        <img loading="lazy" src="{$Image.ScaleMaxWidth(800).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                     </div>
                 <% end_if %>
 
