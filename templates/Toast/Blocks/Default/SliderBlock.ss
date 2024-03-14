@@ -7,7 +7,7 @@
         </div>
     <% end_if %>
 
-    <div class="default-slider__wrap" data-equalize="{$HTMLID}__media">
+    <div class="default-slider__wrap" data-match-height="{$HTMLID}__media">
         <div class="default-slider__container colour--{$SecondaryColour.ColourClasses}">
             <div class="[ js-default-slider__container ]">
                 <% loop $Items.Sort('SortOrder') %>
