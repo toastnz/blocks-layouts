@@ -3,6 +3,7 @@
         <div class="default-image__wrap">
             <div class="default-image__media">
                 <picture class="default-image__image">
+                    <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                     <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
                     <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
                     <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
