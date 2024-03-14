@@ -9,7 +9,7 @@
                             <source media="(max-width: 767px)" srcset="{$Thumbnail.ScaleMaxWidth(768).URL}">
                             <source media="(max-width: 1439px)" srcset="{$Thumbnail.ScaleMaxWidth(1440).URL}">
                             <source media="(max-width: 1919px)" srcset="{$Thumbnail.ScaleMaxWidth(1920).URL}">
-                            <img loading="lazy" src="{$Thumbnail.ScaleMaxWidth(1920).URL}" alt="{$Thumbnail.Title.ATT}" width="{$Thumbnail.Width}" height="{$Thumbnail.Height}" style="object-fit: cover; object-position: {$getThumbnailFocusPosition($Thumbnail.ID)}">
+                            <img loading="lazy" src="{$Thumbnail.ScaleMaxWidth(1920).URL}" alt="{$Thumbnail.Title.ATT}" width="{$Thumbnail.Width}" height="{$Thumbnail.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Thumbnail.ID)}">
                         </picture>
                     <% else_if $Video %>
                         <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
