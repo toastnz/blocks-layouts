@@ -28,9 +28,7 @@
                                     <% end_if %>
 
                                     <% if $Video %>
-                                        <div class="default-slider-item__aspect">
-                                            <div class="default-slider-item__icon"></div>
-                                        </div>
+                                        <div class="default-slider-item__icon"></div>
                                     <% end_if %>
                                 </div>
                             </div>
