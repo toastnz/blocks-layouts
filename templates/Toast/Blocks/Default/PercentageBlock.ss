@@ -7,7 +7,7 @@
                         <picture>
                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                            <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}">
+                            <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}">
                         </picture>
                     </div>
                 <% end_if %>
