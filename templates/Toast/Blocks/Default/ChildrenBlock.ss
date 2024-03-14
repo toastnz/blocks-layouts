@@ -12,8 +12,12 @@
             <% loop $Items %>
                 <div class="default-children-item [ js-in-view ]">
                     <a href="{$Link}" class="default-children-item__link">
-                        <div class="default-children-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <img src="{$Image.ScaleMaxWidth(800).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                        <div class="default-children-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
+                            <picture>
+                                <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                                <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                                <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                            </picture>
                         </div>
 
                         <div class="default-children-item__details">

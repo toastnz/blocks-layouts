@@ -3,8 +3,12 @@
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
                 <% if $Image %>
-                    <div class="default-percentage-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                        <img loading="lazy" src="{$Image.ScaleMaxWidth(800).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                    <div class="default-percentage-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
+                        <picture>
+                            <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                            <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                            <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}">
+                        </picture>
                     </div>
                 <% end_if %>
 

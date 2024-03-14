@@ -2,7 +2,19 @@
     <div class="default-video__wrap">
         <div class="default-video__media">
             <a id="{$HTMLID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
-                <div class="default-video__thumbnail" data-src="<% if $ThumbnailID %>{$Thumbnail.FocusFill(1920,1080).URL}<% else %>{$Video.ThumbnailURL('large')}<% end_if %>"></div>
+                <div class="default-video__thumbnail">
+                    <% if $Image %>
+                        <picture>
+                            <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                            <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                            <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
+                            <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
+                            <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                        </picture>
+                    <% else_if $Video %>
+                        <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
+                    <% end_if %>
+                </div>
                 <div class="default-video__icon colour--{$SecondaryColour.ColourClasses}"></div>
             </a>
 

@@ -2,12 +2,24 @@
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
-                <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}" data-src="{$Image.ScaleMaxWidth(1200).URL}" style="background-position: {$getImageFocusPosition($Image.ID)}">
-                    <img src="{$Image.ScaleMaxWidth(1200).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}">
+                    <picture>
+                        <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                        <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                        <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
+                        <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
+                        <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                    </picture>
                 </div>
             <% else %>
-                <div class="default-media-text__image" data-src="{$Image.ScaleMaxWidth(1200).URL}" style="background-position: {$getImageFocusPosition($Image.ID)}">
-                    <img src="{$Image.ScaleMaxWidth(1200).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                <div class="default-media-text__image">
+                    <picture>
+                        <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                        <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                        <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
+                        <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
+                        <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                    </picture>
                 </div>
             <% end_if %>
         </div>

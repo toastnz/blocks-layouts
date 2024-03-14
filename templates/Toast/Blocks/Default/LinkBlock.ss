@@ -12,8 +12,12 @@
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
-                        <div class="default-link-item__media" data-src="{$Image.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <img src="{$Image.ScaleMaxWidth(800).URL}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
+                        <div class="default-link-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
+                            <picture>
+                                <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                                <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                                <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                            </picture>
                         </div>
 
                         <div class="default-link-item__details">

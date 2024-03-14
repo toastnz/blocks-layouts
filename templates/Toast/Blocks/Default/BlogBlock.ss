@@ -12,8 +12,12 @@
             <% loop $Posts %>
                 <div class="default-blog-item [ js-in-view ]">
                     <a href="{$Link}" class="default-blog-item__link">
-                        <div class="default-blog-item__media" data-src="{$FeaturedImage.ScaleMaxWidth(800).URL}" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <img src="{$FeaturedImage.ScaleMaxWidth(800).URL}" width="{$FeaturedImage.getWidth()}" height="{$FeaturedImage.getHeight()}" loading="lazy" alt="{$FeaturedImage.Title.ATT}">
+                        <div class="default-blog-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
+                            <picture>
+                                <source media="(max-width: 479px)" srcset="{$FeaturedImage.ScaleMaxWidth(480).URL}">
+                                <source media="(max-width: 767px)" srcset="{$FeaturedImage.ScaleMaxWidth(768).URL}">
+                                <img loading="lazy" src="{$FeaturedImage.ScaleMaxWidth(960).URL}" alt="{$FeaturedImage.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                            </picture>
                         </div>
 
                         <div class="default-blog-item__details">
