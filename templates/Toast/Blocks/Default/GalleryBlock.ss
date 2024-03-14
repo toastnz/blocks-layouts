@@ -14,10 +14,10 @@
                     <button class="default-gallery-item__action background-colour--{$Top.SecondaryColour.ColourClasses} [ js-default-gallery__action ] <% if $Video %>has-video<% end_if %>">
                         <div class="default-gallery-item__media">
                             <% if $Image %>
-                                <picture data-as="background">
+                                <picture>
                                     <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                                     <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                                    <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
                                 </picture>
                             <% else_if $Video %>
                                 <img data-as="background" loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">

@@ -4,10 +4,10 @@
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
                 <% if $Image %>
                     <div class="default-percentage-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
-                        <picture data-as="background">
+                        <picture>
                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                            <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}">
+                            <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}">
                         </picture>
                     </div>
                 <% end_if %>
