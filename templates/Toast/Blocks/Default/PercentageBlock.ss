@@ -4,7 +4,7 @@
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
                 <% if $Image %>
                     <div class="default-percentage-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
-                        <picture>
+                        <picture data-as="background">
                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
                             <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$FeaturedImage.Width}" height="{$FeaturedImage.Height}">

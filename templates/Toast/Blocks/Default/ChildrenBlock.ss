@@ -13,7 +13,7 @@
                 <div class="default-children-item [ js-in-view ]">
                     <a href="{$Link}" class="default-children-item__link">
                         <div class="default-children-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
-                            <picture>
+                            <picture data-as="background">
                                 <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                                 <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
                                 <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
