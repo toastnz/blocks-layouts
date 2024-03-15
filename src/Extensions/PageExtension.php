@@ -93,7 +93,9 @@ class PageExtension extends DataExtension
         $styles = [];
 
         foreach ($blocks as $block) {
-            $cssFile = $block->getCSSFile();
+            // Check if the CSSFile has been stored in the DB, otherwise find it
+            $cachedCSSFile = $block->owner->CSSFile;
+            $cssFile = $cachedCSSFile ? $cachedCSSFile : $block->getCSSFile();
 
             if ($cssFile && !in_array($cssFile, $styles)) {
                 $styles[] = $cssFile;
