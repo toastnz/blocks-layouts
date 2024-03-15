@@ -2,7 +2,7 @@
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
-                <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}">
+                <div class="default-media-text__video colour--{$SecondaryColour.ColourClasses}" data-video-modal="{$Video.IframeURL}">
                     <% if $Image %>
                         <picture>
                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
