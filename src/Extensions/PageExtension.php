@@ -97,7 +97,8 @@ class PageExtension extends DataExtension
             $cachedCSSFile = $block->owner->CSSFile;
             $cssFile = $cachedCSSFile ? $cachedCSSFile : $block->getCSSFile();
 
-            if ($cssFile && !in_array($cssFile, $styles)) {
+            // Check if the file exists before adding it to the styles array
+            if ($cssFile && file_exists($baseFolder . '/' . $cssFile) && !in_array($cssFile, $styles)) {
                 $styles[] = $cssFile;
             }
         }
