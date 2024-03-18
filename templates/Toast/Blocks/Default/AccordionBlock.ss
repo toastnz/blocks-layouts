@@ -16,7 +16,7 @@
                     </div>
 
                     <div class="default-accordion-item__content [ js-default-accordion__target ]">
-                        <div class="default-accordion-item__wrap">
+                        <div class="default-accordion-item__wrap {$Top.PrimaryColour.ColourBrightness}">
                             {$Content}
                         </div>
                     </div>
