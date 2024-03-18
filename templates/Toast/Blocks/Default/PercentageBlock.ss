@@ -1,7 +1,7 @@
 <section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-percentage__wrap" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}__Text">
         <% loop $Items %>
-            <div class="default-percentage-item percentage-{$Width} [ js-in-view ]">
+            <div class="default-percentage-item percentage-{$Width} [ js-in-view ] <% if not $Image && not $Title && not $Summary && not $LinkID %>default-percentage-item--space<% end_if %>">
                 <% if $Image %>
                     <div class="default-percentage-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
                         <picture>
