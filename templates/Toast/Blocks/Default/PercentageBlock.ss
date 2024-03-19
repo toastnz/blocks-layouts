@@ -14,8 +14,13 @@
 
                 <div class="default-percentage-item__details">
                     <div data-equalize-watch="{$Top.HTMLID}__Text">
-                        <span class="default-percentage-item__title">{$Title.XML}</span>
-                        <p class="default-percentage-item__summary">{$Summary}</p>
+                        <% if $Title %>
+                            <span class="default-percentage-item__title">{$Title.XML}</span>
+                        <% end_if %>
+
+                        <% if $Summary %>
+                            <p class="default-percentage-item__summary">{$Summary}</p>
+                        <% end_if %>
                     </div>
 
                     <% if $LinkID %>
