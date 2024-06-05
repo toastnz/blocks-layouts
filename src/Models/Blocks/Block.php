@@ -95,11 +95,13 @@ class Block extends DataObject
 
         $this->extend('updateBlockTemplate', $template);
         // load css file if exists in directory specified in config yml
-        if ($cssFilePath = $this->getCSSFile()){
-            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
-                Requirements::css($cssFilePath);
-            }
-        }
+	if(!$this->dbObject('CSSFile')){
+	        if ($cssFilePath = $this->getCSSFile()){
+	            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
+	                Requirements::css($cssFilePath);
+	            }
+	        }
+	}
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
     }
 
