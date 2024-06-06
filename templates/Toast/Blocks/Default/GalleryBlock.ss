@@ -17,7 +17,7 @@
                                 <picture>
                                     <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                                     <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-position: {$getImageFocusPosition($Image.ID)}">
                                 </picture>
                             <% else_if $Video %>
                                 <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
@@ -44,7 +44,7 @@
                                     <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
                                     <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
                                     <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
-                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                                    <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}" style="object-position: {$getImageFocusPosition($Image.ID)}">
                                 </picture>
 
                                 <% if $Video %>
