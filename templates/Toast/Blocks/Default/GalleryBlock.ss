@@ -35,7 +35,7 @@
         </div>
 
         <div class="default-gallery-modal colour--{$Top.SecondaryColour.ColourClasses} [ js-default-gallery__modal ]">
-            <div class="[ js-default-gallery__slider ]">
+            <div class="default-gallery-modal__slider [ js-default-gallery__slider ]">
                 <% loop $Items.Sort('SortOrder') %>
                     <div class="default-gallery-modal__item">
                         <div class="default-gallery-modal__media">
