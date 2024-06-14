@@ -9,7 +9,7 @@
 
     <div class="default-slider__wrap" data-match-height="{$HTMLID}__media">
         <div class="default-slider__container colour--{$SecondaryColour.ColourClasses}">
-            <div class="[ js-default-slider__container ]">
+            <div class="default-slider__slider [ js-default-slider__container ]">
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image || $Video %>
                         <div class="default-slider-item">
