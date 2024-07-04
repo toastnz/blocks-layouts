@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-media-text [ js-default-media-text ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" tabIndex="0" class="default-media-text [ js-default-media-text ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>

@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-testimonial [ js-default-testimonial ] background-colour--c-white {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-testimonial [ js-default-testimonial ] background-colour--c-white {$IncludeClasses} {$ExtraClasses}">
         <div class="default-testimonial__wrap">
             <div class="default-testimonial__list colour--{$SecondaryColour.ColourClasses}">
                 <div class="default-testimonial__slider [ js-default-testimonial__container ]">

@@ -1,5 +1,5 @@
 <% if $Posts.Count %>
-    <section id="{$HTMLID}" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-blog__header">
                 <div class="default-blog__content">
