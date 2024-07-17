@@ -43,8 +43,7 @@ class PercentageBlockItem extends BlockItem
 
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Thumbnail')
-                    ->setFolderName('Uploads/Blocks')
-                    ->setDescription('Original image aspect ratio will be used, however, they will all match the height of the tallest image which will result in smaller images being cropped.'),
+                    ->setFolderName('Uploads/Blocks'),
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
                 DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
