@@ -19,6 +19,7 @@ class PercentageBlockItem extends BlockItem
 
     private static $db = [
         'SortOrder' => 'Int',
+        'Name' => 'Varchar(255)',
         'Title' => 'Varchar(255)',
         'Summary' => 'Text',
         'Width' => 'Enum("25, 33, 50, 66, 75, 100", "50")'
@@ -31,7 +32,7 @@ class PercentageBlockItem extends BlockItem
     ];
 
     private static $summary_fields = [
-        'Title' => 'Title',
+        'Name' => 'Name',
     ];
     private static $owns = [
         'Image',
@@ -44,6 +45,8 @@ class PercentageBlockItem extends BlockItem
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Thumbnail')
                     ->setFolderName('Uploads/Blocks'),
+                TextField::create('Name', 'Name')
+                    ->setDescription('This is for internal use only and will not be displayed on the website'),
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
                 DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
