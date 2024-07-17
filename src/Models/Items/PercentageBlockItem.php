@@ -33,6 +33,7 @@ class PercentageBlockItem extends BlockItem
 
     private static $summary_fields = [
         'Name' => 'Name',
+        'Title' => 'Title',
     ];
     private static $owns = [
         'Image',
