@@ -89,6 +89,8 @@ class PageExtension extends DataExtension
     {
         $baseFolder = Director::baseFolder();
         $blocks = $this->owner->ContentBlocks();
+        
+        $this->extend('updateCombinedBlocks', $blocks);
 
         $styles = [];
 
