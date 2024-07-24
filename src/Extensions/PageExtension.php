@@ -5,6 +5,7 @@ namespace Toast\Blocks\Extensions;
 use Toast\Blocks\Block;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Assets\File;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Control\Director;
@@ -90,11 +91,13 @@ class PageExtension extends DataExtension
         $baseFolder = Director::baseFolder();
         $blocks = $this->owner->ContentBlocks();
         
-        $this->owner->extend('updateCombinedBlocks', $blocks);
+        $components = new ArrayList();
+        $components->merge($blocks);
+        $this->owner->extend('updateCombinedBlocks', $components);
 
-        $styles = [];
+        $styles = [];   
 
-        foreach ($blocks as $block) {
+        foreach ($components as $block) {
             // Check if the CSSFile has been stored in the DB, otherwise find it
             $cachedCSSFile = $block->owner->CSSFile;
             $cssFile = $cachedCSSFile ? $cachedCSSFile : $block->getCSSFile();
