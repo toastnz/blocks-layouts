@@ -48,6 +48,7 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
+        'CSSFile'       => 'Varchar',
     ];
 
     private static $casting = [
@@ -96,12 +97,7 @@ class Block extends DataObject
         $template = $this->Template;
 
         $this->extend('updateBlockTemplate', $template);
-        // load css file if exists in directory specified in config yml
-        if ($cssFilePath = $this->getCSSFile()){
-            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
-                Requirements::css($cssFilePath);
-            }
-        }
+
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
     }
 
@@ -117,12 +113,13 @@ class Block extends DataObject
             }
 
             $fields->removeByName([
-                'Template'
+                'Template',
+                'CSSFile'
             ]);
 
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
-                    ->setDescription('Title used for internal reference only and does not appear on the site.')
+                    ->setDescription('Title used for internal reference only and does not appear on the site.'),
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -192,28 +189,52 @@ class Block extends DataObject
 
     public function getCSSFile()
     {
-        $cssFilePath = null;
-        if($cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir')){
-            if($this->Template){
-                // check block template dir for css file
-               $template =explode('\\', $this->Template);
-               // layoutname is always going to be in the pos 2 of the array
-               if(isset($template[2])){
-                   $layoutName = strtolower($template[2]);
-                   $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                   if (file_exists($cssFilePath)){
-                       // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                       $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+        // Get the CSS directory from the configuration
+        $cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
 
-                   }
-               }
-           }
+        var_dump($cssDir);
+
+        // Get the template name
+        $template = $this->Template;
+
+        // If either the CSS directory or the template name is not set, return null
+        if (!$cssDir || !$template) {
+            return null;
         }
 
+        // Split the template name into parts
+        $templateParts = explode('\\', $template);
+
+        // If the template name doesn't have at least 3 parts, return null
+        if (!isset($templateParts[2])) {
+            return null;
+        }
+
+        // Get the layout name from the template parts and convert it to lowercase
+        $layoutName = strtolower($templateParts[2]);
+
+        // Get the block template name and convert it to lowercase
+        $blockTemplateName = strtolower($this->getBlockTemplateName());
+
+        // Construct the CSS file name
+        $cssFileName = $layoutName . '-' . $blockTemplateName . '.css';
+
+        // Construct the full path to the CSS file
+        $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
+
+        // If the CSS file doesn't exist, return null
+        if (!file_exists($cssFilePath)) {
+            return null;
+        }
+
+        // Construct the relative path to the CSS file
+        $cssFilePath = $cssDir . '/' . $cssFileName;
+
+        // Allow other extensions to update the CSS file path
         $this->extend('updateBlockTemplateCSS', $cssFilePath);
 
+        // Return the CSS file path
         return $cssFilePath;
-
     }
 
     public function onBeforeWrite()
@@ -221,6 +242,9 @@ class Block extends DataObject
         if (!$this->Template){
             $this->Template =  $this->getTemplateClass();
         }
+
+        $this->CSSFile = $this->getCSSFile();
+
          parent::onBeforeWrite();
 
     }
