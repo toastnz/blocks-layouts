@@ -7,13 +7,17 @@ use Page;
 use ReflectionClass;
 use SilverStripe\ORM\DB;
 use SilverStripe\Forms\Tab;
-use SilverStripe\Forms\TabSet;
 use SilverStripe\Assets\Image;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\View\SSViewer;
 use SilverStripe\ORM\DataObject;
+use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
+use SilverStripe\Security\Security;
+use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -21,18 +25,17 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
+use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Core\Manifest\ModuleResource;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
-use SilverStripe\View\SSViewer;
-use SilverStripe\SiteConfig\SiteConfig;
-use Toast\Blocks\Helpers\Helper;
-use SilverStripe\Forms\OptionsetField;
-use SilverStripe\View\Requirements;
 
 class Block extends DataObject
 {
@@ -45,6 +48,7 @@ class Block extends DataObject
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
+        'CSSFile'       => 'Varchar',
     ];
 
     private static $casting = [
@@ -73,8 +77,7 @@ class Block extends DataObject
         if(self::config()->get('block-icon') == null){
             return;
         }
-
-        $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
+        $icon = str_replace('[resources]', TOAST_RESOURCES_DIR , self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
             <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
@@ -94,12 +97,7 @@ class Block extends DataObject
         $template = $this->Template;
 
         $this->extend('updateBlockTemplate', $template);
-        // load css file if exists in directory specified in config yml
-        if ($cssFilePath = $this->getCSSFile()){
-            if (file_exists(BASE_PATH . '/' . $cssFilePath)){
-                Requirements::css($cssFilePath);
-            }
-        }
+
         return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
     }
 
@@ -115,12 +113,13 @@ class Block extends DataObject
             }
 
             $fields->removeByName([
-                'Template'
+                'Template',
+                'CSSFile'
             ]);
 
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
-                    ->setDescription('Title used for internal reference only and does not appear on the site.')
+                    ->setDescription('Title used for internal reference only and does not appear on the site.'),
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -138,36 +137,25 @@ class Block extends DataObject
         // scan the app directory for block layouts and return them as an array
         $layouts = [];
         $optionalLayouts = [];
-        $baseFolder = Director::baseFolder();
+        $baseFolder = BASE_PATH;
         $theme = Helper::getThemes();
         // module dir
         $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
-        $module_imgsrc =  TOAST_BLOCKS_IMAGE_DIR . '/client/images/layout-icons/default/' ;
-        // $module_imgsrc = BASE_PATH . '/vendor/toastnz/' . TOAST_BLOCKS_DIR . '/client/images/layout-icons/default/' ;
+        $module_imgsrc = BASE_PATH . '/' . TOAST_BLOCKS_IMAGE_DIR ;
        // get default layouts
         $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
 
         // alternate layouts if specified
         if ($layout_src = Helper::getLayoutSrc()){
             $layout_src = BASE_PATH . '/' . $layout_src;
-            // NOTE: I have commented this out as this is what I believe was causing templates to not display for me.
-            // get layout dir from yml
-            // if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-            //     return;
-            // }
             $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
             foreach ($dirs as $dir) {
-                 if (!$layout_imgsrc = Helper::getLayoutIconSrc()){
-                    // NOTE: I have updated this return to a continue as this is what I believe was causing templates to not display for me.
-                    continue;
-                }
+                $layout_imgsrc = Helper::getLayoutIconSrc();
                 $optionalSrcPath = $layout_src . '/' . $dir . '/';
                 $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-
                 $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
             }
         }
-
         if (count($optionalLayouts) > 0){
             foreach($optionalLayouts as $layout){
                 if ($layout){
@@ -177,16 +165,14 @@ class Block extends DataObject
             }
         }
 
-         if (count($layouts) > 0){
-            $tplField = OptionsetField::create(
-                "Template",
-                "Choose a layout",
-                $layouts,
-                $this->Template
-            )->addExtraClass('toast-block-layouts');
-            return $tplField;
-        }
-        return ;
+        $tplField = OptionsetField::create(
+            "Template",
+            "Choose a layout",
+            $layouts,
+            $this->Template
+        )->addExtraClass('toast-block-layouts');
+
+        return $tplField;
     }
 
     public function getLayoutDirs(){
@@ -203,28 +189,52 @@ class Block extends DataObject
 
     public function getCSSFile()
     {
-        $cssFilePath = null;
-        if($cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir')){
-            if($this->Template){
-                // check block template dir for css file
-               $template =explode('\\', $this->Template);
-               // layoutname is always going to be in the pos 2 of the array
-               if(isset($template[2])){
-                   $layoutName = strtolower($template[2]);
-                   $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                   if (file_exists($cssFilePath)){
-                       // $cssFilePath =   '/' .$cssDir . '/' . $layout . '-' . strtolower($this->getBlockTemplateName()) . '.css';
-                       $cssFilePath =   $cssDir . '/' . $layoutName . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+        // Get the CSS directory from the configuration
+        $cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
 
-                   }
-               }
-           }
+        var_dump($cssDir);
+
+        // Get the template name
+        $template = $this->Template;
+
+        // If either the CSS directory or the template name is not set, return null
+        if (!$cssDir || !$template) {
+            return null;
         }
 
+        // Split the template name into parts
+        $templateParts = explode('\\', $template);
+
+        // If the template name doesn't have at least 3 parts, return null
+        if (!isset($templateParts[2])) {
+            return null;
+        }
+
+        // Get the layout name from the template parts and convert it to lowercase
+        $layoutName = strtolower($templateParts[2]);
+
+        // Get the block template name and convert it to lowercase
+        $blockTemplateName = strtolower($this->getBlockTemplateName());
+
+        // Construct the CSS file name
+        $cssFileName = $layoutName . '-' . $blockTemplateName . '.css';
+
+        // Construct the full path to the CSS file
+        $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
+
+        // If the CSS file doesn't exist, return null
+        if (!file_exists($cssFilePath)) {
+            return null;
+        }
+
+        // Construct the relative path to the CSS file
+        $cssFilePath = $cssDir . '/' . $cssFileName;
+
+        // Allow other extensions to update the CSS file path
         $this->extend('updateBlockTemplateCSS', $cssFilePath);
 
+        // Return the CSS file path
         return $cssFilePath;
-
     }
 
     public function onBeforeWrite()
@@ -232,6 +242,9 @@ class Block extends DataObject
         if (!$this->Template){
             $this->Template =  $this->getTemplateClass();
         }
+
+        $this->CSSFile = $this->getCSSFile();
+
          parent::onBeforeWrite();
 
     }
@@ -393,7 +406,7 @@ class Block extends DataObject
     public function canPublish($member = null)
     {
         if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
         }
 
         if ($member && Permission::checkMember($member, "ADMIN")) {
@@ -470,7 +483,7 @@ class Block extends DataObject
     public function canArchive($member = null)
     {
         if (!$member) {
-            $member = Member::currentUser();
+            $member = Security::getCurrentUser();
         }
 
         $extended = $this->extendedCan('canArchive', $member);
