@@ -192,8 +192,6 @@ class Block extends DataObject
         // Get the CSS directory from the configuration
         $cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
 
-        var_dump($cssDir);
-
         // Get the template name
         $template = $this->Template;
 
