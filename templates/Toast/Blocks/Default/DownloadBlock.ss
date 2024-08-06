@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-download__wrap">
             <div class="default-download__list">
                 <% loop $Items.Sort('SortOrder') %>
@@ -8,15 +8,15 @@
                             <div class="default-download-item__title">
                                 <span>{$Up.Title.XML}</span>
                             </div>
-        
+
                             <div class="default-download-item__description">
                                 <span>{$Up.Summary.XML}</span>
                             </div>
-        
+
                             <div class="default-download-item__info">
                                 <span>{$Extension.upperCase} {$Size}</span>
                             </div>
-        
+
                             <div class="default-download-item__icon">
                                 <span></span>
                             </div>

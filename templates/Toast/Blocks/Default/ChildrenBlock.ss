@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" class="default-children [ js-default-children ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-children [ js-default-children ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-children__header">
                 <div class="default-children__content">
@@ -7,7 +7,7 @@
                 </div>
             </div>
         <% end_if %>
-        
+
         <div class="default-children__wrap lg-up-{$Columns}" data-equalize="{$HTMLID}">
             <% loop $Items.Sort('Sort') %>
                 <div class="default-children-item">
@@ -16,18 +16,18 @@
                             <img src="{$Image.Fill(5,6).URL}" width="5" height="6" loading="lazy" alt="{$Image.Title.ATT}">
                             <div class="default-children-item__icon" data-src="{$Icon.URL}"></div>
                         </div>
-        
+
                         <div class="default-children-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                             <div data-equalize-watch="{$Top.HTMLID}">
                                 <% if $Title %>
                                     <span class="default-children-item__title">{$Title.XML}</span>
                                 <% end_if %>
-        
+
                                 <% if $Summary %>
                                     <p class="default-children-item__summary">{$Summary.XML}</p>
                                 <% end_if %>
                             </div>
-        
+
                             <span class="default-children-item__button">{$Link.Title}</span>
                         </div>
                     </a>

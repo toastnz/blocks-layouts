@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-video [ js-default-video ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" tabIndex="0" class="default-video [ js-default-video ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-video__header">
             <div class="default-video__content">{$Content}</div>

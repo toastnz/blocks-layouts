@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-gallery [ js-default-gallery ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" tabIndex="0" class="default-gallery [ js-default-gallery ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-gallery__header">
             <div class="default-gallery__content">
@@ -40,7 +40,7 @@
                                     <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
                                     <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}">
                                 </picture>
-        
+
                                 <% if $Video %>
                                     <div class="default-gallery-modal__video colour--{$Top.SecondaryColour.ColourClasses}" data-video="{$Video.IframeURL}">
                                         {$SVG('play')}

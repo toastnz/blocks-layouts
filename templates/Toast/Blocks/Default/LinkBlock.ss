@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" tabIndex="0" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">
@@ -15,13 +15,13 @@
                         <img src="{$Image.Fill(5,6).URL}" width="5" height="6" loading="lazy" alt="{$Image.Title.ATT}">
                         <div class="default-link-item__icon" data-src="{$Icon.URL}"></div>
                     </div>
-    
+
                     <div class="default-link-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                         <div data-equalize-watch="default-links">
                             <% if $Title %>
                                 <span class="default-link-item__title">{$Title.XML}</span>
                             <% end_if %>
-    
+
                             <% if $Summary %>
                                 <p class="default-link-item__summary">{$Summary.XML}</p>
                             <% end_if %>

@@ -1,5 +1,5 @@
 <% if $Posts.Count %>
-    <section id="{$HTMLID}" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-blog__header">
                 <div class="default-blog__content">
@@ -7,7 +7,7 @@
                 </div>
             </div>
         <% end_if %>
-    
+
         <div class="default-blog__wrap lg-up-{$Columns}" data-equalize="{$HTMLID}">
             <% loop $Posts %>
                 <div class="default-blog-item">
@@ -17,18 +17,18 @@
 
                             <div class="default-blog-item__icon" data-src="{$Icon.URL}"></div>
                         </div>
-    
+
                         <div class="default-blog-item__details background-colour--{$Top.SecondaryColour.getColourClasses}">
                             <div data-equalize-watch="{$Top.HTMLID}">
                                 <% if $Title %>
                                     <span class="default-blog-item__title">{$Title.XML}</span>
                                 <% end_if %>
-        
+
                                 <% if $Summary %>
                                     <p class="default-blog-item__summary">{$Summary.XML}</p>
                                 <% end_if %>
                             </div>
-    
+
                             <span class="default-blog-item__button">Read more</span>
                         </div>
                     </a>

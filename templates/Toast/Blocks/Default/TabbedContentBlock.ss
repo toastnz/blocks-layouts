@@ -1,5 +1,5 @@
 <% if $Tabs.Count %>
-    <section id="{$HTMLID}" class="default-tabbed-content [ js-default-tabbed-content ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$HTMLID}" tabIndex="0" class="default-tabbed-content [ js-default-tabbed-content ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <div class="default-tabbed-content__wrap">
             <div class="default-tabbed-content__header">
                 <% loop $Tabs.Sort('SortOrder') %>
@@ -10,7 +10,7 @@
                     </div>
                 <% end_loop %>
             </div>
-    
+
             <div class="default-tabbed-content__main">
                 <% loop $Tabs.Sort('SortOrder') %>
                     <div class="default-tab-item [ js-default-tabbed-content__item ]">
@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                         <% end_if %>
-                        
+
                         <% if $Content %>
                             <div class="default-tab-item__main">
                                 {$Content}

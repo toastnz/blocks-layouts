@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$HTMLID}" tabIndex="0" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-percentage__wrap" data-equalize="{$HTMLID}__items">
         <% loop $Items %>
             <div class="default-percentage-item percentage-{$Width}">
