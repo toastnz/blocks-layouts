@@ -127,7 +127,7 @@ class Block extends DataObject
 
             if ($layoutOptions = $this->getBlockLayouts()){
                 // Add the $layoutOptions to the Main tab, AFTER the Title field
-                $fields->insertAfter('Title', $layoutOptions);
+                $fields->insertAfter('NavigationHeading', $layoutOptions);
             }
 
         });
