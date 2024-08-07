@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" tabIndex="0" class="default-accordion [ js-default-accordion ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-accordion__header">
                 <div class="default-accordion__content">

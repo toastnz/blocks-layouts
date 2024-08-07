@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" tabIndex="0" class="default-gallery [ js-default-gallery ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-gallery [ js-default-gallery ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-gallery__header">
             <div class="default-gallery__content">

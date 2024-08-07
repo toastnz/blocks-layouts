@@ -1,7 +1,7 @@
-<section id="{$HTMLID}" tabIndex="0" class="default-video [ js-default-video ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-video [ js-default-video ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-video__wrap">
         <div class="default-video__media">
-            <a id="{$HTMLID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
+            <a id="{$BlockID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
                 <div class="default-video__thumbnail">
                     <% if $Thumbnail %>
                         <picture>

@@ -1,4 +1,4 @@
-<section id="{$HTMLID}" tabIndex="0" class="default-slider [ js-default-slider ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-slider [ js-default-slider ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-slider__header">
             <div class="default-slider__content">
@@ -7,7 +7,7 @@
         </div>
     <% end_if %>
 
-    <div class="default-slider__wrap" data-match-height="{$HTMLID}__media">
+    <div class="default-slider__wrap" data-match-height="{$BlockID}__media">
         <div class="default-slider__container colour--{$SecondaryColour.ColourClasses}">
             <div class="default-slider__slider [ js-default-slider__container ]">
                 <% loop $Items.Sort('SortOrder') %>

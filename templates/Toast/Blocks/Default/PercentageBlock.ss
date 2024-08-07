@@ -1,5 +1,5 @@
-<section id="{$HTMLID}" tabIndex="0" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
-    <div class="default-percentage__wrap" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}__Text">
+<section id="{$BlockID}" tabIndex="0" class="default-percentage [ js-default-percentage ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <div class="default-percentage__wrap" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}__Text">
         <% loop $Items.Sort('SortOrder') %>
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ] <% if not $Image && not $Title && not $Summary && not $LinkID %>default-percentage-item--space<% end_if %>">
                 <% if $Image %>

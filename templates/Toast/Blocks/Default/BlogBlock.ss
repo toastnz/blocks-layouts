@@ -1,5 +1,5 @@
 <% if $Posts.Count %>
-    <section id="{$HTMLID}" tabIndex="0" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$BlockID}" tabIndex="0" class="default-blog [ js-default-blog ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-blog__header">
                 <div class="default-blog__content">
@@ -8,7 +8,7 @@
             </div>
         <% end_if %>
 
-        <div class="default-blog__wrap lg-up-{$Columns}" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}_Text">
+        <div class="default-blog__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
             <% loop $Posts %>
                 <div class="default-blog-item [ js-in-view ]">
                     <a href="{$Link}" class="default-blog-item__link">

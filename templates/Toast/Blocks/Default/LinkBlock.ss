@@ -1,5 +1,5 @@
 <% if $Items.Count %>
-    <section id="{$HTMLID}" tabIndex="0" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+    <section id="{$BlockID}" tabIndex="0" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
         <% if $Content %>
             <div class="default-link__header">
                 <div class="default-link__content">
@@ -8,7 +8,7 @@
             </div>
         <% end_if %>
 
-        <div class="default-link__wrap lg-up-{$Columns}" data-match-height="{$HTMLID}_Media" data-equalize="{$HTMLID}_Text">
+        <div class="default-link__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
