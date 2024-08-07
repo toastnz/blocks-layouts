@@ -49,6 +49,7 @@ class Block extends DataObject
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
         'CSSFile'       => 'Varchar',
+        'NavigationHeading' => 'Varchar(255)',
     ];
 
     private static $casting = [
@@ -120,6 +121,8 @@ class Block extends DataObject
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
+                TextField::create('NavigationHeading', 'Navigation Heading')
+                    ->setDescription('Heading will be used for navigation purposes and converted to an ID for linking. Please ensure this heading is unique on the page.'),
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -513,6 +516,24 @@ class Block extends DataObject
         }
 
         return;
+    }
+
+    public function getBlockID()
+    {
+        // First check if there is a NavigationHeading
+        if ($this->NavigationHeading) {
+            // Remove any number, punctuation, and special characters
+            $id = preg_replace('/[^a-zA-Z0-9]+/', ' ', $this->NavigationHeading);
+            // Convert to Upper Camel Case (Pascal Case)
+            $id = str_replace(' ', '', ucwords(trim($id)));
+            // Return the ID
+            return $id;
+        }
+
+        else {
+            // If there is no NavigationHeading, return the ID
+            return $this->getHtmlID();
+        }
     }
 
 }
