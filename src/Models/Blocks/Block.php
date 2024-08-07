@@ -520,20 +520,19 @@ class Block extends DataObject
 
     public function getBlockID()
     {
+        // Set an ID var
+        $id = '';
+
         // First check if there is a NavigationHeading
         if ($this->NavigationHeading) {
             // Remove any number, punctuation, and special characters
             $id = preg_replace('/[^a-zA-Z0-9]+/', ' ', $this->NavigationHeading);
             // Convert to Upper Camel Case (Pascal Case)
             $id = str_replace(' ', '', ucwords(trim($id)));
-            // Return the ID
-            return $id;
         }
 
-        else {
-            // If there is no NavigationHeading, return the ID
-            return $this->getHtmlID();
-        }
+        // Make sure the ID has at least 1 character, otherwise return the default ID
+        return (strlen($id) > 0) ? $id : $this->getHtmlID();
     }
 
 }
