@@ -12,7 +12,7 @@
             <% loop $Posts %>
                 <div class="default-blog-item [ js-in-view ]">
                     <a href="{$Link}" class="default-blog-item__link">
-                        <div class="default-blog-item__media" data-equalize-watch="{$Top.HTMLID}_Media">
+                        <div class="default-blog-item__media" data-equalize-watch="{$$Top.BlockID}_Media">
                             <picture>
                                 <source media="(max-width: 479px)" srcset="{$FeaturedImage.ScaleMaxWidth(480).URL}">
                                 <source media="(max-width: 767px)" srcset="{$FeaturedImage.ScaleMaxWidth(768).URL}">
@@ -21,7 +21,7 @@
                         </div>
 
                         <div class="default-blog-item__details">
-                            <div data-equalize-watch="{$Top.HTMLID}_Text">
+                            <div data-equalize-watch="{$$Top.BlockID}_Text">
                                 <% if $Title %>
                                     <span class="default-blog-item__title">{$Title.XML}</span>
                                 <% end_if %>
