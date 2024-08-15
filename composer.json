@@ -40,7 +40,8 @@
   "extra": {
     "resources-dir": "_resources",
     "expose": [
-        "client/images"
+        "client/images",
+        "client/dist"
     ]
   }
 }

@@ -104,6 +104,9 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/index.js');
+        Requirements::css('toastnz/blocks-layouts: client/dist/styles/index.css');
+
         $this->beforeUpdateCMSFields(function ($fields) {
 
             if ($this->ID) {
