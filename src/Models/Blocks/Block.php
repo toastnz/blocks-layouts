@@ -144,7 +144,7 @@ class Block extends DataObject
         $theme = Helper::getThemes();
         // module dir
         $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
-        $module_imgsrc = BASE_PATH . '/' . TOAST_BLOCKS_IMAGE_DIR ;
+        $module_imgsrc = Helper::getLayoutIconSrc()  ? Helper::getLayoutIconSrc() . TOAST_DEFAULT_DIR : BASE_PATH . '/' . TOAST_BLOCKS_IMAGE_DIR ;
        // get default layouts
         $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
 

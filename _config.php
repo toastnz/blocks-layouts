@@ -4,3 +4,4 @@ define('TOAST_BLOCKS_IMAGE_DIR', 'vendor/toastnz/' . basename(__DIR__) . '/clien
 define('TOAST_BLOCKS_DIR', 'vendor/toastnz/' .   basename(__DIR__));
 define('TOAST_RESOURCES_DIR', RESOURCES_DIR . '/vendor');
 define('TOAST_BLOCKS_TEMPLATE_DIR','templates/Toast/Blocks/Default');
+define('TOAST_DEFAULT_DIR','/default/');

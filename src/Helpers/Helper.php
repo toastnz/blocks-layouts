@@ -40,12 +40,15 @@ class Helper
 
     static function getLayoutIconSrc()
     {
-        $availableBlocks = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src');
+        if($availableBlocksLayouts = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src')){
+            $layout_icon_src_path = str_replace('[resources]', RESOURCES_DIR , $availableBlocksLayouts);
+            $fullpath = Director::publicFolder() . '/' . $layout_icon_src_path;
+            if (!file_exists($fullpath)) {
+                return ;
+            }
 
-        if (!file_exists(Director::baseFolder() . '/' . $availableBlocks)) {
-            return ;
+            return $fullpath;
         }
-        return Director::baseFolder() . '/' . $availableBlocks;
     }
 
     static function getAvailableBlocksLayouts($block, $src, $imgsrc, $default = true)
