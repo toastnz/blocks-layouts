@@ -1,0 +1,121 @@
+$primary: var(--theme-primary, var(--cms-text-colour, #000));
+$text-on-primary: var(--theme-primary-text, var(--cms-background-colour, #fff));
+
+$text-colour: var(--cms-text-colour, #000);
+$accent-colour: var(--cms-accent-colour, #007bff);
+$border-colour: var(--cms-border-colour, #ccc);
+$background-colour: var(--cms-background-colour, transparent);
+
+.toast-block-layouts {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: calc(100% + 40px);
+  margin-left: -20px;
+  margin-right: -20px;
+
+  .radio {
+    position: relative;
+    display: block;
+    padding: 0 20px 40px;
+    margin-right: 0;
+    margin-bottom: 0;
+    text-align: center;
+    width: 25%;
+
+    label {
+      cursor: pointer;
+      display: block;
+      width: 100%;
+    }
+
+    input {
+      position: absolute;
+      opacity: 0;
+      height: 0;
+      width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+
+      &:checked {
+        +.blockThumbnail {
+
+          box-shadow:
+            0 0 0 .2rem #{$background-colour},
+            0 0 0 .4rem #{$accent-colour};
+
+          svg {
+            color: #{$primary};
+            background-color: #{$background-colour};
+          }
+        }
+
+        ~ strong {
+          color: #{$accent-colour};
+        }
+      }
+
+      &:not(:checked) {
+        +.blockThumbnail {
+          svg {
+            filter: grayscale(.75);
+            opacity: .75;
+          }
+        }
+      }
+    }
+
+    .blockThumbnail {
+      position: relative;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      border-radius: .3rem;
+      overflow: hidden;
+      color: #{$text-colour};
+      border: .1rem solid #{$border-colour};
+      background-color: #{$background-colour};
+      transition:
+        background-color .2s ease,
+        border-color .2s ease;
+
+      img,
+      svg {
+        display: block;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: auto;
+      }
+
+      svg {
+        transition:
+          filter .3s ease,
+          opacity .3s ease,
+          background-color .3s ease;
+
+        * {
+          transition: color .3s ease;
+        }
+
+        [fill^="#"] {
+          fill: currentColor;
+        }
+
+        [stroke^="#"] {
+          stroke: currentColor;
+        }
+      }
+    }
+
+    strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: bold;;
+      text-transform: uppercase;
+      transition: color .2s ease;
+    }
+  }
+}

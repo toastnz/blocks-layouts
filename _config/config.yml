@@ -6,6 +6,12 @@ Page:
   extensions:
     - Toast\Blocks\Extensions\PageExtension
 
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+    - 'client/dist/styles/index.css'
+  extra_requirements_javascript:
+    - 'client/dist/scripts/index.js'
+
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - Toast\Blocks\Extensions\SiteConfigExtension
