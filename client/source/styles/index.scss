@@ -46,8 +46,8 @@ $background-colour: var(--cms-background-colour, transparent);
             0 0 0 .4rem #{$accent-colour};
 
           svg {
-            color: #{$primary};
-            background-color: #{$background-colour};
+            color: #{$text-on-primary};
+            background-color: #{$primary};
           }
         }
 

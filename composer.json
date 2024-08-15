@@ -11,17 +11,12 @@
   "license": "BSD-3-Clause",
   "authors": [
     {
-      "name": "Jaydn de Graaf",
-      "homepage": "http://pinc.nz/",
-      "role": "Developer"
+    "name": "Priscilla Yap",
+    "homepage": "http://toast.co.nz/",
+    "role": "Developer"
     },
     {
       "name": "Emmanuel Davies",
-      "homepage": "http://toast.co.nz/",
-      "role": "Developer"
-    },
-    {
-      "name": "Priscilla Yap",
       "homepage": "http://toast.co.nz/",
       "role": "Developer"
     }
