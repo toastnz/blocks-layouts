@@ -8,9 +8,9 @@ Page:
 
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'client/dist/styles/index.css'
+    - 'toastnz/blocks-layouts: client/dist/styles/index.css'
   extra_requirements_javascript:
-    - 'client/dist/scripts/index.js'
+    - 'toastnz/blocks-layouts: client/dist/scripts/index.js'
 
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
