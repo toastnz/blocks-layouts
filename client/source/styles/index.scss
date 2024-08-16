@@ -1,5 +1,5 @@
-$primary: var(--BlocksLayouts-ColourPrimary, var(--cms-text-colour, #000));
-$text-on-primary: var(--BlocksLayouts-ColourPrimary_Text, var(--cms-background-colour, #fff));
+$primary: var(--BlocksLayouts-ColourPrimary, transparent);
+$text-on-primary: var(--BlocksLayouts-ColourPrimary_Text, var(--cms-text-colour, #000));
 
 $text-colour: var(--cms-text-colour, #000);
 $accent-colour: var(--cms-accent-colour, #007bff);
