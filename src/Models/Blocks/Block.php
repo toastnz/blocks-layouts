@@ -104,12 +104,25 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
-        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/index.js');
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/index.css');
+        Requirements::css('toastnz/blocks-layouts: client/dist/styles/preview.css');
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/index.js');
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/preview.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
 
             if ($this->ID) {
+                // Get the URL of the custom route for BlockPreviewPage
+                $previewURL = Controller::join_links(
+                    Director::absoluteBaseURL(),
+                    '_block-preview',
+                    '?block=' . $this->owner->ID . '&stage=Stage'
+                );
+
+                $fields->addFieldsToTab('Root.Preview', [
+                    LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $previewURL . '"></iframe></div>')
+                ]);
+
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
                     ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']')
