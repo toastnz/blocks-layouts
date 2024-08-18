@@ -1,5 +1,5 @@
 $primary: var(--BlocksLayouts-ColourPrimary, transparent);
-$text-on-primary: var(--BlocksLayouts-ColourPrimary_Text, var(--cms-text-colour, #000));
+$text-on-primary: var(--BlocksLayouts-ColourPrimary_Text, #000);
 
 $text-colour: var(--cms-text-colour, #000);
 $accent-colour: var(--cms-accent-colour, #007bff);
@@ -73,9 +73,9 @@ $background-colour: var(--cms-background-colour, transparent);
       width: 100%;
       border-radius: .3rem;
       overflow: hidden;
-      color: #{$text-colour};
+      color: #000;
       border: .1rem solid #{$border-colour};
-      background-color: #{$background-colour};
+      background-color: #fff;
       transition:
         background-color .2s ease,
         border-color .2s ease;
