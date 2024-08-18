@@ -1,9 +1,47 @@
 #BlockPreviewFrame {
   position: relative;
-  overflow: hidden;
   display: block;
-  max-width: 1440px;
-  margin: 50px auto;
+  margin-top: 25px;
+  margin-bottom: 50px;
+  flex: 100%;
+
+  @media (min-width: 992px) {
+    flex: 0 0 75%;
+    max-width: 75%;
+    margin-left: 25%;
+  }
+
+  @media (min-width: 1200px) {
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%;
+    margin-left: 16.66666667%;
+  }
+
+  @media (min-width: 1400px) {
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%;
+  }
+
+  &:before {
+    content: 'Save to update this preview';
+    display: block;
+    position: absolute;
+    top: 100%;
+    margin-top: 5px;
+    left: 0;
+    z-index: 1;
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
 
   iframe {
     position: absolute;

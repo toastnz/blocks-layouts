@@ -43,7 +43,7 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
     // Set the scale and height
     iframe.style.transform = `scale(${scale})`;
     iframe.style.height = `${height}px`;
-    preview.style.height = `${(scale >= 1) ? height * scale : height}px`;
+    preview.style.height = `${height * scale}px`;
   }
 
   // Create a resize observer
