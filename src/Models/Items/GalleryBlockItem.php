@@ -38,10 +38,6 @@ class GalleryBlockItem extends BlockItem
     {
         $fields = parent::getCMSFields();
 
-        $fields->removeByName([
-           'SortOrder',
-        ]);
-
         $fields->addFieldsToTab('Root.Main',
         [
             UploadField::create(

@@ -37,12 +37,6 @@ class SliderBlockItem extends BlockItem
     public function getCMSFields()
     {
        $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->removeByName([
-                'SortOrder',
-                'ParentID'
-            ]);
-
             $fields->addFieldsToTab('Root.Main',
             [
                 UploadField::create(
