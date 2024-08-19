@@ -27,11 +27,22 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
   // Find the iframe
   const iframe = preview.querySelector('iframe');
 
+  let interval = null;
+
   let width = -1;
+
+  const resetInterval = () => {
+    clearInterval(interval);
+    interval = setInterval(() => onResize(), 1000);
+  }
 
   const onResize = () => {
     // Do nothing if the width has not changed
     if (width === preview.clientWidth) return;
+    // Do nothing if the iframe is not ready
+    if (!iframe.contentDocument) return;
+    // Do nothing if the iframe is not ready
+    if (!iframe.contentDocument.readyState === 'complete') return;
 
     // Update the width
     width = preview.clientWidth;
@@ -47,10 +58,14 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
   }
 
   // Create a resize observer
-  const PreviewObserver = new ResizeObserver(() => onResize());
+  const PreviewObserver = new ResizeObserver(() => {
+    resetInterval();
+    onResize();
+  });
 
-  // Observe the preview
+  // Observe the preview when the iframe is loaded
   PreviewObserver.observe(preview);
-
   onResize();
+
+  resetInterval();
 });

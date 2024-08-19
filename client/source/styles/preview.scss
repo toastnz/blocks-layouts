@@ -2,7 +2,8 @@
   #Root_Main {
     &:has(#BlockPreviewFrame) {
       .form-group {
-        width: 50%;
+        display: block!important;
+        width: 50%!important;
         margin-left: 0!important;
         margin-right: 0!important;
         padding-right: 40px!important;
@@ -10,7 +11,15 @@
         &:after {
           margin-left: 0!important;
           margin-right: 0!important;
+          width: 100%!important;
         }
+      }
+
+      .ss-gridfield {
+        display: block!important;
+        width: calc(50% - 40px)!important;
+        // margin-left: 20px!important;
+        // margin-right: 20px!important;
       }
 
       .form__field-label {
@@ -21,6 +30,7 @@
 
       .form__field-holder {
         flex-basis: 100%!important;
+        width: 100%!important;
         max-width: 100%!important;
         margin-left: 0 !important;
         padding-left: 0!important;
