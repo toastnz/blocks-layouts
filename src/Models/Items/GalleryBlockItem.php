@@ -21,8 +21,8 @@ class GalleryBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'         => Image::class,
-        'GalleryBlock'   => GalleryBlock::class
+        'Image'  => Image::class,
+        'Parent' => GalleryBlock::class
     ];
 
     private static $owns = [

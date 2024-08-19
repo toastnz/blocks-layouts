@@ -21,8 +21,8 @@ class SliderBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'         => Image::class,
-        'SliderBlock'   => SliderBlock::class
+        'Image'  => Image::class,
+        'Parent' => SliderBlock::class
     ];
 
     private static $owns = [
