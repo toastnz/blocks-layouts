@@ -16,6 +16,10 @@ $background-colour: var(--cms-background-colour, transparent);
   // margin-left: -20px;
   // margin-right: -20px;
 
+  .form__field-holder {
+    width: 100%;
+  }
+
   .radio {
     position: relative;
     display: block;
@@ -23,7 +27,11 @@ $background-colour: var(--cms-background-colour, transparent);
     margin-right: 0;
     margin-bottom: 0;
     text-align: center;
-    width: calc(25% - 40px);
+    width: calc(50% - 40px);
+
+    @media (min-width: 960px) {
+      width: calc(25% - 40px);
+    }
 
     label {
       cursor: pointer;
