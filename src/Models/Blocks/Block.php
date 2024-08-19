@@ -297,7 +297,7 @@ class Block extends DataObject
         $parent = $this->getParentPage();
 
         if ($parent && $parent->exists()) {
-            return $parent->Link($action) . '#' . $this->getHtmlID();
+            return $parent->Link($action) . '#' . $this->getBlockID();
         }
 
         $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
@@ -305,7 +305,7 @@ class Block extends DataObject
             ->first();
 
         if ($parent && $parent->exists()) {
-            return $parent->Link($action) . '#' . $this->getHtmlID();
+            return $parent->Link($action) . '#' . $this->getBlockID();
         }
 
         return '';
