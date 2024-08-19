@@ -16,6 +16,10 @@ class BlockItem extends DataObject
     {
         $this->beforeUpdateCMSFields(function ($fields) {
 
+            if ($preview = $this->getPagePreview()) {
+                $fields->addFieldToTab('Root.Main', $preview);
+            }
+
             $fields->removeByName([
                 'ParentID',
                 'SortOrder',
