@@ -46,6 +46,10 @@
           }
         }
 
+        .hidden {
+          display: none !important;
+        }
+
         .form__field-label {
           padding-left: 0;
           flex-basis: 100% !important;
