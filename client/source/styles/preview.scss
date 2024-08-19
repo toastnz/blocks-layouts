@@ -10,7 +10,8 @@
       }
 
       fieldset {
-        flex: 1;
+        flex: 1 1 50%;
+        max-width: 50%;
         position: relative;
 
         .form-group {
