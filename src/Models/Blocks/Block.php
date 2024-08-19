@@ -119,7 +119,7 @@ class Block extends DataObject
                     '?block=' . $this->owner->ID . '&stage=Stage'
                 );
 
-                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $previewURL . '"></iframe></div>'));
+                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getPage()->AbsoluteLink() . '"></iframe></div>'));
 
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),

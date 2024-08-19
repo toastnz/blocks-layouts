@@ -1,3 +1,45 @@
+@media (min-width: 1400px) {
+  #Root_Main {
+    &:has(#BlockPreviewFrame) {
+      .form-group {
+        width: 50%;
+        margin-left: 0!important;
+        margin-right: 0!important;
+        padding-right: 40px!important;
+
+        &:after {
+          margin-left: 0!important;
+          margin-right: 0!important;
+        }
+      }
+
+      .form__field-label {
+        padding-left: 0;
+        flex-basis: 100%!important;
+        max-width: 100%!important;
+      }
+
+      .form__field-holder {
+        flex-basis: 100%!important;
+        max-width: 100%!important;
+        margin-left: 0 !important;
+        padding-left: 0!important;
+        padding-right: 0!important;
+
+        &.form-check {
+          margin-left: 20px!important;
+          max-width: calc(100% - 20px)!important;
+        }
+
+        .form__field-holder {
+          padding-left: 0!important;
+          padding-right: 0!important;
+        }
+      }
+    }
+  }
+}
+
 #BlockPreviewFrame {
   position: relative;
   display: block;
@@ -18,8 +60,16 @@
   }
 
   @media (min-width: 1400px) {
-    flex: 0 0 58.33333333%;
-    max-width: 58.33333333%;
+    float: right;
+    position: sticky;
+    top: 0;
+    right: 0;
+    flex: 0 0 50%;
+    max-width: 50%;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 50%;
   }
 
   &:before {
