@@ -112,14 +112,10 @@ class Block extends DataObject
         $this->beforeUpdateCMSFields(function ($fields) {
 
             if ($this->ID) {
-                // Get the URL of the custom route for BlockPreviewPage
-                $previewURL = Controller::join_links(
-                    Director::absoluteBaseURL(),
-                    '_block-preview',
-                    '?block=' . $this->owner->ID . '&stage=Stage'
-                );
+                // Insert ?stage=Stage before the #
+                $blockLink = str_replace('#', '?stage=Stage#', $this->AbsoluteLink());
 
-                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $previewURL . '"></iframe></div>'));
+                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $blockLink . '"></iframe></div>'));
 
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
