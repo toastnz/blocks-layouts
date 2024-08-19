@@ -104,9 +104,9 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
-        Requirements::css('toastnz/blocks-layouts: client/dist/styles/icons.css');
+        Requirements::css('toastnz/blocks-layouts: client/dist/styles/index.css');
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/preview.css');
-        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/icons.js');
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/index.js');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/preview.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
@@ -119,7 +119,7 @@ class Block extends DataObject
                     '?block=' . $this->owner->ID . '&stage=Stage'
                 );
 
-                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getPage()->AbsoluteLink() . '"></iframe></div>'));
+                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $previewURL . '"></iframe></div>'));
 
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
