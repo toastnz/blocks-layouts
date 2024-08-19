@@ -65,7 +65,7 @@
             left: 20px;
             width: 100%;
             height: calc(100% + 40px);
-            border-left: 1px solid var(--cms-border-colour, transparent);
+            box-shadow: 0 0 0 1px var(--cms-border-colour, transparent);
 
             iframe {
               position: absolute;
