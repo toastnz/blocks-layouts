@@ -8,6 +8,10 @@ class BlockItem extends DataObject
 {
     private static $table_name = 'Blocks_BlockItem';
 
+    private static $db = [
+        'SortOrder' => 'Int'
+    ];
+
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
