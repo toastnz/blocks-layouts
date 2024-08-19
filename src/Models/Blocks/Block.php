@@ -112,14 +112,10 @@ class Block extends DataObject
         $this->beforeUpdateCMSFields(function ($fields) {
 
             if ($this->ID) {
-                // Insert ?stage=Stage before the #
-                $blockLink = str_replace('#', '?stage=Stage#', $this->AbsoluteLink());
-
-                $fields->insertBefore('Title', LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $blockLink . '"></iframe></div>'));
-
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']')
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
+                    $this->getPagePreview()
                 ]);
             }
 
@@ -143,6 +139,14 @@ class Block extends DataObject
         });
 
         return parent::getCMSFields();
+    }
+
+    public function getPagePreview()
+    {
+        // Insert ?stage=Stage before the #
+        $blockLink = str_replace('#', '?stage=Stage#', $this->AbsoluteLink());
+
+        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $blockLink . '"></iframe></div>');
     }
 
     public function getBlockLayouts()

@@ -24,6 +24,14 @@ class BlockItem extends DataObject
         return parent::getCMSFields();
     }
 
+    public function getPagePreview() {
+        if ($this->hasMethod('Parent')) {
+            return $this->Parent()->getPagePreview();
+        }
+
+        return null;
+    }
+
     public function canView($member = null)
     {
         if ($this->hasMethod('Parent')) {
@@ -60,6 +68,6 @@ class BlockItem extends DataObject
         return parent::canCreate($member, $context);
 
     }
-    
+
 
 }
