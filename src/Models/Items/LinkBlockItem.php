@@ -16,7 +16,6 @@ class LinkBlockItem extends BlockItem
     private static $table_name = 'Blocks_LinkBlockItem';
 
     private static $db = [
-        'SortOrder' => 'Int',
         'Title' => 'Varchar(255)',
         'Summary' => 'Text',
     ];

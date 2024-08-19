@@ -18,7 +18,6 @@ class PercentageBlockItem extends BlockItem
     private static $table_name = 'Blocks_PercentageBlockItem';
 
     private static $db = [
-        'SortOrder' => 'Int',
         'Name' => 'Varchar(255)',
         'Title' => 'Varchar(255)',
         'Summary' => 'Text',

@@ -12,13 +12,12 @@ use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
-class SliderBlockItem extends DataObject
+class SliderBlockItem extends BlockItem
 {
     private static $table_name = 'SliderBlockItem';
 
     private static $db = [
         'Video'         => VideoLink::class,
-        'SortOrder'     => 'Int'
     ];
 
     private static $has_one = [
@@ -43,7 +42,7 @@ class SliderBlockItem extends DataObject
                 'SortOrder',
                 'SliderBlockID'
             ]);
-    
+
             $fields->addFieldsToTab('Root.Main',
             [
                 UploadField::create(

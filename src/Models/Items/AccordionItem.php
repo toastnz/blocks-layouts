@@ -15,17 +15,16 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 class AccordionItem extends BlockItem
 {
     private static $table_name = 'Blocks_AccordionItem';
- 
+
     private static $singular_name = 'Item';
- 
+
     private static $plural_name = 'Items';
- 
+
     private static $default_sort = 'SortOrder';
 
     private static $db = [
         'Title' => 'Varchar(255)',
         'Content' => 'HTMLText',
-        'SortOrder' => 'Int'
     ];
 
     private static $has_one = [

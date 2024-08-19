@@ -23,7 +23,6 @@ class DownloadBlockItem extends BlockItem
     private static $db = [
         'Title' => 'Varchar(255)',
         'Summary' => 'Text',
-        'SortOrder' => 'Int'
     ];
 
     private static $has_one = [
@@ -43,7 +42,7 @@ class DownloadBlockItem extends BlockItem
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-        
+
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),

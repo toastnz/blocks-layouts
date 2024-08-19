@@ -17,7 +17,6 @@ class TestimonialBlockItem extends BlockItem
     private static $table_name = 'Blocks_TestimonialBlockItem';
 
     private static $db = [
-        'SortOrder' => 'Int',
         'Name'      => 'Varchar(255)',
         'Position'  => 'Varchar(255)',
         'Summary'   => 'Text'
