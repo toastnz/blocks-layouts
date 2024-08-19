@@ -40,7 +40,6 @@ class GalleryBlockItem extends BlockItem
 
         $fields->removeByName([
            'SortOrder',
-            'GalleryBlockID'
         ]);
 
         $fields->addFieldsToTab('Root.Main',

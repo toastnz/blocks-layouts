@@ -40,7 +40,7 @@ class SliderBlockItem extends BlockItem
 
             $fields->removeByName([
                 'SortOrder',
-                'SliderBlockID'
+                'ParentID'
             ]);
 
             $fields->addFieldsToTab('Root.Main',
