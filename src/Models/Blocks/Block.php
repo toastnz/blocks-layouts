@@ -16,6 +16,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
+use SilverStripe\Forms\HeaderField;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
@@ -112,9 +113,22 @@ class Block extends DataObject
         $this->beforeUpdateCMSFields(function ($fields) {
 
             if ($this->ID) {
+                // Fetch all unique pages related to the block
+                $pages = $this->getAllPages();
+
+                // Generate HTML for the list of links
+                $linksHtml = '';
+
+                foreach ($pages as $page) {
+                    $linksHtml .= '<div><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $this->getBlockID() . '">' . $page->Title . '</a></div>';
+                }
+
                 $fields->addFieldsToTab('Root.More', [
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
                     ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
+                    // Add a heading
+                    HeaderField::create('PageLinksHeading', 'Pages using this block'),
+                    LiteralField::create('PageLinks', $linksHtml),
                     $this->getPagePreview()
                 ]);
             }
@@ -124,6 +138,7 @@ class Block extends DataObject
                 'CSSFile'
             ]);
 
+            // Add fields to the form
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
@@ -314,9 +329,7 @@ class Block extends DataObject
             $parent = $this->getParentPage();
 
             if (!$parent || !$parent->exists()) {
-                $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
-                    ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
-                    ->first();
+                $parent = $this->getAllPages()[0];
             }
         }
 
@@ -325,6 +338,18 @@ class Block extends DataObject
         }
 
         return '';
+    }
+
+    public function getAllPages()
+    {
+        // Fetch unique pages related to the block
+        $pages = SiteTree::get()
+            ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
+            ->distinct(true, ['"SiteTree"."ID"']);
+
+        // Convert the result to an array
+        return $pages->toArray();
     }
 
     public function Link($action = null)
