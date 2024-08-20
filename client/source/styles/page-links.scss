@@ -4,6 +4,7 @@
   &__item {
     color: var(--cms-text-colour, #000);
     margin-bottom: 5px;
+    line-height: 1em;
 
     &:last-child {
       margin-bottom: 0;
@@ -19,6 +20,7 @@
 
     i {
       margin-right: 4px;
+      font-size: 1.2em;
     }
 
     a {
