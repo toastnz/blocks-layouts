@@ -3,7 +3,7 @@
         <% loop $Items.Sort('SortOrder') %>
             <div class="default-percentage-item percentage-{$Width} [ js-in-view ] <% if not $Image && not $Title && not $Summary && not $LinkID %>default-percentage-item--space<% end_if %>">
                 <% if $Image %>
-                    <div class="default-percentage-item__media" data-equalize-watch="{$$Top.BlockID}_Media">
+                    <div class="default-percentage-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                         <picture>
                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">

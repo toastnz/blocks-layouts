@@ -30,7 +30,10 @@
         position: relative;
         overflow: auto;
         padding: 20px;
-        box-shadow: 0 0 0 1px var(--cms-border-colour, transparent);
+
+        &:has(#BlockPreviewFrame) {
+          box-shadow: 0 0 0 1px var(--cms-border-colour, transparent);
+        }
 
         .form-group {
           display: block !important;
@@ -82,18 +85,80 @@
           left: 0;
           width: 100%;
           height: 100%;
+          background-color: var(--cms-background-colour--dynamic, transparent);
+
+          &.dragging {
+            &:before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              z-index: 1;
+            }
+          }
+
+          .preview-thumb {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 20px;
+            height: auto;
+            padding: 0;
+            margin: 0;
+            transform: translateY(-50%);
+            border: 0;
+            background-color: transparent;
+
+            &:before,
+            &:after {
+              content: 'S';
+              display: block;
+              text-align: center;
+              width: 100%;
+              font-size: 18px;
+              font-family: "silverstripe" !important;
+              font-style: normal !important;
+              font-weight: normal !important;
+              font-variant: normal !important;
+              text-transform: none !important;
+              line-height: 1;
+              margin-bottom: .1em;
+              color: var(--cms-text-colour, #ccc);
+            }
+          }
 
           iframe {
             position: absolute;
             top: 0;
-            left: 0;
-            width: 1440px;
+            left: 20px;
+            width: calc(100% - 20px);
             height: 100%;
             border: 0;
             overscroll-behavior: contain;
             // border-radius: 3px;
             transform-origin: 0 0;
           }
+        }
+      }
+    }
+  }
+
+  // Allow for custom block preview width
+  body:has(#BlockPreviewFrame) {
+    --block-preview-width: 50%;
+
+    .panel {
+      >fieldset {
+        max-width: 75% !important;
+        min-width: 25% !important;
+        flex-basis: calc(100% - var(--block-preview-width, 50%)) !important;
+        width: calc(100% - var(--block-preview-width, 50%)) !important;
+
+        &:has(#BlockPreviewFrame) {
+          flex-basis: var(--block-preview-width, 50%) !important;
+          width: var(--block-preview-width, 50%) !important;
         }
       }
     }
