@@ -28,6 +28,7 @@ use SilverStripe\Versioned\Versioned;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
@@ -60,7 +61,6 @@ class Block extends DataObject
         'IconForCMS'        => 'Type',
         'Title'             => 'Title',
         'ContentSummary'    => 'Content',
-        'Template'          => 'Template'
     ];
 
     private static $searchable_fields = [
@@ -298,10 +298,24 @@ class Block extends DataObject
 
     public function getLink($action = null)
     {
+        // Get the current controller
+        $controller = Controller::curr();
+        // Get the parent page
         $parent = $this->getParentPage();
 
         if ($parent && $parent->exists()) {
             return $parent->Link($action) . '#' . $this->getBlockID();
+        }
+
+        // Ensure the controller is an instance of CMSMain
+        if ($controller instanceof CMSMain) {
+            // Call the currentPage() method on the controller instance
+            $parent = $controller->currentPage();
+
+            // If the parent exists, return the parent's link
+            if ($parent && $parent->exists()) {
+                return $parent->Link($action) . '#' . $this->getBlockID();
+            }
         }
 
         $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
