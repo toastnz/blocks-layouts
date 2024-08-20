@@ -18,6 +18,7 @@ $background-colour: var(--cms-background-colour, transparent);
 
   .form__field-holder {
     width: 100%;
+    container-type: inline-size;
   }
 
   .radio {
@@ -29,7 +30,7 @@ $background-colour: var(--cms-background-colour, transparent);
     text-align: center;
     width: calc(50% - 40px);
 
-    @media (min-width: 960px) {
+    @container (min-width: 640px) {
       width: calc(25% - 40px);
     }
 
