@@ -34,6 +34,10 @@ $background-colour: var(--cms-background-colour, transparent);
       width: calc(25% - 40px);
     }
 
+    @container (min-width: 1280px) {
+      width: calc(20% - 40px);
+    }
+
     label {
       cursor: pointer;
       display: block;
