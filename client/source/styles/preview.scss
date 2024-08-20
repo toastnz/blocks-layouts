@@ -138,7 +138,8 @@
             border: 0;
             overscroll-behavior: contain;
             // border-radius: 3px;
-            transform-origin: 0 0;
+            // transform-origin: 0 0;
+            box-shadow: 0 0 0 1px var(--cms-border-colour, transparent);
           }
         }
       }
