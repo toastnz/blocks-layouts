@@ -20,7 +20,7 @@
       overflow: hidden;
       padding: 0;
 
-      .alert {
+      >.alert {
         display: none !important;
       }
 
@@ -75,30 +75,24 @@
           }
         }
 
-        &:has(#BlockPreviewFrame) {
-          position: sticky;
+        > #BlockPreviewFrame {
+          display: block;
+          position: absolute;
           top: 0;
-          right: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
 
-          >#BlockPreviewFrame {
-            display: block;
+          iframe {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 1440px;
             height: 100%;
-
-            iframe {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 1440px;
-              height: 100%;
-              border: 0;
-              overscroll-behavior: contain;
-              // border-radius: 3px;
-              transform-origin: 0 0;
-            }
+            border: 0;
+            overscroll-behavior: contain;
+            // border-radius: 3px;
+            transform-origin: 0 0;
           }
         }
       }
