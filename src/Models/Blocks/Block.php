@@ -107,28 +107,22 @@ class Block extends DataObject
     {
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/icons.css');
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/preview.css');
+        Requirements::css('toastnz/blocks-layouts: client/dist/styles/page-links.css');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/icons.js');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/preview.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
-
             if ($this->ID) {
-                // Fetch all unique pages related to the block
-                $pages = $this->getAllPages();
-
                 // Generate HTML for the list of links
-                $linksHtml = '';
-
-                foreach ($pages as $page) {
-                    $linksHtml .= '<div><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $this->getBlockID() . '">' . $page->Title . '</a></div>';
-                }
+                $linksHtml = Helper::getBlockPageLinksHTMLForCMS($this);
 
                 $fields->addFieldsToTab('Root.More', [
-                    LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
                     // Add a heading
                     HeaderField::create('PageLinksHeading', 'Pages using this block'),
                     LiteralField::create('PageLinks', $linksHtml),
+                    HeaderField::create('UsageHeading', 'Link to this block'),
+                    LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
                     $this->getPagePreview()
                 ]);
             }

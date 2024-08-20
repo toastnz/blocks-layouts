@@ -144,4 +144,55 @@ class Helper
         }
         return $themes;
     }
+
+    // TODO: This has not been tested for Subsites yet - may cause errors? meant to group the page links by subsite :)
+    static function getBlockPageLinksHTMLForCMS($block = null)
+    {
+        $pages = $block->getAllPages();
+
+        // Generate HTML for the list of links
+        $linksHtml = '<div class="blocks-layouts-page-links">';
+
+        // Check if the Subsites module is installed
+        if (class_exists(Subsite::class)) {
+            // Group pages by subsite
+            $groupedPages = [];
+
+            foreach ($pages as $page) {
+                $subsiteID = $page->SubsiteID;
+                if (!isset($groupedPages[$subsiteID])) {
+                    $groupedPages[$subsiteID] = [];
+                }
+                $groupedPages[$subsiteID][] = $page;
+            }
+
+            foreach ($groupedPages as $subsiteID => $subsitePages) {
+                // Get the subsite title
+                $subsite = Subsite::get()->byID($subsiteID);
+                if ($subsite) {
+                    $linksHtml .= '<h2>' . $subsite->Title . '</h2>';
+                }
+
+                foreach ($subsitePages as $page) {
+                    // Get the icon class for the page
+                    $iconClass = $page->config()->get('icon_class');
+
+                    // Construct the HTML with the icon class and link
+                    $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
+                }
+            }
+        } else {
+            foreach ($pages as $page) {
+                // Get the icon class for the page
+                $iconClass = $page->config()->get('icon_class');
+
+                // Construct the HTML with the icon class and link
+                $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
+            }
+        }
+
+        $linksHtml .= '</div>';
+
+        return $linksHtml;
+    }
 }
