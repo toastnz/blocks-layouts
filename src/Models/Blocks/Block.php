@@ -117,14 +117,15 @@ class Block extends DataObject
                 $linksHtml = Helper::getBlockPageLinksHTMLForCMS($this);
 
                 $fields->addFieldsToTab('Root.More', [
-                    // Add a heading
-                    HeaderField::create('PageLinksHeading', 'Pages using this block'),
-                    LiteralField::create('PageLinks', $linksHtml),
                     HeaderField::create('UsageHeading', 'Link to this block'),
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
                     ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
                     $this->getPagePreview()
                 ]);
+
+                $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
+                $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
+                $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
             }
 
             $fields->removeByName([

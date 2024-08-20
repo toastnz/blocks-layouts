@@ -170,7 +170,7 @@ class Helper
                 // Get the subsite title
                 $subsite = Subsite::get()->byID($subsiteID);
                 if ($subsite) {
-                    $linksHtml .= '<h2>' . $subsite->Title . '</h2>';
+                    $linksHtml .= '<h3>' . $subsite->Title . '</h3>';
                 }
 
                 foreach ($subsitePages as $page) {

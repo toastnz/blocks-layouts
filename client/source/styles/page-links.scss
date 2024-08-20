@@ -1,9 +1,11 @@
 .blocks-layouts-page-links {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--cms-border-colour, #ccc);
 
   &__item {
     color: var(--cms-text-colour, #000);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     line-height: 1em;
 
     &:last-child {
