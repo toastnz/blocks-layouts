@@ -80,7 +80,7 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
     const container = panel.parentElement;
 
     // Calculate the mouse X position relative to the container
-    const mouseX = e.clientX - container.getBoundingClientRect().left;
+    const mouseX = (e.clientX - 10) - container.getBoundingClientRect().left;
 
     // Calculate the container width
     const containerWidth = container.clientWidth;
