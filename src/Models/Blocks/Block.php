@@ -300,27 +300,25 @@ class Block extends DataObject
     {
         // Get the current controller
         $controller = Controller::curr();
-        // Get the parent page
-        $parent = $this->getParentPage();
 
-        if ($parent && $parent->exists()) {
-            return $parent->Link($action) . '#' . $this->getBlockID();
-        }
+        // Initialise the parent variable
+        $parent = null;
 
         // Ensure the controller is an instance of CMSMain
         if ($controller instanceof CMSMain) {
             // Call the currentPage() method on the controller instance
             $parent = $controller->currentPage();
-
-            // If the parent exists, return the parent's link
-            if ($parent && $parent->exists()) {
-                return $parent->Link($action) . '#' . $this->getBlockID();
-            }
         }
 
-        $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
-            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
-            ->first();
+        else {
+            $parent = $this->getParentPage();
+
+            if (!$parent || !$parent->exists()) {
+                $parent = Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+                    ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
+                    ->first();
+            }
+        }
 
         if ($parent && $parent->exists()) {
             return $parent->Link($action) . '#' . $this->getBlockID();
@@ -332,6 +330,14 @@ class Block extends DataObject
     public function Link($action = null)
     {
         return $this->getLink($action);
+    }
+
+    public function getBlockLink($parent) {
+        if ($parent && $parent->exists()) {
+            return $parent->Link() . '#' . $this->getBlockID();
+        }
+
+        return '';
     }
 
     public function getAbsoluteLink($action = null)
