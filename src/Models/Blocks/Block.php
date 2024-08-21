@@ -121,7 +121,8 @@ class Block extends DataObject
                 $fields->addFieldsToTab('Root.More', [
                     HeaderField::create('UsageHeading', 'Link to this block'),
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']')
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
+                    ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
                 ]);
 
                 if ($preview = $this->getPagePreview()) {
