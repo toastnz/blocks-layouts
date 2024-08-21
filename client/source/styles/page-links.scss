@@ -36,11 +36,16 @@
     }
   }
 
-  h3 ~ &__item {
-    margin-left: 20px;
+  h4 {
+    text-transform: uppercase;
+    font-weight: bold;
   }
 
-  &__item + h3 {
-    margin-top: 20px;
+  h4 ~ &__item {
+    margin-left: 10px;
+  }
+
+  &__item + h4 {
+    margin-top: 30px;
   }
 }
