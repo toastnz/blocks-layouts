@@ -145,7 +145,6 @@ class Helper
         return $themes;
     }
 
-    // TODO: This has not been tested for Subsites yet - may cause errors? meant to group the page links by subsite :)
     static function getBlockPageLinksHTMLForCMS($block = null)
     {
         $pages = $block->getAllPages();
