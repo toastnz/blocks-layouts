@@ -29,10 +29,12 @@ use SilverStripe\Versioned\Versioned;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\SiteConfig\SiteConfig;
+use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Subsites\State\SubsiteState;
 use SilverStripe\Core\Manifest\ModuleResource;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
@@ -314,6 +316,8 @@ class Block extends DataObject
         // Initialise the parent variable
         $parent = null;
 
+        $pages = $this->getAllPages();
+
         // Ensure the controller is an instance of CMSMain
         if ($controller instanceof CMSMain) {
             // Call the currentPage() method on the controller instance
@@ -324,7 +328,7 @@ class Block extends DataObject
             $parent = $this->getParentPage();
 
             if (!$parent || !$parent->exists()) {
-                $parent = $this->getAllPages()[0];
+                if (count($pages) > 0) $parent = $this->getAllPages()[0];
             }
         }
 
@@ -333,18 +337,6 @@ class Block extends DataObject
         }
 
         return '';
-    }
-
-    public function getAllPages()
-    {
-        // Fetch unique pages related to the block
-        $pages = SiteTree::get()
-            ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
-            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
-            ->distinct(true, ['"SiteTree"."ID"']);
-
-        // Convert the result to an array
-        return $pages->toArray();
     }
 
     public function Link($action = null)
@@ -368,6 +360,48 @@ class Block extends DataObject
     public function AbsoluteLink($action = null)
     {
         return $this->getAbsoluteLink($action);
+    }
+
+    public function getAllPages()
+    {
+        $allPages = [];
+
+        if (class_exists(Subsite::class)) {
+            // Fetch all subsites
+            $subsites = Subsite::get();
+            // Get the current subsite ID
+            $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+
+            // Iterate through each subsite
+            foreach ($subsites as $subsite) {
+                // Temporarily switch to the subsite context
+                Subsite::changeSubsite($subsite->ID);
+
+                // Fetch unique pages related to the block within the current subsite
+                $pages = $this->getPagesFromSiteTree();
+
+                // Merge the pages into the allPages array
+                $allPages = array_merge($allPages, $pages->toArray());
+            }
+
+            // Return to the main site context
+            Subsite::changeSubsite($currentSubsiteID);
+
+            // Return the unique pages
+            return $allPages;
+        }
+
+        return $this->getPagesFromSiteTree();
+    }
+
+    public function getPagesFromSiteTree()
+    {
+        $pages = SiteTree::get()
+            ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
+            ->distinct(true, ['"SiteTree"."ID"']);
+
+        return $pages;
     }
 
     public function getBlockTemplateName()
