@@ -121,9 +121,12 @@ class Block extends DataObject
                 $fields->addFieldsToTab('Root.More', [
                     HeaderField::create('UsageHeading', 'Link to this block'),
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
-                    $this->getPagePreview()
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']')
                 ]);
+
+                if ($preview = $this->getPagePreview()) {
+                    $fields->addFieldToTab('Root.More', $preview);
+                }
 
                 $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
                 $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
@@ -155,6 +158,8 @@ class Block extends DataObject
 
     public function getPagePreview()
     {
+        if (Director::absoluteBaseURL() == $this->AbsoluteLink()) return null;
+
         // Insert ?stage=Stage before the #
         $blockLink = str_replace('#', '?stage=Stage#', $this->AbsoluteLink());
 

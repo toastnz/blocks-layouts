@@ -155,31 +155,42 @@ class Helper
         // Group all the pages by subsiteID
         $groupedPages = [];
 
-        // Check if the Subsites module is installed
-        if (class_exists(Subsite::class)) {
-            // Group pages by subsite
-            $groupedPages = [];
+        if ($pages) {
 
-            foreach ($pages as $page) {
-                $subsiteID = $page->SubsiteID ?: 0; // Use 0 for main site pages
-                if (!isset($groupedPages[$subsiteID])) {
-                    $groupedPages[$subsiteID] = [];
-                }
-                $groupedPages[$subsiteID][] = $page;
-            }
+            // Check if the Subsites module is installed
+            if (class_exists(Subsite::class)) {
+                // Group pages by subsite
+                $groupedPages = [];
 
-            foreach ($groupedPages as $subsiteID => $subsitePages) {
-                // Get the subsite title
-                if ($subsiteID == 0) {
-                    $subsiteTitle = 'Main Site';
-                } else {
-                    $subsite = Subsite::get()->byID($subsiteID);
-                    $subsiteTitle = $subsite ? $subsite->Title : 'Unknown Subsite';
+                foreach ($pages as $page) {
+                    $subsiteID = $page->SubsiteID ?: 0; // Use 0 for main site pages
+                    if (!isset($groupedPages[$subsiteID])) {
+                        $groupedPages[$subsiteID] = [];
+                    }
+                    $groupedPages[$subsiteID][] = $page;
                 }
 
-                $linksHtml .= '<h4>' . $subsiteTitle . '</h4>';
+                foreach ($groupedPages as $subsiteID => $subsitePages) {
+                    // Get the subsite title
+                    if ($subsiteID == 0) {
+                        $subsiteTitle = 'Main Site';
+                    } else {
+                        $subsite = Subsite::get()->byID($subsiteID);
+                        $subsiteTitle = $subsite ? $subsite->Title : 'Unknown Subsite';
+                    }
 
-                foreach ($subsitePages as $page) {
+                    $linksHtml .= '<h4>' . $subsiteTitle . '</h4>';
+
+                    foreach ($subsitePages as $page) {
+                        // Get the icon class for the page
+                        $iconClass = $page->config()->get('icon_class');
+
+                        // Construct the HTML with the icon class and link
+                        $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
+                    }
+                }
+            } else {
+                foreach ($pages as $page) {
                     // Get the icon class for the page
                     $iconClass = $page->config()->get('icon_class');
 
@@ -188,13 +199,7 @@ class Helper
                 }
             }
         } else {
-            foreach ($pages as $page) {
-                // Get the icon class for the page
-                $iconClass = $page->config()->get('icon_class');
-
-                // Construct the HTML with the icon class and link
-                $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
-            }
+            $linksHtml .= '<p class="message warning" style="margin-bottom: 0;">No pages are using this block.</p>';
         }
 
         $linksHtml .= '</div>';
