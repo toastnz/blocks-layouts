@@ -1,4 +1,4 @@
-<section id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>

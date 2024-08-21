@@ -1,5 +1,5 @@
 
-<section id="{$BlockID}" tabIndex="0" class="default-children [ js-default-children ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-children [ js-default-children ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-children__header">
             <div class="default-children__content">

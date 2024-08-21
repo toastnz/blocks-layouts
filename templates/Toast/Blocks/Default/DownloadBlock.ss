@@ -1,4 +1,4 @@
-<section id="{$BlockID}" tabIndex="0" class="default-download [ js-default-download ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-download [ js-default-download ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-download__header">
             <div class="default-download__content">

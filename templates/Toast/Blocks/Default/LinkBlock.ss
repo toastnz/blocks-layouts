@@ -1,4 +1,4 @@
-<section id="{$BlockID}" tabIndex="0" class="default-link [ js-default-link ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-link [ js-default-link ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-link__header">
             <div class="default-link__content">

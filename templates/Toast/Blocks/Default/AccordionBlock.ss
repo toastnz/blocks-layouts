@@ -1,4 +1,4 @@
-<section id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <% if $Content %>
         <div class="default-accordion__header">
             <div class="default-accordion__content">
