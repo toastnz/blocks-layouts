@@ -35,4 +35,12 @@
       }
     }
   }
+
+  h3 ~ &__item {
+    margin-left: 20px;
+  }
+
+  &__item + h3 {
+    margin-top: 20px;
+  }
 }
