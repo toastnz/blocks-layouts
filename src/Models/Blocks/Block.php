@@ -364,6 +364,43 @@ class Block extends DataObject
 
     public function getAllPages()
     {
+        $pages = array_merge($this->getPagesFromMainSite(), $this->getPagesFromSubsites());
+
+        // make the array unique
+        return array_unique($pages, SORT_REGULAR);
+    }
+
+    public function getPagesFromSiteTree()
+    {
+        $pages = SiteTree::get()
+            ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
+            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
+            ->distinct(true, ['"SiteTree"."ID"']);
+
+        return $pages->toArray();
+    }
+
+    public function getPagesFromMainSite()
+    {
+        $pages = $this->getPagesFromSiteTree();
+
+        if (class_exists(Subsite::class)) {
+            // Get the current subsite ID
+            $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+            // Change to the main site context
+            Subsite::changeSubsite(0);
+
+            $pages = $this->getPagesFromSiteTree();
+
+            // Return to the original subsite context
+            Subsite::changeSubsite($currentSubsiteID);
+        }
+
+        return $pages;
+    }
+
+    public function getPagesFromSubsites()
+    {
         $allPages = [];
 
         if (class_exists(Subsite::class)) {
@@ -381,7 +418,7 @@ class Block extends DataObject
                 $pages = $this->getPagesFromSiteTree();
 
                 // Merge the pages into the allPages array
-                $allPages = array_merge($allPages, $pages->toArray());
+                $allPages = array_merge($allPages, $pages);
             }
 
             // Return to the main site context
@@ -391,17 +428,7 @@ class Block extends DataObject
             return $allPages;
         }
 
-        return $this->getPagesFromSiteTree();
-    }
-
-    public function getPagesFromSiteTree()
-    {
-        $pages = SiteTree::get()
-            ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
-            ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->ID)
-            ->distinct(true, ['"SiteTree"."ID"']);
-
-        return $pages;
+        return [];
     }
 
     public function getBlockTemplateName()

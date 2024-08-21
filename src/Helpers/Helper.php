@@ -153,9 +153,8 @@ class Helper
         // Generate HTML for the list of links
         $linksHtml = '<div class="blocks-layouts-page-links">';
 
-        // Add the main site title as a heading, using the title from the SiteConfig
-        $siteConfig = SiteConfig::current_site_config();
-        $linksHtml .= '<h4>' . $siteConfig->Title . '</h4>';
+        // Group all the pages by subsiteID
+        $groupedPages = [];
 
         // Check if the Subsites module is installed
         if (class_exists(Subsite::class)) {
@@ -163,7 +162,7 @@ class Helper
             $groupedPages = [];
 
             foreach ($pages as $page) {
-                $subsiteID = $page->SubsiteID;
+                $subsiteID = $page->SubsiteID ?: 0; // Use 0 for main site pages
                 if (!isset($groupedPages[$subsiteID])) {
                     $groupedPages[$subsiteID] = [];
                 }
@@ -172,10 +171,14 @@ class Helper
 
             foreach ($groupedPages as $subsiteID => $subsitePages) {
                 // Get the subsite title
-                $subsite = Subsite::get()->byID($subsiteID);
-                if ($subsite) {
-                    $linksHtml .= '<h4>' . $subsite->Title . '</h4>';
+                if ($subsiteID == 0) {
+                    $subsiteTitle = 'Main Site';
+                } else {
+                    $subsite = Subsite::get()->byID($subsiteID);
+                    $subsiteTitle = $subsite ? $subsite->Title : 'Unknown Subsite';
                 }
+
+                $linksHtml .= '<h4>' . $subsiteTitle . '</h4>';
 
                 foreach ($subsitePages as $page) {
                     // Get the icon class for the page
