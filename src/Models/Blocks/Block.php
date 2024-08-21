@@ -354,7 +354,18 @@ class Block extends DataObject
 
     public function getAbsoluteLink($action = null)
     {
-        return Controller::join_links(Director::absoluteBaseURL(), $this->Link($action));
+        // Get the current controller
+        $controller = Controller::curr();
+
+        $link = Director::absoluteBaseURL();
+
+        // Ensure the controller is an instance of CMSMain
+        if ($controller instanceof CMSMain && Director::is_https()) {
+            // Call the currentPage() method on the controller instance
+            $link = $controller->currentPage()->AbsoluteLink() ;
+        }
+
+        return Controller::join_links($link, $this->Link($action));
     }
 
     public function AbsoluteLink($action = null)
