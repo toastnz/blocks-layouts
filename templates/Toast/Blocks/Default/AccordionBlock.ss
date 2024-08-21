@@ -12,7 +12,7 @@
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-accordion-item [ js-default-accordion__item js-in-view ]">
                     <div class="default-accordion-item__header [ js-default-accordion__trigger ]">
-                        <span class="default-accordion-item__title">{$Title}}</span>
+                        <span class="default-accordion-item__title">{$Title}</span>
                     </div>
 
                     <div class="default-accordion-item__content [ js-default-accordion__target ]">

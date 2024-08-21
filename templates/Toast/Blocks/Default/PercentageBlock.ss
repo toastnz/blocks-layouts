@@ -16,7 +16,7 @@
                     <% end_if %>
 
                     <div class="default-percentage-item__details">
-                        <div data-equalize-watch="{$$Top.BlockID}__Text">
+                        <div data-equalize-watch="{$Top.BlockID}__Text">
                             <% if $Title %>
                                 <span class="default-percentage-item__title">{$Title.XML}</span>
                             <% end_if %>

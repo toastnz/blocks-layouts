@@ -12,7 +12,7 @@
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
-                        <div class="default-link-item__media" data-equalize-watch="{$$Top.BlockID}_Media">
+                        <div class="default-link-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                             <% with $Image %>
                                 <picture>
                                     <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
