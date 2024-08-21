@@ -667,4 +667,12 @@ class Block extends DataObject
         return (strlen($id) > 0) ? $id : $this->getHtmlID();
     }
 
+    public function getExtraRequirements()
+    {
+        $extraRequirements = [];
+
+        $this->extend('updateExtraRequirements', $extraRequirements);
+
+        return $extraRequirements;
+    }
 }

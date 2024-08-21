@@ -1,14 +1,14 @@
-<% if $Items.Count %>
-    <section id="{$BlockID}" tabIndex="0" class="default-link [ js-default-link ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
-        <% if $Content %>
-            <div class="default-link__header">
-                <div class="default-link__content">
-                    {$Content}
-                </div>
+<section id="{$BlockID}" tabIndex="0" class="default-link [ js-default-link ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <% if $Content %>
+        <div class="default-link__header">
+            <div class="default-link__content">
+                {$Content}
             </div>
-        <% end_if %>
+        </div>
+    <% end_if %>
 
-        <div class="default-link__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
+    <div class="default-link__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
+        <% if $Items.Count %>
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
@@ -17,13 +17,13 @@
                                 <picture>
                                     <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
                                     <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                                    <img data-as="background" loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-fit: cover; object-position: {$FocusPosition}">
+                                    <img loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
                                 </picture>
                             <% end_with %>
                         </div>
 
                         <div class="default-link-item__details">
-                            <div data-equalize-watch="{$$Top.BlockID}_Text">
+                            <div data-equalize-watch="{$Top.BlockID}_Text">
                                 <% if $Title %>
                                     <span class="default-link-item__title">{$Title.XML}</span>
                                 <% end_if %>
@@ -33,15 +33,13 @@
                                 <% end_if %>
                             </div>
 
-                            <% if $Top.SecondaryColour.ID && $Top.SecondaryColour.ID != $Top.PrimaryColour.ID %>
-                                <span class="default-link-item__button button colour--{$Top.SecondaryColour.ColourClasses}">{$Link.Title}</span>
-                            <% else %>
-                                <span class="default-link-item__button button {$Top.getButtonClasses($Top.PrimaryColour.ID, 'primary')}">{$Link.Title}</span>
-                            <% end_if %>
+                            <span class="default-link-item__button read-more">{$Link.Title}</span>
                         </div>
                     </a>
                 </div>
             <% end_loop %>
-        </div>
-    </section>
-<% end_if %>
+        <% end_if %>
+    </div>
+
+    {$ExtraRequirements}
+</section>

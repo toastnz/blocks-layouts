@@ -1,21 +1,23 @@
-<% if $Image %>
-    <section id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] background-colour--{$PrimaryColour.getColourClasses} {$IncludeClasses} {$ExtraClasses}">
-        <div class="default-image__wrap">
-            <div class="default-image__media">
+<section id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <div class="default-image__wrap">
+        <div class="default-image__media">
+            <% with $Image %>
                 <picture class="default-image__image">
-                    <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
-                    <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                    <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
-                    <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
-                    <img loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.getWidth()}" height="{$Image.getHeight()}" loading="lazy" alt="{$Image.Title.ATT}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
+                    <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                    <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                    <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                    <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                    <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
                 </picture>
-            </div>
-
-            <% if $Caption %>
-                <div class="default-image__content">
-                    <p>{$Caption}</p>
-                </div>
-            <% end_if %>
+            <% end_with %>
         </div>
-    </section>
-<% end_if %>
+
+        <% if $Caption %>
+            <div class="default-image__content">
+                <p>{$Caption}</p>
+            </div>
+        <% end_if %>
+    </div>
+
+    {$ExtraRequirements}
+</section>

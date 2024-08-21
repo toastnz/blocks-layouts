@@ -1,27 +1,29 @@
-<% if $Items.Count %>
-    <section id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
-        <% if $Content %>
-            <div class="default-accordion__header">
-                <div class="default-accordion__content">
-                    {$Content}
-                </div>
+<section id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <% if $Content %>
+        <div class="default-accordion__header">
+            <div class="default-accordion__content">
+                {$Content}
             </div>
-        <% end_if %>
+        </div>
+    <% end_if %>
 
-        <div class="default-accordion__wrap">
+    <div class="default-accordion__wrap">
+        <% if $Items.Count %>
             <% loop $Items.Sort('SortOrder') %>
                 <div class="default-accordion-item [ js-default-accordion__item js-in-view ]">
-                    <div class="default-accordion-item__header background-colour--{$Top.SecondaryColour.ColourClasses} [ js-default-accordion__trigger ]">
-                        <span class="default-accordion-item__title">{$Title} {$SVG('accordion')}</span>
+                    <div class="default-accordion-item__header [ js-default-accordion__trigger ]">
+                        <span class="default-accordion-item__title">{$Title}}</span>
                     </div>
 
                     <div class="default-accordion-item__content [ js-default-accordion__target ]">
-                        <div class="default-accordion-item__wrap {$Top.PrimaryColour.ColourBrightness}">
+                        <div class="default-accordion-item__wrap">
                             {$Content}
                         </div>
                     </div>
                 </div>
             <% end_loop %>
-        </div>
-    </section>
-<% end_if %>
+        <% end_if %>
+    </div>
+
+    {$ExtraRequirements}
+</section>

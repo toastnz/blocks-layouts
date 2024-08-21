@@ -1,29 +1,35 @@
-<section id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
+<section id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
     <div class="default-media-text__wrap">
         <div class="default-media-text__media align-{$MediaAlignment}">
             <% if $Video %>
-                <div class="default-media-text__video colour--{$SecondaryColour.ColourClasses}" data-video-modal="{$Video.IframeURL}">
+                <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}">
                     <% if $Image %>
-                        <picture>
-                            <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
-                            <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                            <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
-                            <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
-                            <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
-                        </picture>
+                        <% with $Image %>
+                            <picture>
+                                <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                                <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                                <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                                <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-fit: cover; object-position: {$FocusPosition}">
+                            </picture>
+                        <% end_with %>
                     <% else_if $Video %>
-                        <img data-as="background" loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
+                        <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
                     <% end_if %>
                 </div>
             <% else %>
                 <div class="default-media-text__image">
-                    <picture>
-                        <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
-                        <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                        <source media="(max-width: 1439px)" srcset="{$Image.ScaleMaxWidth(1440).URL}">
-                        <source media="(max-width: 1919px)" srcset="{$Image.ScaleMaxWidth(1920).URL}">
-                        <img data-as="background" loading="lazy" src="{$Image.ScaleMaxWidth(1920).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-fit: cover; object-position: {$getImageFocusPosition($Image.ID)}">
-                    </picture>
+                    <% if $Image %>
+                        <% with $Image %>
+                            <picture>
+                                <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                                <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                                <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                                <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
+                            </picture>
+                        <% end_with %>
+                    <% end_if %>
                 </div>
             <% end_if %>
         </div>
@@ -34,13 +40,11 @@
                 {$Content}
 
                 <% if $CTALink %>
-                    <% if $SecondaryColour.ID && $SecondaryColour.ID != $PrimaryColour.ID %>
-                        <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button colour--{$SecondaryColour.ColourClasses}">{$CTALink.Title}</a>
-                    <% else %>
-                        <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link button {$getButtonClasses($PrimaryColour.ID, 'primary')}">{$CTALink.Title}</a>
-                    <% end_if %>
+                    <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link read-more">{$CTALink.Title}</a>
                 <% end_if %>
             </div>
         </div>
     </div>
+
+    {$ExtraRequirements}
 </section>

@@ -1,39 +1,41 @@
-<% if $Items.Count %>
-    <section id="{$BlockID}" tabIndex="0" class="default-download [ js-default-download ] background-colour--{$PrimaryColour.ColourClasses} {$IncludeClasses} {$ExtraClasses}">
-        <% if $Content %>
-            <div class="default-download__header">
-                <div class="default-download__content">
-                    {$Content}
-                </div>
+<section id="{$BlockID}" tabIndex="0" class="default-download [ js-default-download ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <% if $Content %>
+        <div class="default-download__header">
+            <div class="default-download__content">
+                {$Content}
             </div>
-        <% end_if %>
+        </div>
+    <% end_if %>
 
-        <div class="default-download__wrap">
-            <div class="default-download__list">
+    <div class="default-download__wrap">
+        <div class="default-download__list">
+            <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
                     <% with $File %>
                         <a href="{$Link}" class="default-download-item [ js-in-view ]" download="{$Up.Title.ATT}">
-                            <div class="default-download-item__background background-colour--{$Top.SecondaryColour.ColourClasses}"></div>
+                            <div class="default-download-item__background"></div>
 
-                            <div class="default-download-item__title background-colour--{$Top.SecondaryColour.ColourClasses}">
+                            <div class="default-download-item__title">
                                 <span>{$Up.Title.XML}</span>
                             </div>
 
-                            <div class="default-download-item__description background-colour--{$Top.SecondaryColour.ColourClasses}">
+                            <div class="default-download-item__description">
                                 <span>{$Up.Summary.XML}</span>
                             </div>
 
-                            <div class="default-download-item__info background-colour--{$Top.SecondaryColour.ColourClasses}">
+                            <div class="default-download-item__info">
                                 <span>{$Extension.upperCase} {$Size}</span>
                             </div>
 
-                            <div class="default-download-item__icon background-colour--{$Top.SecondaryColour.ColourClasses}">
+                            <div class="default-download-item__icon">
                                 <span></span>
                             </div>
                         </a>
                     <% end_with %>
                 <% end_loop %>
-            </div>
+            <% end_if %>
         </div>
-    </section>
-<% end_if %>
+    </div>
+
+    {$ExtraRequirements}
+</section>
