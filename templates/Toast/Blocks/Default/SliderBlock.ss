@@ -8,7 +8,7 @@
     <% end_if %>
 
     <div class="default-slider__wrap" data-match-height="{$BlockID}__media">
-        <div class="default-slider__container colour--{$SecondaryColour.ColourClasses}">
+        <div class="default-slider__container">
             <div class="default-slider__slider [ js-default-slider__container ]">
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
