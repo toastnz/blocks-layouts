@@ -155,7 +155,7 @@ class Helper
 
         // Add the main site title as a heading, using the title from the SiteConfig
         $siteConfig = SiteConfig::current_site_config();
-        $linksHtml .= '<h3>' . $siteConfig->Title . '</h3>';
+        $linksHtml .= '<h4>' . $siteConfig->Title . '</h4>';
 
         // Check if the Subsites module is installed
         if (class_exists(Subsite::class)) {
@@ -174,7 +174,7 @@ class Helper
                 // Get the subsite title
                 $subsite = Subsite::get()->byID($subsiteID);
                 if ($subsite) {
-                    $linksHtml .= '<h3>' . $subsite->Title . '</h3>';
+                    $linksHtml .= '<h4>' . $subsite->Title . '</h4>';
                 }
 
                 foreach ($subsitePages as $page) {
