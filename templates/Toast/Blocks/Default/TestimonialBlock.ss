@@ -1,7 +1,7 @@
 <section id="{$BlockID}" tabIndex="0" class="default-testimonial [ js-default-testimonial ] ThemeColour_{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
-    <div class="default-testimonial__wrap">
-        <div class="default-testimonial__list">
-            <div class="default-testimonial__slider [ js-default-testimonial__container ]">
+    <div class="default-testimonial__wrap [ js-default-testimonial__wrap ]">
+        <div class="default-testimonial__list [ js-default-testimonial__list ]">
+            <div class="default-testimonial__slides  [ js-default-testimonial__slides ]">
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
                         <div class="default-testimonial-item">
