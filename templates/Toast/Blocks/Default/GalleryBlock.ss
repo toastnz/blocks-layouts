@@ -11,7 +11,7 @@
         <div class="default-gallery__wrap [ js-default-gallery__list ] columns-{$Columns}">
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
-                    <div class="default-gallery-item [ js-in-view ]">
+                    <div id="{$BlockItemID}" class="default-gallery-item [ js-in-view ]">
                         <button class="default-gallery-item__action [ js-default-gallery__action ] <% if $Video %>has-video<% end_if %>">
                             <div class="default-gallery-item__media">
                                 <% if $Image %>

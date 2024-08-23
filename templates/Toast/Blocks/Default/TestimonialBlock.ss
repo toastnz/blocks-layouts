@@ -4,7 +4,7 @@
             <div class="default-testimonial__slides  [ js-default-testimonial__slides ]">
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
-                        <div class="default-testimonial-item">
+                        <div id="{$BlockItemID}" class="default-testimonial-item">
                             <div class="default-testimonial-item__wrap">
                                 <div class="default-testimonial-item__content">
                                     <b>&#8220;</b>

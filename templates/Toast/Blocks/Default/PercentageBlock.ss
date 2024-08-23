@@ -2,7 +2,7 @@
     <div class="default-percentage__wrap" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}__Text">
         <% if $Items.Count %>
             <% loop $Items.Sort('SortOrder') %>
-                <div class="default-percentage-item percentage-{$Width} [ js-in-view ] <% if not $Image && not $Title && not $Summary && not $LinkID %>default-percentage-item--space<% end_if %>">
+                <div id="{$BlockItemID}" class="default-percentage-item percentage-{$Width} [ js-in-view ] <% if not $Image && not $Title && not $Summary && not $LinkID %>default-percentage-item--space<% end_if %>">
                     <% if $Image %>
                         <div class="default-percentage-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                             <% with $Image %>

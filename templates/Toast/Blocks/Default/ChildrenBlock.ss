@@ -11,7 +11,7 @@
     <div class="default-children__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
         <% if $Items.Count %>
             <% loop $Items %>
-                <div class="default-children-item [ js-in-view ]">
+                <div id="{$BlockItemID}" class="default-children-item [ js-in-view ]">
                     <a href="{$Link}" class="default-children-item__link">
                         <div class="default-children-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                             <% with $Image %>

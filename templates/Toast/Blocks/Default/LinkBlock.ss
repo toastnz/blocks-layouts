@@ -10,7 +10,7 @@
     <div class="default-link__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
         <% if $Items.Count %>
             <% loop $Items.Sort('SortOrder') %>
-                <div class="default-link-item [ js-in-view ]">
+                <div id="{$BlockItemID}" class="default-link-item [ js-in-view ]">
                     <a href="{$Link.LinkURL}" {$Link.TargetAttr} class="default-link-item__link">
                         <div class="default-link-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                             <% with $Image %>

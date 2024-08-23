@@ -13,7 +13,7 @@
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
                         <% if $Image || $Video %>
-                            <div class="default-slider-item">
+                            <div id="{$BlockItemID}" class="default-slider-item">
                                 <div class="default-slider-item__layout" data-equalize-watch="{$Top.BlockID}__media">
                                     <div class="default-slider-item__media">
                                         <% if $Image %>
