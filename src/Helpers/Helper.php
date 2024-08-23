@@ -186,7 +186,7 @@ class Helper
                         $iconClass = $page->config()->get('icon_class');
 
                         // Construct the HTML with the icon class and link
-                        $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
+                        $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
                     }
                 }
             } else {
@@ -195,7 +195,7 @@ class Helper
                     $iconClass = $page->config()->get('icon_class');
 
                     // Construct the HTML with the icon class and link
-                    $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a target="_blank" href="' . $page->AbsoluteLink() . '#' . $block->getBlockID() . '">' . $page->Title . '</a></div>';
+                    $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
                 }
             }
         } else {
