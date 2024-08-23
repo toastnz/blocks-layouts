@@ -159,12 +159,7 @@ class Block extends DataObject
 
     public function getPagePreview()
     {
-        if (Director::absoluteBaseURL() == $this->AbsoluteLink()) return null;
-
-        // Insert ?stage=Stage before the #
-        $blockLink = str_replace('#', '?stage=Stage#', $this->AbsoluteLink());
-
-        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $blockLink . '"></iframe></div>');
+        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getBlockPreviewURL() . '"></iframe></div>');
     }
 
     public function getBlockLayouts()
@@ -357,6 +352,40 @@ class Block extends DataObject
 
         return '';
     }
+    /* ?SubsiteID=1&stage=Stage&CMSPreview=1 */
+    public function getBlockPreviewURL()
+    {
+        // Get the current controller
+        $controller = Controller::curr();
+
+        // Get the base URL
+        $baseURL = Director::absoluteBaseURL();
+
+        // // Ensure the controller is an instance of CMSMain
+        if ($controller instanceof CMSMain) {
+            $path = $controller->currentPage()->Link();
+        }
+
+        // Generate the link
+        $link = Controller::join_links($baseURL, $path);
+        // Add the necessary query string parameters
+        $link .= '?stage=Stage&CMSPreview=1';
+
+        if (class_exists(Subsite::class)) {
+            // Get the current subsite ID
+            $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+
+            if ($currentSubsiteID !== 0) {
+                // Add the subsite ID to the query string
+                $link .= '&SubsiteID=' . $currentSubsiteID;
+            }
+        }
+
+        // Add the block ID as a hash
+        $link .= '#' . $this->getBlockID();
+
+        return $link;
+    }
 
     public function getAbsoluteLink($action = null)
     {
@@ -372,19 +401,6 @@ class Block extends DataObject
         }
 
         return $link . '?stage=Stage#' . $this->owner->getBlockID();
-
-        // // Get the current controller
-        // $controller = Controller::curr();
-
-        // $link = Director::absoluteBaseURL();
-
-        // // Ensure the controller is an instance of CMSMain
-        // if ($controller instanceof CMSMain && Director::is_https()) {
-        //     // Call the currentPage() method on the controller instance
-        //     $link = $controller->currentPage()->AbsoluteLink() ;
-        // }
-
-        // return Controller::join_links($link, $this->Link($action));
     }
 
     public function AbsoluteLink($action = null)
