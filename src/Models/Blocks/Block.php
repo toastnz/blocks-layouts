@@ -374,11 +374,8 @@ class Block extends DataObject
         if (class_exists(Subsite::class)) {
             // Get the current subsite ID
             $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
-
-            if ($currentSubsiteID !== 0) {
-                // Add the subsite ID to the query string
-                $link .= '&SubsiteID=' . $currentSubsiteID;
-            }
+            // Add the subsite ID to the query string
+            $link .= '&SubsiteID=' . $currentSubsiteID;
         }
 
         // Add the block ID as a hash
