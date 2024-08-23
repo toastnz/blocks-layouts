@@ -157,9 +157,9 @@ class Block extends DataObject
         return parent::getCMSFields();
     }
 
-    public function getPagePreview()
+    public function getPagePreview($anchor = null)
     {
-        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getBlockPreviewURL() . '"></iframe></div>');
+        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getBlockPreviewURL($anchor) . '"></iframe></div>');
     }
 
     public function getBlockLayouts()
@@ -353,7 +353,7 @@ class Block extends DataObject
         return '';
     }
     /* ?SubsiteID=1&stage=Stage&CMSPreview=1 */
-    public function getBlockPreviewURL()
+    public function getBlockPreviewURL($anchor = null)
     {
         // Get the current controller
         $controller = Controller::curr();
@@ -379,7 +379,7 @@ class Block extends DataObject
         }
 
         // Add the block ID as a hash
-        $link .= '#' . $this->getBlockID();
+        $link .= '#' . ($anchor ?: $this->getBlockID());
 
         return $link;
     }

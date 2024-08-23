@@ -3,6 +3,7 @@
 namespace Toast\Blocks\Items;
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\ReadonlyField;
 
 class BlockItem extends DataObject
 {
@@ -15,9 +16,14 @@ class BlockItem extends DataObject
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-
             if ($preview = $this->getPagePreview()) {
                 $fields->addFieldToTab('Root.Main', $preview);
+            }
+
+            if ($this->ID) {
+                $fields->addFieldsToTab('Root.More', [
+                    ReadonlyField::create('BlockID', 'Item ID', $this->getBlockItemID()),
+                ]);
             }
 
             $fields->removeByName([
@@ -32,9 +38,15 @@ class BlockItem extends DataObject
         return parent::getCMSFields();
     }
 
+    public function getBlockItemID()
+    {
+        return $this->Parent->getBlockID() . '_' . $this->ID;
+    }
+
     public function getPagePreview() {
         if ($this->hasMethod('Parent')) {
-            return $this->Parent()->getPagePreview();
+            $id = $this->getBlockItemID();
+            return $this->Parent()->getPagePreview($id);
         }
 
         return null;
