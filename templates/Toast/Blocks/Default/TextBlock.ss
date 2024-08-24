@@ -1,5 +1,5 @@
-<% if $Content || $Heading %>
-    <section id="{$BlockID}" tabIndex="0" class="default-text [ js-default-text ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-text [ js-default-text ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <section>
         <div class="default-text__wrap">
             <% if $Heading %>
                 <div class="default-text__content">
@@ -11,7 +11,7 @@
                 {$Content}
             </div>
         </div>
-
-        {$ExtraRequirements}
     </section>
-<% end_if %>
+
+    {$ExtraRequirements}
+</colour-block>

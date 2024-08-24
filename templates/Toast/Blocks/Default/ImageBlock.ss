@@ -1,23 +1,25 @@
-<section id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
-    <div class="default-image__wrap">
-        <div class="default-image__media">
-            <% with $Image %>
-                <picture class="default-image__image">
-                    <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
-                    <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                    <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
-                    <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
-                    <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
-                </picture>
-            <% end_with %>
-        </div>
-
-        <% if $Caption %>
-            <div class="default-image__content">
-                <p>{$Caption}</p>
+<colour-block id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <section>
+        <div class="default-image__wrap">
+            <div class="default-image__media">
+                <% with $Image %>
+                    <picture class="default-image__image">
+                        <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                        <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                        <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                        <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                        <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
+                    </picture>
+                <% end_with %>
             </div>
-        <% end_if %>
-    </div>
+
+            <% if $Caption %>
+                <div class="default-image__content">
+                    <p>{$Caption}</p>
+                </div>
+            <% end_if %>
+        </div>
+    </section>
 
     {$ExtraRequirements}
-</section>
+</colour-block>

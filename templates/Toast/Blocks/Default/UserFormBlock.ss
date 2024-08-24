@@ -1,5 +1,5 @@
-<% if $Form %>
-    <section id="{$BlockID}" tabIndex="0" class="default-userform [ js-default-user-form ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-userform [ js-default-user-form ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+    <section>
         <div class="default-userform__wrap">
             <% if $Content %>
                 <div class="default-userform__content">
@@ -11,7 +11,7 @@
                 {$Form}
             </div>
         </div>
-
-        {$ExtraRequirements}
     </section>
-<% end_if %>
+
+    {$ExtraRequirements}
+</colour-block>
