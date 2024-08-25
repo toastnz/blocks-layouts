@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-video [ js-default-video ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-video [ js-default-video ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-video__wrap">
             <div class="default-video__media">

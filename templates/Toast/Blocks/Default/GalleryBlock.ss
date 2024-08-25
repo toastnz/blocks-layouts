@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-gallery [ js-default-gallery ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-gallery [ js-default-gallery ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <% if $Content %>
             <div class="default-gallery__header">

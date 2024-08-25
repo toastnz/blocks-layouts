@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-userform [ js-default-user-form ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-userform [ js-default-user-form ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-userform__wrap">
             <% if $Content %>

@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-image [ js-default-image ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-image__wrap">
             <div class="default-image__media">

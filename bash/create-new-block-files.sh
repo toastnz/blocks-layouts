@@ -5,10 +5,12 @@ Blocks="src/Models/Blocks"
 Templates="templates/Toast/Blocks/Default"
 Icons="client/images/layout-icons/default"
 
-# function to make string UpperCamelCase
+# function to make the first character uppercase and remove all spaces and special characters
 function to_camel_case {
     str=$1
-    str="$(echo $str | awk 'BEGIN{OFS=""};{for(j=1;j<=NF;j++){ if(j==1){$j=tolower($j)} else {$j=toupper(substr($j,1,1)) tolower(substr($j,2)) }}}1')"
+    # Remove all spaces and special characters
+    str=$(echo $str | tr -cd '[:alnum:]')
+    # Make the first character uppercase
     str="$(tr '[:lower:]' '[:upper:]' <<< ${str:0:1})${str:1}"
     echo $str
 }
@@ -45,7 +47,7 @@ function enter_block_name {
 
     # Convert the array back into a string
     block="${block[@]}"
-    
+
     # Remove spaces from the block name
     block=$(echo $block | sed 's/ //g')
     # block=$(to_camel_case "$block")
@@ -97,7 +99,7 @@ if [ ! -f "$TemplateFile" ]; then
     # LowerBlockName=$(echo $block | tr '[:upper:]' '[:lower:]');
     # LowerBlockNameWithoutBlock=$(echo $LowerBlockName | sed 's/block$//');
 
-    # # 
+    # #
 
     TemplateName=$(from_camel_to_sentence_case "$template");
     LowerTemplateName=$(echo $template | tr '[:upper:]' '[:lower:]');
@@ -105,9 +107,9 @@ if [ ! -f "$TemplateFile" ]; then
     # The default html we want is like this <section id="{$HTMLID}" class="default-showcase [ js-showcase ] background-colour--{$getColourForTemplate($PrimaryColour)} {$IncludeClasses} {$ExtraClasses}">
 
     # Write some default content to the template file
-    echo "<section id=\"{\$HTMLID}\" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] background-colour--{\\$PrimaryColour.ColourClasses)} {\$IncludeClasses} {\$ExtraClasses}\">
+    echo "<colour-block id=\"{\$HTMLID}\" tabIndex="0" class=\"$LowerTemplateName-$LowerBlockNameWithoutBlock [ js-$LowerTemplateName-$LowerBlockNameWithoutBlock ] {\$IncludeClasses} {\$ExtraClasses}\">
 
-</section>" > "$TemplateFile"
+</colour-block>" > "$TemplateFile"
 
 fi
 

@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-slider [ js-default-slider ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-slider [ js-default-slider ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <% if $Content %>
             <div class="default-slider__header">

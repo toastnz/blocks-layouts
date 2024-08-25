@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-percentage [ js-default-percentage ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-percentage [ js-default-percentage ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-percentage__wrap" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}__Text">
             <% if $Items.Count %>

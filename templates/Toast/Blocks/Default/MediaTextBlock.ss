@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-media-text__wrap">
             <div class="default-media-text__media align-{$MediaAlignment}">

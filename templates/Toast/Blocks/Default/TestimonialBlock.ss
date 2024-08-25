@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-testimonial [ js-default-testimonial ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-testimonial [ js-default-testimonial ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-testimonial__wrap [ js-default-testimonial__wrap ]">
             <div class="default-testimonial__list [ js-default-testimonial__list ]">

@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-text [ js-default-text ] theme-colour--{$PrimaryColour.ColourCustomID} {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-text [ js-default-text ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-text__wrap">
             <% if $Heading %>
