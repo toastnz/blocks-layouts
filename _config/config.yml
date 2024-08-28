@@ -24,7 +24,7 @@ SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest:
 
 Sheadawson\Linkable\Models\Link:
   extensions:
-    - Toast\Extensions\LinkExtension
+    - Toast\Blocks\Extensions\LinkExtension
 
 Toast\Blocks\AccordionBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/accordion.svg'
