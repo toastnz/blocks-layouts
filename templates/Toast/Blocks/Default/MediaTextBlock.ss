@@ -41,7 +41,7 @@
                     {$Content}
 
                     <% if $CTALink %>
-                        <a href="{$CTALink.LinkURL}" {$CTALink.TargetAttr} class="default-media-text__link read-more">{$CTALink.Title}</a>
+                        <a href="{$CTALink.LinkURL}" {$CTALink.LinkAttributes} class="default-media-text__link read-more">{$CTALink.Title}</a>
                     <% end_if %>
                 </div>
             </div>

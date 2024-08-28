@@ -22,6 +22,10 @@ SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest:
   extensions:
     CmsActionsExtension: Toast\Blocks\Extensions\CmsActionsExtension
 
+Sheadawson\Linkable\Models\Link:
+  extensions:
+    - Toast\Extensions\LinkExtension
+
 Toast\Blocks\AccordionBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/accordion.svg'
 

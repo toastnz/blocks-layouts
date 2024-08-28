@@ -28,7 +28,7 @@
                             </div>
 
                             <% if $LinkID %>
-                                <a href="{$Link.LinkURL}" class="default-percentage-item__link read-more" {$Link.TargetAttr}>{$Link.Title}</a>
+                                <a href="{$Link.LinkURL}" class="default-percentage-item__link read-more" {$Link.LinkAttributes}>{$Link.Title}</a>
                             <% end_if %>
                         </div>
                     </div>
