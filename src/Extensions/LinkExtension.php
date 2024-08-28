@@ -1,6 +1,6 @@
 <?php
 
-namespace Toast\Extensions;
+namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -11,6 +11,11 @@ class LinkExtension extends DataExtension
     private static $db = [
         'AriaLabel' => 'Varchar(255)',
         'DescriptiveTitle' => 'Varchar(255)',
+    ];
+
+    private static $casting = [
+        'LinkAttributes' => 'HTMLFragment',
+        'AccessibilityAttributes' => 'HTMLFragment',
     ];
 
     // Add the AriaLabel and DescriptiveTitle fields to the CMS
@@ -30,8 +35,7 @@ class LinkExtension extends DataExtension
     // Override the default TargetAttr method to also return rel="noopener noreferrer" if the link is set to open in a new window
     public function getTargetAttr()
     {
-        // return $this->OpenInNewWindow ? " target='_blank'" : '';
-        return $this->OpenInNewWindow ? " target='_blank' rel='noopener noreferrer'" : '';
+        return $this->owner->OpenInNewWindow ? " target='_blank' rel='noopener noreferrer'" : '';
     }
 
     public function getAccessibilityAttributes()
@@ -39,11 +43,11 @@ class LinkExtension extends DataExtension
         $attributes = ' ';
 
         if ($this->owner->AriaLabel) {
-            $attributes .= 'aria-label="' . $this->owner->AriaLabel . '" ';
+            $attributes .= "aria-label='" . $this->owner->AriaLabel . "'";
         }
 
         if ($this->owner->DescriptiveTitle) {
-            $attributes .= 'title="' . $this->owner->DescriptiveTitle . '" ';
+            $attributes .= " title='" . $this->owner->DescriptiveTitle . "'";
         }
 
         return $attributes;
