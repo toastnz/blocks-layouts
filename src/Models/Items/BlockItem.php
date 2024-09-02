@@ -16,11 +16,11 @@ class BlockItem extends DataObject
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-            if ($preview = $this->getPagePreview()) {
-                $fields->addFieldToTab('Root.Main', $preview);
-            }
-
             if ($this->ID) {
+                if ($preview = $this->getPagePreview()) {
+                    $fields->addFieldToTab('Root.Main', $preview);
+                }
+
                 $fields->addFieldsToTab('Root.More', [
                     ReadonlyField::create('BlockID', 'Item ID', $this->getBlockItemID()),
                 ]);
