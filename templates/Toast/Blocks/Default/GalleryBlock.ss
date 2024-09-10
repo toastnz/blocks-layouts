@@ -38,28 +38,30 @@
 
         <div class="default-gallery-modal [ js-default-gallery__modal ]">
             <div class="default-gallery-modal__slider [ js-default-gallery__slider ]">
-                <% loop $Items.Sort('SortOrder') %>
-                    <div class="default-gallery-modal__item">
-                        <div class="default-gallery-modal__media">
-                            <div class="default-gallery-modal__image <% if $Video %>has-video<% end_if %>">
-                                <% with $Image %>
-                                    <picture>
-                                        <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                                        <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
-                                        <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
-                                        <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
-                                    </picture>
-                                <% end_with %>
+                <% if $Items.Count %>
+                    <% loop $Items.Sort('SortOrder') %>
+                        <div class="default-gallery-modal__item">
+                            <div class="default-gallery-modal__media">
+                                <div class="default-gallery-modal__image <% if $Video %>has-video<% end_if %>">
+                                    <% with $Image %>
+                                        <picture>
+                                            <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                            <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                                            <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                                            <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
+                                        </picture>
+                                    <% end_with %>
 
-                                <% if $Video %>
-                                    <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}">
-                                        <div class="default-gallery-item__icon"></div>
-                                    </div>
-                                <% end_if %>
+                                    <% if $Video %>
+                                        <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}">
+                                            <div class="default-gallery-item__icon"></div>
+                                        </div>
+                                    <% end_if %>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <% end_loop %>
+                    <% end_loop %>
+                <% end_if %>
             </div>
         </div>
     </section>
