@@ -8,8 +8,8 @@
             </div>
         <% end_if %>
 
-        <% if $Items.Count %>
-            <div class="default-gallery__wrap [ js-default-gallery__list ] columns-{$Columns}">
+        <div class="default-gallery__wrap [ js-default-gallery__list ] columns-{$Columns}">
+            <% if $Items.Count %>
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
                         <div id="{$BlockItemID}" class="default-gallery-item [ js-in-view ]">
