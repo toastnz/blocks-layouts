@@ -40,7 +40,7 @@ class BlockItem extends DataObject
 
     public function getBlockItemID()
     {
-        return $this->Parent->getBlockID() . '_' . $this->ID;
+        return $this->Parent()->getBlockID() . '_' . $this->ID;
     }
 
     public function getPagePreview() {
