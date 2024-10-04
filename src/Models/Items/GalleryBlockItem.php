@@ -35,28 +35,27 @@ class GalleryBlockItem extends DataObject
     ];
     private static $default_sort = 'SortOrder ASC';
 
-    public function getCMSFields()
+     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function ($fields) {
+            $fields->removeByName([
+                       'SortOrder',
+                        'GalleryBlockID'
+                    ]);
+            $fields->addFieldsToTab('Root.Main', [
+                UploadField::create(
+                    'Image',
+                    'Image'
+                )->setFolderName('Uploads/Media'),
+                VideoLinkField::create(
+                    'Video',
+                    'Video'
+                )->showPreview('100%')
+            ]);
 
-        $fields->removeByName([
-           'SortOrder',
-            'GalleryBlockID'
-        ]);
+        });
 
-        $fields->addFieldsToTab('Root.Main',
-        [
-            UploadField::create(
-                'Image',
-                'Image'
-            )->setFolderName('Uploads/Media'),
-            VideoLinkField::create(
-                'Video',
-                'Video'
-            )->showPreview('100%')
-        ]);
-
-        return $fields;
+        return parent::getCMSFields();
     }
 
 
