@@ -38,9 +38,9 @@ class Helper
         return $availableBlocks;
     }
 
-    static function getLayoutDistSrc()
+    static function getLayoutDistDir()
     {
-        $srcPath = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_src');
+        $srcPath = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
 
         if (!file_exists(BASE_PATH . '/' . $srcPath)) {
             return ;

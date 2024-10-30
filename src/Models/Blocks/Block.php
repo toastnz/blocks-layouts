@@ -150,7 +150,6 @@ class Block extends DataObject
             $fields->removeByName([
                 'Template',
                 'CSSFile',
-                'SetDefaultCSS'
             ]);
 
             // Add fields to the form
@@ -233,7 +232,7 @@ class Block extends DataObject
     public function getDefaultCSSFile()
     {
         $blockname = strtolower($this->getBlockTemplateName());
-        $layoutSource = Helper::getLayoutDistSrc();
+        $layoutSource = Helper::getLayoutDistDir();
         // return default block css file
         return $layoutSource . '/default-' . $blockname . '.css';
     }
