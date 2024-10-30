@@ -683,10 +683,16 @@ class Block extends DataObject
 
     public function getPage() {
         $currentController = Controller::curr();
+        if (!$currentController instanceof CMSPageEditController) {
+            $currentPage = $currentController->data();
+        }else{
+            $currentPage = $currentController->currentPage();
+        }
         $parent = \Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
             ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->owner->ID)
-            ->where('"Page_ContentBlocks"."PageID" = ' . $currentController->ID)
+            ->where('"Page_ContentBlocks"."PageID" = ' . $currentPage->ID)
             ->first();
+
 
         // get the page that has this block
         if ($parent && $parent->exists()) {
