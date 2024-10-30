@@ -54,6 +54,7 @@ class Block extends DataObject
         'Template'      => 'Varchar',
         'CSSFile'       => 'Varchar',
         'NavigationHeading' => 'Varchar(255)',
+        'SetDefaultCSS' => 'Boolean',
     ];
 
     private static $casting = [
@@ -132,11 +133,23 @@ class Block extends DataObject
                 $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
                 $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
                 $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
+
+                // check if this is the first block on the page
+                if($parent = $this->getPage()){
+                    if($parentFirstBlock = $parent->getFirstBlock()){
+                        if($this->ID == $parentFirstBlock->ID){
+                            $fields->addFieldToTab('Root.Main', LiteralField::create('FirstBlock', '<div class="alert alert-info">This is the first block on the page</div>'));
+                            // add setdefaultcss checkbox
+                            $fields->addFieldToTab('Root.Main', CheckboxField::create('SetDefaultCSS', 'Include Default CSS')->setDescription('Include the default CSS file for this block. This will be included in the critical CSS.'),'Title');
+                        }
+                    }
+                }
             }
 
             $fields->removeByName([
                 'Template',
-                'CSSFile'
+                'CSSFile',
+                'SetDefaultCSS'
             ]);
 
             // Add fields to the form
@@ -151,7 +164,6 @@ class Block extends DataObject
                 // Add the $layoutOptions to the Main tab, AFTER the Title field
                 $fields->insertAfter('NavigationHeading', $layoutOptions);
             }
-
         });
 
         return parent::getCMSFields();
@@ -215,6 +227,14 @@ class Block extends DataObject
             }
             return $output;
         }
+    }
+
+    public function getDefaultCSSFile()
+    {
+        $blockname = strtolower($this->getBlockTemplateName());
+        $layoutSource = Helper::getLayoutDistSrc();
+        // return default block css file
+        return $layoutSource . '/default-' . $blockname . '.css';
     }
 
     public function getCSSFile()

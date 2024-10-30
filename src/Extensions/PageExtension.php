@@ -111,13 +111,37 @@ class PageExtension extends DataExtension
         if (!empty($styles)) {
             // With the first cssFile, we want to load it directly to the page as critical css
             $firstCssFile = array_shift($styles);
-            Requirements::customCSS(file_get_contents($baseFolder . '/' . $firstCssFile));
-        }
 
-        if (!empty($styles)) {
+            if($firstBlock = $this->getFirstBlock()) {   
+                if($firstBlock->SetDefaultCSS) {
+                    if(file_exists(Director::baseFolder() . '/' . $firstBlock->getDefaultCSSFile())) {
+                        $criticalStyles[] = $firstBlock->getDefaultCSSFile();
+                    }
+                }
+            }
+            
+            $this->owner->extend('updateCriticalStyles', $criticalStyles);  
+
+            if(!empty($criticalStyles)) {
+                $criticalStyles[] = $firstCssFile;
+                foreach ($criticalStyles as $criticalFile) {
+                    if(file_exists($baseFolder . '/' . $criticalFile)) {
+                        Requirements::customCSS(file_get_contents($baseFolder . '/' . $criticalFile));
+                    
+                    }
+                }
+            }else{
+                Requirements::customCSS(file_get_contents($baseFolder . '/' . $firstCssFile));
+            }
             // Now load the rest of the css files as a single file
             Requirements::combine_files('blocks.css', $styles);
         }
+    }
+
+    public function getFirstBlock()
+    {
+        $blocks = $this->owner->ContentBlocks();
+        return $blocks && $blocks->count() ? $blocks->first() : null;
     }
 }
 

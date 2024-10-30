@@ -38,6 +38,17 @@ class Helper
         return $availableBlocks;
     }
 
+    static function getLayoutDistSrc()
+    {
+        $srcPath = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_src');
+
+        if (!file_exists(BASE_PATH . '/' . $srcPath)) {
+            return ;
+        }
+
+        return $srcPath;
+    }
+
     static function getLayoutIconSrc()
     {
         if($availableBlocksLayouts = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src')){
