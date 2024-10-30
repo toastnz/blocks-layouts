@@ -139,7 +139,7 @@ class Block extends DataObject
                 if($parent = $this->getPage()){
                     if($parentFirstBlock = $parent->getFirstBlock()){
                         if($this->ID == $parentFirstBlock->ID){
-                            $fields->addFieldToTab('Root.Main', LiteralField::create('FirstBlock', '<div class="alert alert-info">This is the first block on the page</div>'));
+                            $fields->insertBefore('Title', LiteralField::create('FirstBlock', '<div class="h2">This is the first block on the page</div>'));
                             // add setdefaultcss checkbox
                             $fields->addFieldToTab('Root.Main', CheckboxField::create('SetDefaultCSS', 'Include Default CSS')->setDescription('Include the default CSS file for this block. This will be included in the critical CSS.'),'Title');
                         }
