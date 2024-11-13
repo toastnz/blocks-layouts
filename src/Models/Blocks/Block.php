@@ -357,7 +357,7 @@ class Block extends DataObject
     {
         // Get the current controller
         $controller = Controller::curr();
-
+  	$path = null;
         // Get the base URL
         $baseURL = Director::absoluteBaseURL();
 
