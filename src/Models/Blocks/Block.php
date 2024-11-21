@@ -144,7 +144,7 @@ class Block extends DataObject
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
                 TextField::create('NavigationHeading', 'Navigation Heading')
-                    ->setDescription('Heading will be used for navigation purposes and converted to an ID for linking. Please ensure this heading is unique on the page.'),
+                    ->setDescription('Heading will be used for navigation purposes and converted to an ID for linking. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong>'),
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
@@ -684,7 +684,7 @@ class Block extends DataObject
         // First check if there is a NavigationHeading
         if ($this->NavigationHeading) {
             // Remove any number, punctuation, and special characters
-            $id = preg_replace('/[^a-zA-Z0-9]+/', ' ', $this->NavigationHeading);
+            $id = preg_replace('/[^a-zA-Z]+/', ' ', $this->NavigationHeading);
             // Convert to Upper Camel Case (Pascal Case)
             $id = str_replace(' ', '', ucwords(trim($id)));
         }
