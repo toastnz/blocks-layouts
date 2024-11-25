@@ -13,9 +13,9 @@
                 <% loop $Items %>
                     <div id="{$BlockItemID}" class="default-children-item [ js-in-view ]">
                         <a href="{$Link}" class="default-children-item__link">
-                            <% if $Image %>
+                            <% if $FeaturedImage %>
                                 <div class="default-children-item__media" data-equalize-watch="{$Top.BlockID}_Media">
-                                    <% with $Image %>
+                                    <% with $FeaturedImage %>
                                         <picture>
                                             <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
                                             <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">

@@ -13,7 +13,7 @@
                 <% loop $Posts %>
                     <div class="default-blog-item [ js-in-view ]">
                         <a href="{$Link}" class="default-blog-item__link">
-                            <% if $Image %>
+                            <% if $FeaturedImage %>
                                 <div class="default-blog-item__media" data-equalize-watch="{$Top.BlockID}_Media">
                                     <% with $FeaturedImage %>
                                         <picture>
