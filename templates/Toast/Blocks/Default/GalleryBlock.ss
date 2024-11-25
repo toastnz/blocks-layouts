@@ -37,8 +37,8 @@
         </div>
 
         <div class="default-gallery-modal [ js-default-gallery__modal ]">
-            <div class="default-gallery-modal__slider [ js-default-gallery__slider ]">
-                <div>
+            <div class="default-gallery-modal__container [ js-default-gallery__container ]">
+                <div class="default-gallery-modal__slider [ js-default-gallery__slider ]">
                     <% if $Items.Count %>
                         <% loop $Items.Sort('SortOrder') %>
                             <div class="default-gallery-modal__item">
