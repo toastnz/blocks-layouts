@@ -8,7 +8,7 @@
             </div>
         <% end_if %>
 
-        <div class="default-children__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media" data-equalize="{$BlockID}_Text">
+        <div class="default-children__wrap lg-up-{$Columns}" data-match-height="{$BlockID}_Media">
             <% if $Items.Count %>
                 <% loop $Items %>
                     <div id="{$BlockItemID}" class="default-children-item [ js-in-view ]">
@@ -26,15 +26,13 @@
                             <% end_if %>
 
                             <div class="default-children-item__details">
-                                <div data-equalize-watch="{$Top.BlockID}_Text">
-                                    <% if $Title %>
-                                        <span class="default-children-item__title">{$Title.XML}</span>
-                                    <% end_if %>
+                                <% if $Title %>
+                                    <span class="default-children-item__title">{$Title.XML}</span>
+                                <% end_if %>
 
-                                    <% if $Summary %>
-                                        <p class="default-children-item__summary">{$Summary.XML}</p>
-                                    <% end_if %>
-                                </div>
+                                <% if $Summary %>
+                                    <p class="default-children-item__summary">{$Summary.XML}</p>
+                                <% end_if %>
 
                                 <span class="default-children-item__button read-more">Read more</span>
                             </div>
