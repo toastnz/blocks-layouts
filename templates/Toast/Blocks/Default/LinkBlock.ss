@@ -13,15 +13,17 @@
                 <% loop $Items.Sort('SortOrder') %>
                     <div id="{$BlockItemID}" class="default-link-item [ js-in-view ]">
                         <a href="{$Link.LinkURL}" {$Link.LinkAttributes} class="default-link-item__link">
-                            <div class="default-link-item__media" data-equalize-watch="{$Top.BlockID}_Media">
-                                <% with $Image %>
-                                    <picture>
-                                        <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
-                                        <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                                        <img loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
-                                    </picture>
-                                <% end_with %>
-                            </div>
+                            <% if $Image %>
+                                <div class="default-link-item__media" data-equalize-watch="{$Top.BlockID}_Media">
+                                    <% with $Image %>
+                                        <picture>
+                                            <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                                            <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                            <img loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
+                                        </picture>
+                                    <% end_with %>
+                                </div>
+                            <% end_if %>
 
                             <div class="default-link-item__details">
                                 <div data-equalize-watch="{$Top.BlockID}_Text">

@@ -13,15 +13,17 @@
                 <% loop $Posts %>
                     <div class="default-blog-item [ js-in-view ]">
                         <a href="{$Link}" class="default-blog-item__link">
-                            <div class="default-blog-item__media" data-equalize-watch="{$Top.BlockID}_Media">
-                                <% with $FeaturedImage %>
-                                    <picture>
-                                        <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
-                                        <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                                        <img loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
-                                    </picture>
-                                <% end_with %>
-                            </div>
+                            <% if $Image %>
+                                <div class="default-blog-item__media" data-equalize-watch="{$Top.BlockID}_Media">
+                                    <% with $FeaturedImage %>
+                                        <picture>
+                                            <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                                            <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                            <img loading="lazy" src="{$ScaleMaxWidth(960).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
+                                        </picture>
+                                    <% end_with %>
+                                </div>
+                            <% end_if %>
 
                             <div class="default-blog-item__details">
                                 <div data-equalize-watch="{$Top.BlockID}_Text">
