@@ -1,12 +1,12 @@
-/*------------------------------------------------------------------
-Import styles
-------------------------------------------------------------------*/
+// /*------------------------------------------------------------------
+// Import styles
+// ------------------------------------------------------------------*/
 
-import 'styles/preview.scss';
+// import 'styles/preview.scss';
 
-/*------------------------------------------------------------------
-Scripts
-------------------------------------------------------------------*/
+// /*------------------------------------------------------------------
+// Scripts
+// ------------------------------------------------------------------*/
 
 import DomObserverController from 'domobserverjs';
 
@@ -25,7 +25,7 @@ function movePreviewToNewPanel(preview) {
   const fieldset = document.createElement('fieldset');
 
   // Make sure the preview and root exist
-  if(!preview || !root) return;
+  if (!preview || !root) return;
 
   root.appendChild(fieldset);
 
@@ -95,8 +95,7 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
 });
 
 // Chuck this on the normal page preivew cus why not ;)
-CMSObserver.observe('[name="cms-preview-iframe"]', (items) => {
-  console.log(items);
+CMSObserver.observe('.cms-preview .panel', (items) => {
   // Grab the preview
   const preview = items[0];
   // Create the thumb
