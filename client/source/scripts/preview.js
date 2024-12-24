@@ -96,6 +96,7 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
 
 // Chuck this on the normal page preivew cus why not ;)
 CMSObserver.observe('[name="cms-preview-iframe"]', (items) => {
+  console.log(items);
   // Grab the preview
   const preview = items[0];
   // Create the thumb
