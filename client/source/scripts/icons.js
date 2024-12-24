@@ -8,50 +8,47 @@ import 'styles/icons.scss';
 Scripts
 ------------------------------------------------------------------*/
 
-Promise.all([
-  import('domobserverjs'),
-]).then(([moduleDomObserver]) => {
-  // Define the components
-  const DomObserverController = moduleDomObserver.default;
+import DomObserverController from 'domobserverjs';
 
-  // Create a new instance of the DomObserverController
-  const CMSObserver = new DomObserverController();
+/*------------------------------------------------------------------
+Setup
+------------------------------------------------------------------*/
 
-  // Observe the CMS for the toast-block-layouts fieldsets
-  CMSObserver.observe('.toast-block-layouts', (fieldsets) => {
-    // Loop through the fieldsets
-    (async () => {
-      for (const fieldset of fieldsets) {
-        // Find all the images in the fieldset
-        const images = fieldset.querySelectorAll('img');
+// Create a new instance of the DomObserverController
+const CMSObserver = new DomObserverController();
 
-        // Loop the images
-        for (const img of images) {
-          const imgSrc = img.src;
+// Observe the CMS for the toast-block-layouts fieldsets
+CMSObserver.observe('.toast-block-layouts', (fieldsets) => {
+  // Loop through the fieldsets
+  (async () => {
+    for (const fieldset of fieldsets) {
+      // Find all the images in the fieldset
+      const images = fieldset.querySelectorAll('img');
 
-          // If the img src does not include .svg, continue to the next image
-          if (!imgSrc.includes('.svg')) continue;
+      // Loop the images
+      for (const img of images) {
+        const imgSrc = img.src;
 
-          try {
-            // Fetch the svg, convert it to text, and replace the img with the svg
-            const response = await fetch(imgSrc);
-            const svg = await response.text();
+        // If the img src does not include .svg, continue to the next image
+        if (!imgSrc.includes('.svg')) continue;
 
-            // Create a new div
-            const div = document.createElement('div');
+        try {
+          // Fetch the svg, convert it to text, and replace the img with the svg
+          const response = await fetch(imgSrc);
+          const svg = await response.text();
 
-            // Set the innerHTML of the div to the svg
-            div.innerHTML = svg;
+          // Create a new div
+          const div = document.createElement('div');
 
-            // Replace the img with the div
-            img.parentNode.replaceChild(div.firstChild, img);
-          } catch (error) {
-            console.error(`Failed to fetch SVG: ${imgSrc}`, error);
-          }
+          // Set the innerHTML of the div to the svg
+          div.innerHTML = svg;
+
+          // Replace the img with the div
+          img.parentNode.replaceChild(div.firstChild, img);
+        } catch (error) {
+          console.error(`Failed to fetch SVG: ${imgSrc}`, error);
         }
       }
-    })();
-  });
-}).catch((error) => {
-  console.error('Failed to load the DomObserverController', error);
+    }
+  })();
 });
