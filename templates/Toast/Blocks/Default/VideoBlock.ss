@@ -25,9 +25,9 @@
                     <div class="default-video__icon"></div>
                 </a>
 
-                <% if $Caption %>
+                <% if $Content %>
                     <div class="default-video__caption">
-                        <p>{$Caption}</p>
+                        {$Content}
                     </div>
                 <% end_if %>
             </div>

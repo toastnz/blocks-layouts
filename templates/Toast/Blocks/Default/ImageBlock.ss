@@ -17,9 +17,9 @@
                 <% end_with %>
             </div>
 
-            <% if $Caption %>
+            <% if $Content %>
                 <div class="default-image__content">
-                    <p>{$Caption}</p>
+                    {$Content}
                 </div>
             <% end_if %>
         </div>
