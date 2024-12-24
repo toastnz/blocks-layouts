@@ -18,11 +18,6 @@ class TestimonialBlock extends Block
 
     private static $plural_name = 'Testimonial';
 
-    private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText'
-    ];
-
     private static $has_many = [
         'Items' => TestimonialBlockItem::class
     ];
@@ -31,11 +26,6 @@ class TestimonialBlock extends Block
     {
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->removeByName('Items');
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')
-            ]);
 
             if ($this->ID) {
                 $testimonialConfig = GridFieldConfig_RelationEditor::create(10);

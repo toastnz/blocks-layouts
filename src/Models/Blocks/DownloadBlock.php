@@ -2,11 +2,9 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBField;
 use Toast\Blocks\Items\DownloadBlockItem;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -21,11 +19,6 @@ class DownloadBlock extends Block
 
     private static $plural_name = 'Downloads';
 
-    private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText'
-    ];
-
     private static $has_many = [
         'Items' => DownloadBlockItem::class
     ];
@@ -35,11 +28,6 @@ class DownloadBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->removeByName('Items');
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')
-            ]);
 
             if ($this->ID) {
                 $config = GridFieldConfig_RelationEditor::create(50)

@@ -3,12 +3,10 @@
 namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\GalleryBlockItem;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 
@@ -21,8 +19,6 @@ class GalleryBlock extends Block
     private static $plural_name = 'Media Gallery';
 
     private static $db = [
-        'Heading'  => 'Varchar(255)',
-        'Content' => 'HTMLText',
         'Columns'  => 'Enum("2,3,4", "2")'
     ];
 
@@ -35,11 +31,6 @@ class GalleryBlock extends Block
 
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->removeByName('Items');
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')
-            ]);
 
             if ($this->exists()) {
                 $config = GridFieldConfig_RecordEditor::create();

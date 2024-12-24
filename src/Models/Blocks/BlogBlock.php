@@ -3,14 +3,12 @@
 namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
-use SilverStripe\Forms\TextField;
 use SilverStripe\Blog\Model\Blog;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -22,8 +20,6 @@ class BlogBlock extends Block
     private static $plural_name = 'Blog Blocks';
 
     private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText',
         'Columns'  => 'Enum("2,3,4", "2")'
     ];
 
@@ -61,8 +57,6 @@ class BlogBlock extends Block
                     DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
                     DropdownField::create('BlogID', 'Blog', Blog::get()->map('ID', 'Title'))->setEmptyString('--Please select a blog--'),
                     LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
-                    TextField::create('Heading', 'Heading'),
-                    HTMLEditorField::create('Content', 'Content'),
                     $grid
                 ]);
 

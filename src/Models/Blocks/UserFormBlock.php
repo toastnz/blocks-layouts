@@ -18,24 +18,12 @@ class UserFormBlock extends Block
 
     private static $plural_name = 'User forms';
 
-    private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText'
-    ];
-
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')->setDescription('Form will render automatically on the page.')
-            ]);
-
             $fields->insertAfter('Title',
                 LiteralField::create('', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
             );
-
         });
 
         return parent::getCMSFields();

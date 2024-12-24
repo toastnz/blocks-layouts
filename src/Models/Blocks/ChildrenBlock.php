@@ -3,12 +3,10 @@
 namespace Toast\Blocks;
 
 use SilverStripe\ORM\ArrayList;
-use SilverStripe\Forms\TextField;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\TreeDropdownField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use Toast\Blocks\Block;
 
 class ChildrenBlock extends Block
@@ -18,8 +16,6 @@ class ChildrenBlock extends Block
     private static $plural_name = 'Children Blocks';
 
     private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText',
         'Columns'  => 'Enum("2,3,4", "2")'
     ];
 
@@ -35,8 +31,6 @@ class ChildrenBlock extends Block
                 $fields->addFieldsToTab('Root.Main', [
                     TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class),
                     DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
-                    TextField::create('Heading', 'Heading'),
-                    HTMLEditorField::create('Content', 'Content'),
                 ]);
             } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));

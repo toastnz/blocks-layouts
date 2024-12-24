@@ -15,19 +15,9 @@ class TextBlock extends Block
 
     private static $plural_name = 'Text';
 
-    private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText'
-    ];
-
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')
-            ]);
 
         });
 

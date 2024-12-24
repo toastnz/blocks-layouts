@@ -18,11 +18,6 @@ class PercentageBlock extends Block
 
     private static $plural_name = 'Percentage Blocks';
 
-    private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText',
-    ];
-
     private static $has_many = [
         'Items' => PercentageBlockItem::class
     ];
@@ -32,11 +27,6 @@ class PercentageBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->removeByName('Items');
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content'),
-            ]);
 
             if ($this->ID) {
                 $percentageConfig = GridFieldConfig_RecordEditor::create(10);

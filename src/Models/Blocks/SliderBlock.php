@@ -19,11 +19,6 @@ class SliderBlock extends Block
 
     private static $plural_name = 'Media Slider';
 
-    private static $db = [
-        'Heading'  => 'Varchar(255)',
-        'Content' => 'HTMLText'
-    ];
-
     private static $has_many = [
         'Items'    => SliderBlockItem::class
     ];
@@ -33,11 +28,6 @@ class SliderBlock extends Block
 
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->removeByName('Items');
-
-            $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content')
-            ]);
 
             if ($this->exists()) {
                 $config = GridFieldConfig_RecordEditor::create();

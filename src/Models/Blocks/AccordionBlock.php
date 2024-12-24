@@ -3,7 +3,6 @@
 namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
-// use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\GroupedList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
@@ -11,7 +10,6 @@ use Toast\Blocks\Items\AccordionItem;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\GridField\GridField;
-// use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -26,8 +24,6 @@ class AccordionBlock extends Block
     private static $plural_name = 'Accordions';
 
     private static $db = [
-        // 'Heading' => 'Varchar(255)',
-        // 'Content' => 'HTMLText',
         'AccordionDisplay' => 'Enum("all-closed,all-open, first-open", "all-closed")',
     ];
 
@@ -48,10 +44,6 @@ class AccordionBlock extends Block
                 'first-open' => 'First Open'
             ];
 
-            // $fields->addFieldsToTab('Root.Main', [
-                // TextField::create('Heading'),
-                // HTMLEditorField::create('Content'),
-            // ]);
             $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
 
             if ($this->ID) {

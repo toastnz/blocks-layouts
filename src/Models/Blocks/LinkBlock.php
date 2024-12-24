@@ -2,11 +2,9 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\LinkBlockItem;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
@@ -20,8 +18,6 @@ class LinkBlock extends Block
     private static $plural_name = 'Links';
 
     private static $db = [
-        'Heading' => 'Varchar(255)',
-        'Content' => 'HTMLText',
         'Columns' => 'Enum("2, 3, 4", "2")'
     ];
 
@@ -36,8 +32,6 @@ class LinkBlock extends Block
             $fields->removeByName('Items');
 
             $fields->addFieldsToTab('Root.Main', [
-                TextField::create('Heading', 'Heading'),
-                HTMLEditorField::create('Content', 'Content'),
                 DropdownField::create('Columns', 'Number of columns', singleton('Toast\Blocks\LinkBlock')->dbObject('Columns')->enumValues()),
             ]);
 

@@ -20,8 +20,11 @@ class CodeBlock extends Block
 
     public function getCMSFields()
     {
-        
+
         $this->beforeUpdateCMSFields(function ($fields) {
+            // Remove fields
+            $fields->removeByName('Heading', 'Content');
+
             $fields->addFieldsToTab('Root.Main', [
                 TextareaField::create('Content', 'Code')
             ]);
