@@ -17,10 +17,7 @@ Setup
 // Create a new instance of the DomObserverController
 const CMSObserver = new DomObserverController();
 
-// The preview element
-let preview = null;
-
-function movePreviewToNewPanel() {
+function movePreviewToNewPanel(preview) {
   // Find the root element
   const root = document.querySelector('.cms-content .panel');
 
@@ -91,9 +88,9 @@ function createThumb(preview) {
 CMSObserver.observe('#BlockPreviewFrame', (items) => {
   console.log('Found preview: BlockPreviewFrame', items[0]);
   // Grab the preview
-  preview = items[0];
+  const preview = items[0];
   // Move the preview to the root
-  movePreviewToNewPanel();
+  movePreviewToNewPanel(preview);
   // Create the thumb
   createThumb(preview);
 });
@@ -101,8 +98,9 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
 // Chuck this on the normal page preivew cus why not ;)
 CMSObserver.observe('.cms-preview-iframe', (items) => {
   console.log('Found preview: cms-preview-iframe', items[0]);
+  alert('here');
   // Grab the preview
-  preview = items[0];
+  const preview = items[0];
   // Create the thumb
   createThumb(preview);
 });
