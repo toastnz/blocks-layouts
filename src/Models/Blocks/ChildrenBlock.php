@@ -2,19 +2,13 @@
 
 namespace Toast\Blocks;
 
-use Sheadawson\Linkable\Forms\LinkField;
-use SilverStripe\Forms\DropdownField;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Blog\Model\Blog;
-use SilverStripe\Blog\Model\BlogPost;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use SilverStripe\SiteConfig\SiteConfig;
-use Toast\Helpers\Helper;
+use Toast\Blocks\Block;
 
 class ChildrenBlock extends Block
 {
@@ -27,35 +21,21 @@ class ChildrenBlock extends Block
         'Columns'  => 'Enum("2,3,4", "2")'
     ];
 
-    private static $many_many = [
-        'ChildPages' => \Page::class
-    ];
-
-    private static $many_many_extraFields = [
-        'ChildPages' => [
-            'Sort' => 'Int'
-        ]
+    private static $has_one = [
+        'ParentPage' => SiteTree::class
     ];
 
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
-
-            $config = GridFieldConfig_RelationEditor::create(4);
-            $config->removeComponentsByType(GridFieldAddNewButton::class)
-            ->addComponent(GridFieldOrderableRows::create('Sort'));
-            
-            $fields->removeByName(['ChildPages']);
-            
             if ($this->exists()) {
-                $grid = GridField::create('ChildPages', 'Child Pages', $this->ChildPages(), $config);
 
                 $fields->addFieldsToTab('Root.Main', [
+                    TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class),
                     DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
                     HTMLEditorField::create('Content', 'Content'),
-                    // $grid
                 ]);
-            }else{
+            } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
             }
         });
@@ -64,17 +44,20 @@ class ChildrenBlock extends Block
 
     public function getItems()
     {
-      
-        if ($this->ChildPages()->count() == 0 ){
-            if( $parentPage = $this->getParentPage()){
-                // get all the pages under this parent page
-                return SiteTree::get()->filter(["ParentID" => $parentPage->ID ]);
+        $items = new ArrayList();
+
+        if ($parent = $this->ParentPage()) {
+            if ($parent->exists()) {
+                if ($children = $parent->Children()) {
+                    foreach ($children as $child) {
+                        $items->push($child);
+                    }
+                }
             }
         }
-        
-        return $this->ChildPages();
+
+        var_dump($items->count());
+
+        return $items;
     }
- 
 }
-
-

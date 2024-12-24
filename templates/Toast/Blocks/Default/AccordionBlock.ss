@@ -16,9 +16,11 @@
                             <span class="default-accordion-item__title">{$Title}</span>
                         </div>
 
-                        <div class="default-accordion-item__content [ js-default-accordion__target ]">
-                            <div class="default-accordion-item__wrap">
-                                {$Content}
+                        <div class="default-accordion-item__wrap">
+                            <div class="default-accordion-item__content">
+                                <div class="default-accordion-item__text">
+                                    {$Content}
+                                </div>
                             </div>
                         </div>
                     </div>
