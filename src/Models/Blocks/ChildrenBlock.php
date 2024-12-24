@@ -56,8 +56,6 @@ class ChildrenBlock extends Block
             }
         }
 
-        var_dump($items->count());
-
         return $items;
     }
 }
