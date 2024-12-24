@@ -1,8 +1,12 @@
 <colour-block id="{$BlockID}" tabIndex="0" class="default-gallery [ js-default-gallery ] {$IncludeClasses} {$ExtraClasses}">
     <section>
-        <% if $Content %>
+        <% if $Heading || $Content %>
             <div class="default-gallery__header">
                 <div class="default-gallery__content">
+                    <% if $Heading %>
+                        <h2 class="default-gallery__heading">{$Heading.XML}</h2>
+                    <% end_if %>
+
                     {$Content}
                 </div>
             </div>

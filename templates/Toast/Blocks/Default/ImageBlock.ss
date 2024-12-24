@@ -2,6 +2,10 @@
     <section>
         <div class="default-image__wrap">
             <div class="default-image__media">
+                <% if $Heading %>
+                    <h2 class="default-image__heading">{$Heading.XML}</h2>
+                <% end_if %>
+
                 <% with $Image %>
                     <picture class="default-image__image">
                         <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">

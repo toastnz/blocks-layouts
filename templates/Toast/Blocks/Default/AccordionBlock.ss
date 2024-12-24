@@ -1,8 +1,12 @@
 <colour-block id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] {$IncludeClasses} {$ExtraClasses}">
     <section>
-        <% if $Content %>
+        <% if $Heading || $Content %>
             <div class="default-accordion__header">
                 <div class="default-accordion__content">
+                    <% if $Heading %>
+                        <h2 class="default-accordion__heading">{$Heading.XML}</h2>
+                    <% end_if %>
+
                     {$Content}
                 </div>
             </div>

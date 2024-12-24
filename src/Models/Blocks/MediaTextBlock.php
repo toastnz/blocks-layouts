@@ -3,7 +3,7 @@
 namespace Toast\Blocks;
 
 use SilverStripe\Assets\Image;
-use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\RequiredFields;
@@ -13,6 +13,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
 class MediaTextBlock extends Block
 {
@@ -23,6 +24,7 @@ class MediaTextBlock extends Block
     private static $plural_name = 'Media & Text';
 
     private static $db = [
+        'Heading' => 'Varchar(255)',
         'Content' => 'HTMLText',
         'Video' => VideoLink::class,
         'MediaAlignment'    => 'Enum("left,right", "left")',
@@ -42,6 +44,8 @@ class MediaTextBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading', 'Heading'),
+                HTMLEditorField::create('Content', 'Content'),
                 DropdownField::create('MediaAlignment', 'Media Position', $this->owner->dbObject('MediaAlignment')->enumValues()),
                 VideoLinkField::create('Video')
                     ->showPreview(500)

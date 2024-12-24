@@ -2,6 +2,10 @@
     <section>
         <div class="default-video__wrap">
             <div class="default-video__media">
+                <% if $Heading %>
+                    <h2 class="default-video__heading">{$Heading.XML}</h2>
+                <% end_if %>
+
                 <a id="{$BlockID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
                     <div class="default-video__thumbnail">
                         <% if $Thumbnail %>

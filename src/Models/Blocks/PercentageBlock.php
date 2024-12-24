@@ -3,15 +3,11 @@
 namespace Toast\Blocks;
 
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\PercentageBlockItem;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 
 class PercentageBlock extends Block
@@ -22,6 +18,11 @@ class PercentageBlock extends Block
 
     private static $plural_name = 'Percentage Blocks';
 
+    private static $db = [
+        'Heading' => 'Varchar(255)',
+        'Content' => 'HTMLText',
+    ];
+
     private static $has_many = [
         'Items' => PercentageBlockItem::class
     ];
@@ -31,6 +32,11 @@ class PercentageBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->removeByName('Items');
+
+            $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading', 'Heading'),
+                HTMLEditorField::create('Content', 'Content'),
+            ]);
 
             if ($this->ID) {
                 $percentageConfig = GridFieldConfig_RecordEditor::create(10);

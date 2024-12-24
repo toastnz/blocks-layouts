@@ -20,6 +20,7 @@ class ImageBlock extends Block
     private static $plural_name = 'Images';
 
     private static $db = [
+        'Heading' => 'Varchar(255)',
         'Caption' => 'Text',
     ];
 
@@ -37,6 +38,7 @@ class ImageBlock extends Block
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading', 'Heading'),
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks'),
                 TextField::create('Caption', 'Caption')

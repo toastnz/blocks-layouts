@@ -1,8 +1,12 @@
 <colour-block id="{$BlockID}" tabIndex="0" class="default-download [ js-default-download ] {$IncludeClasses} {$ExtraClasses}">
     <section>
-        <% if $Content %>
+        <% if $Heading || $Content %>
             <div class="default-download__header">
                 <div class="default-download__content">
+                    <% if $Heading %>
+                        <h2 class="default-download__heading">{$Heading.XML}</h2>
+                    <% end_if %>
+
                     {$Content}
                 </div>
             </div>

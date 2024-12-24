@@ -2,7 +2,8 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Forms\FieldList;
+use Toast\Blocks\Block;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\GroupedList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
@@ -21,14 +22,15 @@ class AccordionBlock extends Block
     private static $table_name = 'Blocks_AccordionBlock';
 
     private static $singular_name = 'Accordion';
-    
+
     private static $plural_name = 'Accordions';
 
     private static $db = [
+        'Heading' => 'Varchar(255)',
         'Content' => 'HTMLText',
         'AccordionDisplay' => 'Enum("all-closed,all-open, first-open", "all-closed")',
     ];
-    
+
     private static $has_many = [
         'Items' => AccordionItem::class
     ];
@@ -46,7 +48,10 @@ class AccordionBlock extends Block
                 'first-open' => 'First Open'
             ];
 
-            $fields->addFieldToTab('Root.Main', HTMLEditorField::create('Content'));
+            $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading'),
+                HTMLEditorField::create('Content'),
+            ]);
             $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
 
             if ($this->ID) {

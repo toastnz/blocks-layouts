@@ -2,9 +2,7 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\File;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBField;
 use Toast\Blocks\Items\DownloadBlockItem;
 use SilverStripe\Forms\GridField\GridField;
@@ -24,6 +22,7 @@ class DownloadBlock extends Block
     private static $plural_name = 'Downloads';
 
     private static $db = [
+        'Heading' => 'Varchar(255)',
         'Content' => 'HTMLText'
     ];
 
@@ -38,6 +37,7 @@ class DownloadBlock extends Block
             $fields->removeByName('Items');
 
             $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading', 'Heading'),
                 HTMLEditorField::create('Content', 'Content')
             ]);
 

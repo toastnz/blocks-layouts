@@ -1,8 +1,12 @@
 <colour-block id="{$BlockID}" tabIndex="0" class="default-userform [ js-default-user-form ] {$IncludeClasses} {$ExtraClasses}">
     <section>
         <div class="default-userform__wrap">
-            <% if $Content %>
+            <% if $Heading || $Content %>
                 <div class="default-userform__content">
+                    <% if $Heading %>
+                        <h2 class="default-userform__heading">{$Heading.XML}</h2>
+                    <% end_if %>
+
                     {$Content}
                 </div>
             <% end_if %>

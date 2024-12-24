@@ -2,31 +2,33 @@
 
 namespace Toast\Blocks;
 
+use SilverStripe\Forms\TextField;
+use SilverStripe\Control\Controller;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\UserForms\Form\UserForm;
 use SilverStripe\UserForms\Model\UserDefinedForm;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use SilverStripe\Control\Controller;
-use SilverStripe\UserForms\Form\UserForm;
 
 class UserFormBlock extends Block
 {
     private static $table_name = 'Blocks_UserFormBlock';
-    
+
     private static $singular_name = 'User form';
-    
+
     private static $plural_name = 'User forms';
 
     private static $db = [
+        'Heading' => 'Varchar(255)',
         'Content' => 'HTMLText'
     ];
 
     public function getCMSFields()
-    {        
+    {
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Heading', 'Heading'),
                 HTMLEditorField::create('Content', 'Content')->setDescription('Form will render automatically on the page.')
             ]);
 
@@ -53,7 +55,7 @@ class UserFormBlock extends Block
     }
 
 
-    
+
     public function getContentSummary()
     {
         if ($page = $this->getParentPage()) {

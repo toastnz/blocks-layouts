@@ -1,8 +1,12 @@
 <colour-block id="{$BlockID}" tabIndex="0" class="default-children [ js-default-children ] {$IncludeClasses} {$ExtraClasses}">
     <section>
-        <% if $Content %>
+        <% if $Heading || $Content %>
             <div class="default-children__header">
                 <div class="default-children__content">
+                    <% if $Heading %>
+                        <h2 class="default-children__heading">{$Heading.XML}</h2>
+                    <% end_if %>
+
                     {$Content}
                 </div>
             </div>
