@@ -6,13 +6,9 @@ namespace Toast\Blocks;
 use Page;
 use ReflectionClass;
 use SilverStripe\ORM\DB;
-use SilverStripe\Forms\Tab;
 use SilverStripe\Assets\Image;
-use SilverStripe\Forms\TabSet;
-use SilverStripe\View\SSViewer;
 use SilverStripe\ORM\DataObject;
 use Toast\Blocks\Helpers\Helper;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
@@ -28,17 +24,11 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\CMS\Controllers\CMSMain;
-use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Subsites\State\SubsiteState;
-use SilverStripe\Core\Manifest\ModuleResource;
-use SilverStripe\Core\Manifest\ModuleResourceLoader;
-use SilverStripe\Forms\GridField\GridFieldConfig_Base;
-use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
 
 class Block extends DataObject
@@ -53,7 +43,9 @@ class Block extends DataObject
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
         'CSSFile'       => 'Varchar',
-        'NavigationHeading' => 'Varchar(255)',
+        'AnchorName'    => 'Varchar(255)',
+        'Heading'       => 'Varchar(255)',
+        'Content'       => 'HTMLText',
     ];
 
     private static $casting = [
@@ -143,13 +135,15 @@ class Block extends DataObject
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title')
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
-                TextField::create('NavigationHeading', 'Navigation Heading')
-                    ->setDescription('Heading will be used for navigation purposes and converted to an ID for linking. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong>'),
+                TextField::create('AnchorName', 'Anchor Name')
+                    ->setDescription('This will be the name that appears in the URL when linking to this block manually. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong>'),
+                TextField::create('Heading', 'Heading'),
+                HTMLEditorField::create('Content', 'Content')
             ]);
 
             if ($layoutOptions = $this->getBlockLayouts()){
                 // Add the $layoutOptions to the Main tab, AFTER the Title field
-                $fields->insertAfter('NavigationHeading', $layoutOptions);
+                $fields->insertAfter('AnchorName', $layoutOptions);
             }
 
         });
