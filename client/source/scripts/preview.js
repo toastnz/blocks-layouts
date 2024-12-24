@@ -1,8 +1,8 @@
-// /*------------------------------------------------------------------
-// Import styles
-// ------------------------------------------------------------------*/
+/*------------------------------------------------------------------
+Import styles
+------------------------------------------------------------------*/
 
-// import 'styles/preview.scss';
+import 'styles/preview.scss';
 
 // /*------------------------------------------------------------------
 // Scripts
@@ -90,14 +90,6 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
   const preview = items[0];
   // Move the preview to the root
   movePreviewToNewPanel(preview);
-  // Create the thumb
-  createThumb(preview);
-});
-
-// Chuck this on the normal page preivew cus why not ;)
-CMSObserver.observe('.cms-preview .panel', (items) => {
-  // Grab the preview
-  const preview = items[0];
   // Create the thumb
   createThumb(preview);
 });

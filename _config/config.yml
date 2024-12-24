@@ -26,12 +26,6 @@ Sheadawson\Linkable\Models\Link:
   extensions:
     - Toast\Blocks\Extensions\LinkExtension
 
-SilverStripe\Admin\LeftAndMain:
-  extra_requirements_javascript:
-    - 'toastnz/blocks-layouts: client/dist/scripts/preview.js'
-  extra_requirements_css:
-    - 'toastnz/blocks-layouts: client/dist/styles/preview.css'
-
 Toast\Blocks\AccordionBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/accordion.svg'
 
