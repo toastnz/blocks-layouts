@@ -3,7 +3,7 @@
 }
 
 @media (min-width: 1400px) {
-  .cms-content:has(#BlockPreviewFrame, .cms-preview) {
+  .cms-content:has(#BlockPreviewFrame) {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -148,7 +148,7 @@
   }
 
   // Allow for custom block preview width
-  body:has(#BlockPreviewFrame, .cms-preview-iframe) {
+  body:has(#BlockPreviewFrame) {
     --block-preview-width: 50%;
 
     .panel {
@@ -158,7 +158,7 @@
         flex-basis: calc(100% - var(--block-preview-width, 50%)) !important;
         width: calc(100% - var(--block-preview-width, 50%)) !important;
 
-        &:has(#BlockPreviewFrame, .cms-preview-iframe) {
+        &:has(#BlockPreviewFrame) {
           flex-basis: var(--block-preview-width, 50%) !important;
           width: var(--block-preview-width, 50%) !important;
         }
