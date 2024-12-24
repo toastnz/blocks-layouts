@@ -89,6 +89,7 @@ function createThumb(preview) {
 
 // Observe the CMS for the toast-block-layouts fieldsets
 CMSObserver.observe('#BlockPreviewFrame', (items) => {
+  console.log('Found preview: BlockPreviewFrame', items[0]);
   // Grab the preview
   preview = items[0];
   // Move the preview to the root
@@ -99,8 +100,11 @@ CMSObserver.observe('#BlockPreviewFrame', (items) => {
 
 // Chuck this on the normal page preivew cus why not ;)
 CMSObserver.observe('.cms-preview-iframe', (items) => {
+  console.log('Found preview: cms-preview-iframe', items[0]);
   // Grab the preview
   preview = items[0];
   // Create the thumb
   createThumb(preview);
 });
+
+console.log('Preview script loaded');
