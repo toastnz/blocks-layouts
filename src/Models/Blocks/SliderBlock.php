@@ -3,6 +3,7 @@
 namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
+use SilverStripe\Assets\Image;
 use Bummzack\SortableFile\Forms\SortableUploadField;
 
 class SliderBlock extends Block
