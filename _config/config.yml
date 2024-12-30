@@ -10,6 +10,13 @@ SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - Toast\Blocks\Extensions\SiteConfigExtension
 
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - Toast\Blocks\Extensions\SiteTreeExtension
+
+Toast\Blocks\Extensions\SiteTreeExtension:
+  custom_anchors: []
+
 Toast\Blocks\Extensions\PageExtension:
   available_blocks:
     - Toast\Blocks\TextBlock
