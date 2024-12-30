@@ -675,10 +675,10 @@ class Block extends DataObject
         // Set an ID var
         $id = '';
 
-        // First check if there is a NavigationHeading
-        if ($this->NavigationHeading) {
+        // First check if there is a AnchorName
+        if ($this->AnchorName) {
             // Remove any number, punctuation, and special characters
-            $id = preg_replace('/[^a-zA-Z]+/', ' ', $this->NavigationHeading);
+            $id = preg_replace('/[^a-zA-Z]+/', ' ', $this->AnchorName);
             // Convert to Upper Camel Case (Pascal Case)
             $id = str_replace(' ', '', ucwords(trim($id)));
         }
