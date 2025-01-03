@@ -24,7 +24,7 @@ class AccordionBlock extends Block
     private static $plural_name = 'Accordions';
 
     private static $db = [
-        'AccordionDisplay' => 'Enum("all-closed,all-open, first-open", "all-closed")',
+        'AccordionDisplay' => 'Enum("all-closed, all-open, first-open", "all-closed")',
     ];
 
     private static $has_many = [
@@ -39,12 +39,12 @@ class AccordionBlock extends Block
             $fields->removeByName('AccordionDisplay');
 
             $array = [
-                'all-closed' => 'Closed',
-                'all-open' => 'Open',
+                'all-closed' => 'All Closed',
+                'all-open' => 'All Open',
                 'first-open' => 'First Open'
             ];
 
-            $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array ));
+            $fields->insertAfter('Content', DropdownField::create('AccordionDisplay', 'Accordion display', $array));
 
             if ($this->ID) {
                 $config = GridFieldConfig_RelationEditor::create(50)
@@ -76,6 +76,4 @@ class AccordionBlock extends Block
     {
         return GroupedList::create($this->Items());
     }
-
-
 }

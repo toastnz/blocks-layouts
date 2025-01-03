@@ -15,7 +15,7 @@
         <div class="default-accordion__wrap">
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
-                    <div id="{$BlockItemID}" class="default-accordion-item [ js-default-accordion__item js-in-view ]">
+                    <div id="{$BlockItemID}" class="default-accordion-item [ js-default-accordion__item js-in-view ] <% if $Top.AccordionDisplay="first-open" && $isFirst || $Top.AccordionDisplay="all-open" %>is-active<% end_if %>">
                         <div class="default-accordion-item__header [ js-default-accordion__trigger ]">
                             <span class="default-accordion-item__title">{$Title}</span>
                         </div>
