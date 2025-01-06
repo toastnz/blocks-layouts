@@ -2,12 +2,8 @@
 
 namespace Toast\Blocks\Items;
 
-use SilverStripe\ORM\DB;
 use Toast\Blocks\GalleryBlock;
-use SilverStripe\Assets\Image;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\TextareaField;
+use SilverStripe\Assets\File;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -21,7 +17,7 @@ class GalleryBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'  => Image::class,
+        'Image'  => File::class,
         'Parent' => GalleryBlock::class
     ];
 
@@ -40,14 +36,11 @@ class GalleryBlockItem extends BlockItem
 
         $fields->addFieldsToTab('Root.Main',
         [
-            UploadField::create(
-                'Image',
-                'Image'
-            )->setFolderName('Uploads/Media'),
-            VideoLinkField::create(
-                'Video',
-                'Video'
-            )->showPreview('100%')
+            UploadField::create('Image', 'Image')
+                ->setFolderName('Uploads/Blocks')
+                ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
+            VideoLinkField::create('Video', 'Video')
+                ->showPreview('100%')
         ]);
 
         return $fields;

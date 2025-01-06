@@ -2,16 +2,14 @@
 
 namespace Toast\Blocks;
 
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Assets\Image;
-use SilverStripe\Forms\RequiredFields;
-use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 
 class VideoBlock extends Block
 {
@@ -27,7 +25,7 @@ class VideoBlock extends Block
     ];
 
     private static $has_one = [
-        'Thumbnail' => Image::class
+        'Thumbnail' => File::class
     ];
 
     private static $owns = [
@@ -41,9 +39,9 @@ class VideoBlock extends Block
                 CheckboxField::create('OpenInModal', 'Open Video In Modal'),
                 VideoLinkField::create('Video')
                 ->showPreview(500),
-                UploadField::create('Thumbnail', 'Override default thumbnail')
-                ->setFolderName('Uploads/Blocks')
-                ->setDescription('Will automatically use YouTube / Vimeo thumbnail if this image is not uploaded. Ideal size: 960x540'),
+                UploadField::create('Image', 'Preview Image')
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
             ]);
         });
 

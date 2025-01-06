@@ -2,13 +2,9 @@
 
 namespace Toast\Blocks\Items;
 
-use Toast\Blocks\LinkBlock;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Image;
 use SilverStripe\Forms\TextField;
-use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
-use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use Toast\Blocks\TestimonialBlock;
 
@@ -23,7 +19,7 @@ class TestimonialBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'  => Image::class,
+        'Image'  => File::class,
         'Parent' => TestimonialBlock::class
     ];
 
@@ -48,8 +44,9 @@ class TestimonialBlockItem extends BlockItem
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                UploadField::create('Image', 'Thumbnail')
-                    ->setFolderName('Uploads/Blocks'),
+                UploadField::create('Image', 'Image')
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
                 TextField::create('Name', 'Name'),
                 TextField::create('Position', 'Position'),
                 TextareaField::create('Summary', 'Summary')

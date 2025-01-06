@@ -2,9 +2,7 @@
 
 namespace Toast\Blocks\Items;
 
-use SilverStripe\Forms\TabSet;
 use Toast\Blocks\AccordionBlock;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Forms\RequiredFields;

@@ -4,7 +4,7 @@ namespace Toast\Blocks\Items;
 
 use Toast\Blocks\LinkBlock;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Image;
+use SilverStripe\Assets\File;
 use SilverStripe\Forms\TextField;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
@@ -22,7 +22,7 @@ class LinkBlockItem extends BlockItem
 
     private static $has_one = [
         'Link'   => Link::class,
-        'Image'  => Image::class,
+        'Image'  => File::class,
         'Parent' => LinkBlock::class
     ];
 
@@ -38,8 +38,9 @@ class LinkBlockItem extends BlockItem
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
-                UploadField::create('Image', 'Thumbnail')
-                    ->setFolderName('Uploads/Blocks'),
+                UploadField::create('Image', 'Image')
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
                 LinkField::create('LinkID', 'Link'),

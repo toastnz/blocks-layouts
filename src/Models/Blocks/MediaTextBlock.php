@@ -2,7 +2,7 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\Image;
+use SilverStripe\Assets\File;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\RequiredFields;
@@ -27,7 +27,7 @@ class MediaTextBlock extends Block
     ];
 
     private static $has_one = [
-        'Image' => Image::class,
+        'Image' => File::class,
         'CTALink' => Link::class
     ];
 
@@ -45,7 +45,8 @@ class MediaTextBlock extends Block
                     ->showPreview(500)
                     ->setDescription('This will replace the image on this block'),
                 UploadField::create('Image', 'Image')
-                    ->setFolderName('Uploads/Blocks'),
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
                 LinkField::create('CTALinkID', 'Link'),
             ]);
 
