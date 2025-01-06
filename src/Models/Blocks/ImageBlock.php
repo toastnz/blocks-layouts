@@ -32,7 +32,7 @@ class ImageBlock extends Block
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
-                    ->setAllowedFileCategories('image'),
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
             ]);
 
         });
