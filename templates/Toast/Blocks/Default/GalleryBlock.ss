@@ -20,9 +20,13 @@
                             <div class="default-gallery-item__media">
                                 <% if $Image %>
                                     <picture>
-                                        <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
-                                        <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
-                                        <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-position: {$getImageFocusPosition($Image.ID)}">
+                                        <% if $Extension="svg" %>
+                                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
+                                        <% else %>
+                                            <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
+                                            <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
+                                            <img loading="lazy" src="{$Image.ScaleMaxWidth(960).URL}" alt="{$Image.Title.ATT}" width="{$Image.Width}" height="{$Image.Height}" style="object-position: {$getImageFocusPosition($Image.ID)}">
+                                        <% end_if %>
                                     </picture>
                                 <% else_if $Video %>
                                     <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">

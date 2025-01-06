@@ -8,7 +8,7 @@
 
                 <% with $Image %>
                     <picture class="default-image__image">
-                        <% if $Extenion="svg" %>
+                        <% if $Extension="svg" %>
                             <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
                         <% else %>
                             <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">

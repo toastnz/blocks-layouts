@@ -27,7 +27,11 @@
                                     <div class="default-testimonial-item__details">
                                         <% if $Image %>
                                             <% with $Image %>
-                                                <img class="default-testimonial-item__image" src="{$FocusFill(100,100).URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
+                                                <% if $Extension="svg" %>
+                                                    <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
+                                                <% else %>
+                                                    <img class="default-testimonial-item__image" src="{$FocusFill(100,100).URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
+                                                <% end_if %>
                                             <% end_with %>
                                         <% end_if %>
 
