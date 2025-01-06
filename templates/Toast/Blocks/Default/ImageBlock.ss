@@ -8,11 +8,15 @@
 
                 <% with $Image %>
                     <picture class="default-image__image">
-                        <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
-                        <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                        <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
-                        <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
-                        <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$getWidth()}" height="{$getHeight()}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
+                        <% if not $Extension="svg" %>
+                            <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                            <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                            <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                            <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
+                            <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
+                        <% else %>
+                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
+                        <% end_if %>
                     </picture>
                 <% end_with %>
             </div>

@@ -2,7 +2,7 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\Image;
+use SilverStripe\Assets\File;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Forms\RequiredFields;
@@ -17,7 +17,7 @@ class ImageBlock extends Block
     private static $plural_name = 'Images';
 
     private static $has_one = [
-        'Image' => Image::class
+        'Image' => File::class
     ];
 
     private static $owns = [
@@ -31,7 +31,8 @@ class ImageBlock extends Block
 
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Image')
-                    ->setFolderName('Uploads/Blocks'),
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedFileCategories('image'),
             ]);
 
         });
