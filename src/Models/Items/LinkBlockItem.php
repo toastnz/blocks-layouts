@@ -4,7 +4,6 @@ namespace Toast\Blocks\Items;
 
 use Toast\Blocks\LinkBlock;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\File;
 use SilverStripe\Forms\TextField;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
