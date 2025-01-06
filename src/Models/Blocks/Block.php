@@ -19,6 +19,7 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\Versioned;
@@ -70,10 +71,10 @@ class Block extends DataObject
 
     public function getIconForCMS()
     {
-        if(self::config()->get('block-icon') == null){
+        if (self::config()->get('block-icon') == null) {
             return;
         }
-        $icon = str_replace('[resources]', TOAST_RESOURCES_DIR , self::config()->get('block-icon'));
+        $icon = str_replace('[resources]', TOAST_RESOURCES_DIR, self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
             <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
@@ -141,11 +142,9 @@ class Block extends DataObject
                 HTMLEditorField::create('Content', 'Content')
             ]);
 
-            if ($layoutOptions = $this->getBlockLayouts()){
-                // Add the $layoutOptions to the Main tab, AFTER the Title field
-                $fields->insertAfter('AnchorName', $layoutOptions);
+            if ($layoutOptionsField = $this->getTemplateOptionsField()) {
+                $fields->insertAfter('AnchorName', $layoutOptionsField);
             }
-
         });
 
         return parent::getCMSFields();
@@ -156,59 +155,184 @@ class Block extends DataObject
         return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getBlockPreviewURL($anchor) . '"></iframe></div>');
     }
 
-    public function getBlockLayouts()
+    public function getAvailableLayouts($className = null)
     {
-        // scan the app directory for block layouts and return them as an array
+        // This will be a unique list of layouts
         $layouts = [];
-        $optionalLayouts = [];
-        $baseFolder = BASE_PATH;
-        $theme = Helper::getThemes();
-        // module dir
-        $module_src = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR  . '/' ;
-        $module_imgsrc = Helper::getLayoutIconSrc()  ? Helper::getLayoutIconSrc() . TOAST_DEFAULT_DIR : BASE_PATH . '/' . TOAST_BLOCKS_IMAGE_DIR ;
-       // get default layouts
-        $layouts = Helper::getAvailableBlocksLayouts($this, $module_src, $module_imgsrc, true);
+        // These will come from the module
+        $moduleLayouts = [];
+        // These will come from the theme
+        $additionalLayouts = [];
 
-        // alternate layouts if specified
-        if ($layout_src = Helper::getLayoutSrc()){
-            $layout_src = BASE_PATH . '/' . $layout_src;
-            $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-            foreach ($dirs as $dir) {
-                $layout_imgsrc = Helper::getLayoutIconSrc();
-                $optionalSrcPath = $layout_src . '/' . $dir . '/';
-                $optionalImgSrcPath = $layout_imgsrc . '/' . strtolower($dir) . '/';
-                $optionalLayouts[] = Helper::getAvailableBlocksLayouts($this, $optionalSrcPath, $optionalImgSrcPath, false);
-            }
+        // Get the module's layouts directory
+        $moduleLayoutsDir = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR;
+        // Get the additional layouts directory
+        $additionalLayoutsDir = BASE_PATH . '/' . Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_src');
+
+        // Get the folder name of the module layouts
+        $moduleLayoutsName = basename($moduleLayoutsDir);
+
+        // Scan the module's layouts directory to get all the templates
+        $moduleTemplates = array_values(array_diff(scandir('/' . $moduleLayoutsDir), array('.', '..')));
+
+        // Loop all the module templates and add them to the $moduleLayouts array
+        foreach ($moduleTemplates as $template) {
+            $moduleLayouts[$moduleLayoutsName][] = $template;
         }
-        if (count($optionalLayouts) > 0){
-            foreach($optionalLayouts as $layout){
-                if ($layout){
-                    // merge alternate layouts with default layout
-                    $layouts = array_merge($layouts, $layout);
+
+        // If there are additional layouts, scan the directory to get all the templates
+        if (file_exists($additionalLayoutsDir)) {
+            // Get an array of all the subdirectories in the additional layouts directory
+            $additionalLayoutFolders = array_diff(scandir('/' . $additionalLayoutsDir), array('.', '..'));
+
+            // Loop all the additional layout folders
+            foreach ($additionalLayoutFolders as $folder) {
+                // Construct the path to the folder
+                $path = '/' . $additionalLayoutsDir . DIRECTORY_SEPARATOR . $folder;
+
+                // Check if the path is a directory
+                if (is_dir($path)) {
+                    // Scan the $folder directory to get all the templates (.ss files)
+                    $additionalTemplates = array_values(array_diff(scandir($path), array('.', '..')));
+
+                    // Make sure the $additionalTemplates are all files that have the .ss extension
+                    $additionalTemplates = array_filter($additionalTemplates, function ($template) {
+                        return pathinfo($template, PATHINFO_EXTENSION) === 'ss';
+                    });
+
+                    // Loop all the additional templates and add them to the $additionalLayouts array
+                    foreach ($additionalTemplates as $template) {
+                        $additionalLayouts[$folder][] = $template;
+                    }
                 }
             }
         }
 
-        $tplField = OptionsetField::create(
-            "Template",
-            "Choose a layout",
-            $layouts,
-            $this->Template
-        )->addExtraClass('toast-block-layouts');
+        // Now set up the $layouts array using the module layouts, and allowing the additional layouts to override them
+        $layouts = array_merge($moduleLayouts, $additionalLayouts);
 
-        return $tplField;
+        if ($className) {
+            $layouts = array_map(function ($layout) use ($className) {
+                return array_filter($layout, function ($item) use ($className) {
+                    return strpos($item, $className) !== false;
+                });
+            }, $layouts);
+        }
+
+        return $layouts;
     }
 
-    public function getLayoutDirs(){
-        if ($layout_src = Helper::getLayoutSrc()){
-            $layout_src = BASE_PATH . '/' . $layout_src;
-            $dirs = array_values(array_diff(scandir('/'.$layout_src), array('.', '..')));
-            $output = [];
-            foreach ($dirs as $dir) {
-                $output[] = strtolower($dir);
+    public function getOptionsForLayouts($layouts = [])
+    {
+        // Initialize the $icons array with the same structure as $layouts
+        $icons = [];
+        $optionset = [];
+
+        foreach ($layouts as $layout => $templates) {
+            foreach ($templates as $template) {
+                $icons[$layout][] = (object) [
+                    'template' => $template,
+                    'icon' => null
+                ];
             }
-            return $output;
         }
+
+        if ($iconSrcFolder = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src')) {
+            // Get the full path to the icon folder
+            $iconSrcPath = Director::publicFolder() . '/' . str_replace('[resources]', RESOURCES_DIR, $iconSrcFolder);
+
+            if (file_exists($iconSrcPath)) {
+                // Iterate over the layouts to check for icon files
+                foreach ($layouts as $layout => $templates) {
+                    foreach ($templates as $template) {
+                        // Construct the path to the icon file
+                        $iconPath = $iconSrcPath . '/' . $layout . '/' . pathinfo($template, PATHINFO_FILENAME) . '.svg';
+
+                        // Check if the icon file exists
+                        if (file_exists($iconPath)) {
+                            // Get the icon file contents
+                            $icon = file_get_contents($iconPath);
+
+                            // Update the $icons array with the icon content
+                            foreach ($icons[$layout] as $iconObj) {
+                                if ($iconObj->template === $template) {
+                                    $iconObj->icon = $icon;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Generate the $optionset array with HTML
+        foreach ($icons as $layout => $templates) {
+            foreach ($templates as $iconObj) {
+                $template = $iconObj->template;
+                $icon = $iconObj->icon;
+                $className = 'Toast\Blocks\\' . $layout . '\\' . pathinfo($template)['filename'];
+
+                // Generate the HTML for the icon
+                if (!$icon) break;
+
+                $html = '<div class="blockThumbnail">' . $icon . '</div><strong class="title" title="Template file: ' . $template . '">' . $layout . '</strong>';
+                $optionset[$className] = DBField::create_field(DBHTMLText::class, $html);
+            }
+        }
+
+        return $optionset;
+    }
+
+    public function getTemplateOptionsField()
+    {
+        // Create an array of layout options
+        $options = [];
+        // Get the block's short name
+        $shortName = (new ReflectionClass($this))->getShortName();
+        // Get the available layouts
+        $layouts = $this->getAvailableLayouts($shortName);
+
+        // Get the icons for the layouts
+        $icons = $this->getOptionsForLayouts($layouts);
+
+        // Flag to check if all matching layouts have icons
+        $allHaveIcons = true;
+
+        // Loop all the layouts
+        foreach ($layouts as $folder => $templates) {
+            // Loop all the templates
+            foreach ($templates as $template) {
+                // Get the template name without extension
+                $name = pathinfo($template, PATHINFO_FILENAME);
+
+                $className = 'Toast\Blocks\\' . $folder . '\\' . $name;
+
+                // Check if the template name matches the block's class name
+                if ($name === $shortName) {
+                    // Check if the icon exists for this template
+                    if (empty($icons[$className])) {
+                        $allHaveIcons = false;
+                    }
+                    // Add the template to the options array
+                    $options[$className] = $folder;
+                }
+            }
+        }
+
+        // Create the field based on whether all matching layouts have icons
+        if ($allHaveIcons) {
+            // Create an OptionsetField with the layout options and icons
+            $field = OptionsetField::create('Template', 'Layout', $icons, $this->Template)
+                ->addExtraClass('toast-block-layouts');
+        } else {
+            // Create a DropdownField with the layout options
+            $field = DropdownField::create('Template', 'Layout', $options, $this->Template)
+                ->addExtraClass('toast-block-layouts');
+        }
+
+        // Return the field
+        return $field;
     }
 
     public function getCSSFile()
@@ -261,14 +385,13 @@ class Block extends DataObject
 
     public function onBeforeWrite()
     {
-        if (!$this->Template){
+        if (!$this->Template) {
             $this->Template =  $this->getTemplateClass();
         }
 
         $this->CSSFile = $this->getCSSFile();
 
-         parent::onBeforeWrite();
-
+        parent::onBeforeWrite();
     }
 
     public function getTemplateClass()
@@ -277,12 +400,12 @@ class Block extends DataObject
     }
 
     public function populateDefaults()
-	{
-        if (!$this->Template){
+    {
+        if (!$this->Template) {
             $this->Template =  $this->getTemplateClass();
         }
-		parent::populateDefaults();
-	}
+        parent::populateDefaults();
+    }
 
     public function getContentSummary()
     {
@@ -317,9 +440,7 @@ class Block extends DataObject
         if ($controller instanceof CMSMain) {
             // Call the currentPage() method on the controller instance
             $parent = $controller->currentPage();
-        }
-
-        else {
+        } else {
             $parent = $this->getParentPage();
 
             if (!$parent || !$parent->exists()) {
@@ -339,7 +460,8 @@ class Block extends DataObject
         return $this->getLink($action);
     }
 
-    public function getBlockLink($parent) {
+    public function getBlockLink($parent)
+    {
         if ($parent && $parent->exists()) {
             return $parent->Link() . '#' . $this->getBlockID();
         }
@@ -351,7 +473,7 @@ class Block extends DataObject
     {
         // Get the current controller
         $controller = Controller::curr();
-  	$path = null;
+        $path = null;
         // Get the base URL
         $baseURL = Director::absoluteBaseURL();
 
@@ -504,7 +626,7 @@ class Block extends DataObject
         // If we don't have an image, return nothing
         if (!$imageid) return;
         // get image by id
-        if(!$image = Image::get()->byID($imageid)) return;
+        if (!$image = Image::get()->byID($imageid)) return;
         // Make sure the image is an instance of Image
         if (!$image instanceof Image) return;
         // Make sure there is a focus point
@@ -655,7 +777,8 @@ class Block extends DataObject
         return true;
     }
 
-    public function getPage() {
+    public function getPage()
+    {
         $currentController = Controller::curr();
         $parent = \Page::get()->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
             ->where('"Page_ContentBlocks"."Blocks_BlockID" = ' . $this->owner->ID)
