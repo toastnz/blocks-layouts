@@ -214,7 +214,8 @@ class Block extends DataObject
         if ($className) {
             $layouts = array_map(function ($layout) use ($className) {
                 return array_filter($layout, function ($item) use ($className) {
-                    return strpos($item, $className) !== false;
+                    $itemName = pathinfo($item, PATHINFO_FILENAME);
+                    return $itemName === $className;
                 });
             }, $layouts);
         }
