@@ -34,11 +34,9 @@ class ImageBlock extends Block
                     ->setFolderName('Uploads/Blocks')
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
             ]);
-
         });
 
         return parent::getCMSFields();
-
     }
 
     public function getContentSummary()
@@ -48,9 +46,10 @@ class ImageBlock extends Block
         if ($this->Image() && $this->Image()->exists()) {
             // If the image is not svg
             if ($this->Image()->getExtension() !== 'svg') {
-                $content = $this->Image()->Fit(300, 150)->forTemplate();
+                $content = $this->Image()->Fit(80, 80)->forTemplate();
             } else {
-                $content = $this->Image()->forTemplate();
+                $imageURL = $this->Image()->getAbsoluteURL();
+                $content = "<img src='{$imageURL}' alt='{$this->Image()->Title}' width='80' height='80' style='object-fit: contain' />";
             }
         }
         return DBField::create_field(DBHTMLText::class, $content);
