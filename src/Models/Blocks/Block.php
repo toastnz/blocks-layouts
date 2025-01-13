@@ -209,7 +209,7 @@ class Block extends DataObject
         }
 
         // Now set up the $layouts array using the module layouts, and allowing the additional layouts to override them
-        $layouts = array_merge($moduleLayouts, $additionalLayouts);
+        $layouts = array_merge_recursive($moduleLayouts, $additionalLayouts);
 
         if ($className) {
             $layouts = array_map(function ($layout) use ($className) {
