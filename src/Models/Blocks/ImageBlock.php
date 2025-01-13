@@ -46,7 +46,12 @@ class ImageBlock extends Block
         $content = '';
 
         if ($this->Image() && $this->Image()->exists()) {
-            $content = $this->Image()->Fit(300, 150)->forTemplate();
+            // If the image is not svg
+            if ($this->Image()->getExtension() !== 'svg') {
+                $content = $this->Image()->Fit(300, 150)->forTemplate();
+            } else {
+                $content = $this->Image()->forTemplate();
+            }
         }
         return DBField::create_field(DBHTMLText::class, $content);
     }
