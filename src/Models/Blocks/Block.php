@@ -819,4 +819,65 @@ class Block extends DataObject
 
         return $extraRequirements;
     }
+
+    public function getCMSEditLink()
+    {
+        if ($parent = $this->getCMSParentPage()) {
+            $parentID = $parent->ID;
+            $parentEditLink = $this->getCMSParentPage()->CMSEditLink();
+            // Replace /show/$ID with /EditForm/$ID
+            $parentEditFormLink = str_replace("/show/$parentID", "/EditForm/$parentID", $parentEditLink);
+
+            return $parentEditFormLink . '/field/ContentBlocks/item/' . $this->ID . '/edit';
+        }
+    }
+
+    public function getCMSParentPage()
+    {
+        // Get the current controller
+        $controller = Controller::curr();
+
+        $parent = null;
+
+        if ($controller instanceof CMSMain) {
+            // Call the currentPage() method on the controller instance
+            $parent = $controller->currentPage();
+        }
+
+        if ($parent && $parent->exists()) {
+            return $parent;
+        }
+
+        return null;
+    }
+
+    public function getCMSSiblingBlocks()
+    {
+        $parent = $this->getCMSParentPage();
+
+        if ($parent && $parent->exists()) {
+            return $parent->ContentBlocks()->sort('SortOrder');
+        }
+
+        return null;
+    }
+
+    public function getCMSSiblingBlocksLinks()
+    {
+        $blocks = $this->getCMSSiblingBlocks();
+
+        if ($blocks) {
+            $links = [];
+
+            foreach ($blocks as $block) {
+                $active = $block->ID == $this->ID ? 'active' : '';
+                // $icon = $block->IconForCMS ? '<img src="' . $block->IconForCMS . '" alt="Icon" class="cms-icon">' : '';
+                $links[] = '<a class="' . $active . '" href="' . $block->getCMSEditLink() . '">' . $block->IconForCMS . '</a>';
+            }
+
+            return '<div class="content-block-siblings">' . implode('', $links) . '</div>';
+        }
+
+        return null;
+    }
 }
