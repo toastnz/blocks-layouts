@@ -246,8 +246,10 @@ class Block extends DataObject
                 // Iterate over the layouts to check for icon files
                 foreach ($layouts as $layout => $templates) {
                     foreach ($templates as $template) {
+                        $iconFolder = strtolower($layout);
+                        $iconFile = strtolower(pathinfo($template, PATHINFO_FILENAME));
                         // Construct the path to the icon file
-                        $iconPath = $iconSrcPath . '/' . $layout . '/' . pathinfo($template, PATHINFO_FILENAME) . '.svg';
+                        $iconPath = $iconSrcPath . '/' . $iconFolder . '/' . $iconFile . '.svg';
 
                         // Check if the icon file exists
                         if (file_exists($iconPath)) {
