@@ -21,7 +21,7 @@ class BlogBlock extends Block
     private static $plural_name = 'Blog Blocks';
 
     private static $db = [
-        'Columns'  => 'Enum("2,3,4", "2")'
+        'Columns' => 'Varchar(10)',
     ];
 
     private static $has_one = [
