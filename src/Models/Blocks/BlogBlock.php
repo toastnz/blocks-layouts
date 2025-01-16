@@ -4,10 +4,10 @@ namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
 use SilverStripe\Blog\Model\Blog;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -20,7 +20,7 @@ class BlogBlock extends Block
     private static $plural_name = 'Blog Blocks';
 
     private static $db = [
-        'Columns'  => 'Enum("2,3,4", "2")'
+        'Columns' => 'Varchar(10)',
     ];
 
     private static $has_one = [
@@ -45,21 +45,28 @@ class BlogBlock extends Block
             $config->removeComponentsByType(GridFieldAddNewButton::class)
             ->addComponent(GridFieldOrderableRows::create('SortOrder'));
 
-            $fields->removeByName(['BlogPosts']);
+            $fields->removeByName(['BlogPosts', 'Columns']);
 
             if ($this->exists()) {
 
-                $siteConfig = SiteConfig::current_site_config();
+                // Check to see if there are any columns available in the config
+                if ($columns = Config::inst()->get(BlogBlock::class, 'available_columns')) {
+                    // Make the column an array of of key => value pairs using the value as the key and the value as the value
+                    $columns = array_combine($columns, $columns);
+
+                    // Add the dropdown field to the main tab
+                    $fields->addFieldsToTab('Root.Main', [
+                        DropdownField::create('Columns', 'Columns', $columns),
+                    ]);
+                }
 
                 $grid = GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config);
 
                 $fields->addFieldsToTab('Root.Main', [
-                    DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
                     DropdownField::create('BlogID', 'Blog', Blog::get()->map('ID', 'Title'))->setEmptyString('--Please select a blog--'),
                     LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
                     $grid
                 ]);
-
             }else{
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
             }

@@ -38,19 +38,24 @@ Toast\Blocks\AccordionBlock:
 
 Toast\Blocks\BlogBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/link.svg'
+  available_columns:
+    - 2
+    - 3
+    - 4
 
 Toast\Blocks\ChildrenBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/link.svg'
   content_field: 'Content'
+  available_columns:
+    - 2
+    - 3
+    - 4
 
 Toast\Blocks\CodeBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/code.svg'
 
 Toast\Blocks\DownloadBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/download.svg'
-
-Toast\Blocks\HeroBlock:
-  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/hero.svg'
 
 Toast\Blocks\ImageBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/image.svg'
@@ -60,6 +65,12 @@ Toast\Blocks\MediaTextBlock:
 
 Toast\Blocks\LinkBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/link.svg'
+  available_items:
+    - Toast\Blocks\Items\LinkBlockCustomItem
+  available_columns:
+    - 2
+    - 3
+    - 4
 
 Toast\Blocks\PercentageBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/splittext.svg'
@@ -81,3 +92,7 @@ Toast\Blocks\SliderBlock:
 
 Toast\Blocks\GalleryBlock:
   block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/gallery.svg'
+  available_columns:
+    - 2
+    - 3
+    - 4

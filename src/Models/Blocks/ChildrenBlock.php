@@ -3,6 +3,7 @@
 namespace Toast\Blocks;
 
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
@@ -16,7 +17,7 @@ class ChildrenBlock extends Block
     private static $plural_name = 'Children Blocks';
 
     private static $db = [
-        'Columns'  => 'Enum("2,3,4", "2")'
+        'Columns' => 'Varchar(10)',
     ];
 
     private static $has_one = [
@@ -27,10 +28,19 @@ class ChildrenBlock extends Block
     {
         $this->beforeUpdateCMSFields(function ($fields) {
             if ($this->exists()) {
+                // Check to see if there are any columns available in the config
+                if ($columns = Config::inst()->get(ChildrenBlock::class, 'available_columns')) {
+                    // Make the column an array of of key => value pairs using the value as the key and the value as the value
+                    $columns = array_combine($columns, $columns);
+
+                    // Add the dropdown field to the main tab
+                    $fields->addFieldsToTab('Root.Main', [
+                        DropdownField::create('Columns', 'Columns', $columns),
+                    ]);
+                }
 
                 $fields->addFieldsToTab('Root.Main', [
                     TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class),
-                    DropdownField::create('Columns', 'Columns', $this->dbObject('Columns')->enumValues()),
                 ]);
             } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));

@@ -2,12 +2,22 @@
 
 namespace Toast\Blocks;
 
+use Toast\Blocks\Block;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Items\LinkBlockItem;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridField_ActionMenu;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use SilverStripe\Versioned\VersionedGridFieldItemRequest;
+use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 
 class LinkBlock extends Block
 {
@@ -17,13 +27,10 @@ class LinkBlock extends Block
 
     private static $plural_name = 'Links';
 
-    // TODO: update this so it is a number value that gets it's values from a dropdown which is populated by a yml file so it is easy to change from project to project
     private static $db = [
-        'Columns' => 'Enum("2, 3, 4", "2")'
+        'Columns' => 'Varchar(10)',
     ];
 
-    // TODO: update this so it includes a link block item, but each link block item has more items that extend it like LinkBlockPageItem for page only links, and LinkBlockCustomItem for custom links
-    // TODO: update the LinkBlockItem to just have the necessary relationships and fields that every link block item needs, and then have the LinkBlockPageItem and LinkBlockCustomItem extend it and add the extra fields they need
     private static $has_many = [
         'Items' => LinkBlockItem::class
     ];
@@ -32,30 +39,51 @@ class LinkBlock extends Block
     {
         $this->beforeUpdateCMSFields(function ($fields) {
 
-            $fields->removeByName('Items');
+            $fields->removeByName(['Items', 'Columns']);
 
-            // TODO: make this dropdown get it's values from a yml file so it is easy to change from project to project
-            $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('Columns', 'Number of columns', singleton('Toast\Blocks\LinkBlock')->dbObject('Columns')->enumValues()),
-            ]);
+            if ($this->exists()) {
+                // Check to see if there are any columns available in the config
+                if ($columns = Config::inst()->get(LinkBlock::class, 'available_columns')) {
+                    // Make the column an array of of key => value pairs using the value as the key and the value as the value
+                    $columns = array_combine($columns, $columns);
 
-            if ($this->ID) {
-                // TODO: update this to a multi class grid field so it can have different types of link block items, also update it to the inline grid field so it is faster to add items without having to go to a new page
-                $linkConfig = GridFieldConfig_RelationEditor::create(10);
-                $linkConfig->addComponent(GridFieldOrderableRows::create('SortOrder'))
-                    ->removeComponentsByType(GridFieldDeleteAction::class)
-                    ->addComponent(new GridFieldDeleteAction(false))
-                    ->removeComponentsByType('GridFieldAddExistingAutoCompleter');
+                    // Add the dropdown field to the main tab
+                    $fields->addFieldsToTab('Root.Main', [
+                        DropdownField::create('Columns', 'Columns', $columns),
+                    ]);
+                }
 
-                $linkBlockGridField = GridField::create(
+                $config = GridFieldConfig_RelationEditor::create(50);
+                $config->removeComponentsByType(GridFieldAddNewButton::class)
+                    ->removeComponentsByType(GridFieldFilterHeader::class)
+                    ->removeComponentsByType(GridField_ActionMenu::class);
+
+                $config->getComponentByType(GridFieldDetailForm::class)
+                    ->setItemRequestClass(VersionedGridFieldItemRequest::class)
+                    ->setItemEditFormCallback(function ($form, $itemRequest) {
+                        if (!$itemRequest->record->exists()) {
+                            $nextSortOrder = $this->Items()->max('SortOrder') + 1;
+                            $form->Fields()->add(HiddenField::create('ManyMany[SortOrder]', 'Sort Order', $nextSortOrder));
+                        }
+                    });
+
+                $multiClass = new GridFieldAddNewMultiClass();
+
+                $multiClass->setClasses(Config::inst()->get(LinkBlock::class, 'available_items'));
+
+                $config->addComponent($multiClass);
+
+                $config->addComponent(new GridFieldOrderableRows('SortOrder'));
+
+                $gridField = GridField::create(
                     'Items',
-                    'Link Block Items',
+                    'Items',
                     $this->owner->Items(),
-                    $linkConfig
+                    $config
                 );
-                $fields->addFieldToTab('Root.Main', $linkBlockGridField);
-            }
 
+                $fields->addFieldToTab('Root.Main', $gridField);
+            }
         });
 
         return parent::getCMSFields();
