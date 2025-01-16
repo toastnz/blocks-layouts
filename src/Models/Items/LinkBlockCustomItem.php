@@ -18,6 +18,7 @@ class LinkBlockCustomItem extends LinkBlockItem
     private static $plural_name = 'Custom Links';
 
     private static $db = [
+        'Title' => 'Varchar(255)',
         'Summary' => 'Text',
     ];
 
@@ -39,6 +40,7 @@ class LinkBlockCustomItem extends LinkBlockItem
         $this->beforeUpdateCMSFields(function ($fields) {
 
             $fields->addFieldsToTab('Root.Main', [
+                TextField::create('Title', 'Title'),
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
