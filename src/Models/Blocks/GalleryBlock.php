@@ -31,7 +31,7 @@ class GalleryBlock extends Block
     {
 
         $this->beforeUpdateCMSFields(function ($fields) {
-            $fields->removeByName('Items');
+            $fields->removeByName(['Items', 'Columns']);
 
             if ($this->exists()) {
                 $config = GridFieldConfig_RecordEditor::create();
