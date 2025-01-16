@@ -28,7 +28,7 @@
                                         <% if $Image %>
                                             <% with $Image %>
                                                 <% if $Extension="svg" %>
-                                                    <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
+                                                    <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}">
                                                 <% else %>
                                                     <img class="default-testimonial-item__image" src="{$FocusFill(100,100).URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
                                                 <% end_if %>

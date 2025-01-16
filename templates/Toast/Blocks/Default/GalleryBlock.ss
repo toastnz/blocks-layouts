@@ -21,7 +21,7 @@
                                 <% if $Image %>
                                     <picture>
                                         <% if $Extension="svg" %>
-                                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$tHeight}" loading="lazy" alt="{$Title.ATT}">
+                                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}">
                                         <% else %>
                                             <source media="(max-width: 479px)" srcset="{$Image.ScaleMaxWidth(480).URL}">
                                             <source media="(max-width: 767px)" srcset="{$Image.ScaleMaxWidth(768).URL}">
