@@ -3,7 +3,6 @@
 namespace Toast\Blocks\Items;
 
 use Toast\Blocks\LinkBlock;
-use SilverStripe\Forms\TextField;
 
 class LinkBlockItem extends BlockItem
 {

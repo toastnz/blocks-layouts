@@ -3,6 +3,7 @@
 namespace Toast\Blocks\Items;
 
 use SilverStripe\Assets\File;
+use SilverStripe\Forms\TextField;
 use Sheadawson\Linkable\Models\Link;
 use Toast\Blocks\Items\LinkBlockItem;
 use SilverStripe\Forms\TextareaField;
