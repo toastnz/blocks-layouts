@@ -6,6 +6,7 @@ use Toast\Blocks\PercentageBlock;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\TextField;
+use SilverStripe\Core\Config\Config;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
 use Sheadawson\Linkable\Forms\LinkField;
