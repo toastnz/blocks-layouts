@@ -30,14 +30,20 @@ class ChildrenBlock extends Block
             $fields->removeByName(['ParentPageID', 'Columns']);
 
             if ($this->exists()) {
-                // Check to see if there are any columns available in the config
-                if ($columns = Config::inst()->get(ChildrenBlock::class, 'available_columns')) {
-                    // Make the column an array of of key => value pairs using the value as the key and the value as the value
-                    $columns = array_combine($columns, $columns);
+                // Set up the options array
+                $options = [];
 
-                    // Add the dropdown field to the main tab
+                // Check to see if there are any columns available in the config
+                $columns = Config::inst()->get(ChildrenBlock::class, 'available_columns') ?? [2, 3, 4];
+
+                foreach ($columns as $column) {
+                    $options[$column] = $column;
+                }
+
+                // Add the dropdown field to the main tab
+                if (count($options) > 0) {
                     $fields->addFieldsToTab('Root.Main', [
-                        DropdownField::create('Columns', 'Columns', $columns),
+                        DropdownField::create('Columns', 'Columns', $options),
                     ]);
                 }
 

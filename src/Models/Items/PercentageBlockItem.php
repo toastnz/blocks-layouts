@@ -5,6 +5,7 @@ namespace Toast\Blocks\Items;
 use SilverStripe\Assets\File;
 use Toast\Blocks\PercentageBlock;
 use SilverStripe\Forms\TextField;
+use SilverStripe\Core\Config\Config;
 use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\DropdownField;
@@ -19,7 +20,7 @@ class PercentageBlockItem extends BlockItem
         'Name' => 'Varchar(255)',
         'Title' => 'Varchar(255)',
         'Summary' => 'Text',
-        'Width' => 'Enum("25, 33, 50, 66, 75, 100", "50")'
+        'Width' => 'Varchar(10)',
     ];
 
     private static $has_one = [
@@ -40,6 +41,27 @@ class PercentageBlockItem extends BlockItem
     {
         $this->beforeUpdateCMSFields(function ($fields) {
 
+            $fields->removeByName(['Width']);
+
+            // Set up the options array
+            $options = [];
+
+            // Check to see if there are any columns available in the config
+            $columns = Config::inst()->get(PercentageBlock::class, 'available_columns') ?? [2, 3, 4];
+
+            // Loop through the available columns to output the options as percentages
+            foreach ($columns as $column) {
+                $percentage = 100 / $column;
+                for ($i = 1; $i < $column; $i++) {
+                    $options[] = floor($percentage * $i);
+                    $options[] = floor(100 - ($percentage * $i));
+                }
+            }
+
+            // Remove duplicates and sort options
+            $options = array_unique($options);
+            sort($options);
+
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
@@ -48,20 +70,23 @@ class PercentageBlockItem extends BlockItem
                     ->setDescription('This is for internal use only and will not be displayed on the website'),
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
-                DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
+                // DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
                 LinkField::create('LinkID', 'Link'),
             ]);
 
+            // Add the dropdown field to the main tab
+            if (count($options) > 0) {
+                $fields->addFieldsToTab('Root.Main', [
+                    DropdownField::create('Width', 'Width %', array_combine($options, $options)),
+                ]);
+            }
         });
 
         return parent::getCMSFields();
     }
 
-    public function canCreate($member = null, $context = []) {
-        // if there are more than 4 items in the block, don't allow new items to be created
-        //if ($this->Parent()->Items()->Count() >= 4) {
-        //   return false;
-        //}
+    public function canCreate($member = null, $context = [])
+    {
         return parent::canCreate($member);
     }
 }

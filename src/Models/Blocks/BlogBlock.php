@@ -8,7 +8,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -44,19 +43,25 @@ class BlogBlock extends Block
 
             $config = GridFieldConfig_RelationEditor::create(4);
             $config->removeComponentsByType(GridFieldAddNewButton::class)
-            ->addComponent(GridFieldOrderableRows::create('SortOrder'));
+                ->addComponent(GridFieldOrderableRows::create('SortOrder'));
 
             $fields->removeByName(['BlogPosts', 'Columns', 'BlogID']);
 
             if ($this->exists()) {
-                // Check to see if there are any columns available in the config
-                if ($columns = Config::inst()->get(BlogBlock::class, 'available_columns')) {
-                    // Make the column an array of of key => value pairs using the value as the key and the value as the value
-                    $columns = array_combine($columns, $columns);
+                // Set up the options array
+                $options = [];
 
-                    // Add the dropdown field to the main tab
+                // Check to see if there are any columns available in the config
+                $columns = Config::inst()->get(BlogBlock::class, 'available_columns') ?? [2, 3, 4];
+
+                foreach ($columns as $column) {
+                    $options[$column] = $column;
+                }
+
+                // Add the dropdown field to the main tab
+                if (count($options) > 0) {
                     $fields->addFieldsToTab('Root.Main', [
-                        DropdownField::create('Columns', 'Columns', $columns),
+                        DropdownField::create('Columns', 'Columns', $options),
                     ]);
                 }
 
@@ -66,7 +71,7 @@ class BlogBlock extends Block
                     LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
                     $grid
                 ]);
-            }else{
+            } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
             }
         });
@@ -77,13 +82,12 @@ class BlogBlock extends Block
     public function getPosts($limit = 3)
     {
 
-        if (!$this->BlogPosts()->exists()){
-            if( $this->BlogID ){
-                return BlogPost::get()->filter(["ParentID" => $this->BlogID ])->limit($limit);
+        if (!$this->BlogPosts()->exists()) {
+            if ($this->BlogID) {
+                return BlogPost::get()->filter(["ParentID" => $this->BlogID])->limit($limit);
             }
         }
 
         return $this->BlogPosts()->sort('SortOrder')->limit($limit);
     }
-
 }
