@@ -49,16 +49,24 @@ class PercentageBlockItem extends BlockItem
             $options = [];
 
             // Check to see if there are any columns available in the config
-            $columns = Config::inst()->get(PercentageBlock::class, 'available_columns') ?? [2, 3, 4];
+            $columns = Config::inst()->get(PercentageBlock::class, 'available_columns') ?? [1, 2, 3, 4];
 
             // Loop through the available columns to output the options as percentages
             foreach ($columns as $column) {
-                $percentage = 100 / $column;
-                for ($i = 1; $i < $column; $i++) {
-                    $options[] = floor($percentage * $i);
-                    $options[] = floor(100 - ($percentage * $i));
+                if ($column == 1) {
+                    $options[] = '100';
+                } else {
+                    $percentage = 100 / $column;
+                    for ($i = 1; $i < $column; $i++) {
+                        $options[] = floor($percentage * $i);
+                        $options[] = floor(100 - ($percentage * $i));
+                    }
                 }
             }
+
+            // Remove duplicates and sort options
+            $options = array_unique($options);
+            sort($options);
 
             // Remove duplicates and sort options
             $options = array_unique($options);
