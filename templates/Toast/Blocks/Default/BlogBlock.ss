@@ -24,11 +24,8 @@
                                             <% if $Extension="svg" %>
                                                 <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}">
                                             <% else %>
-                                                <% with $Convert('webp') %>
-                                                    <source media="(max-width: 479px)" srcset="{$FocusFillMax(480,480).URL}">
-                                                    <source media="(max-width: 767px)" srcset="{$FocusFillMax(768,768).URL}">
-                                                    <img loading="lazy" src="{$FocusFillMax(960,960).URL}" alt="{$Title.ATT}" width="960" height="960" style="object-position: {$FocusPosition}">
-                                                <% end_with %>
+                                                <source media="(max-width: 479px)" srcset="{$FocusFillMax(480,480).Convert('webp').URL}">
+                                                <img loading="lazy" src="{$FocusFillMax(960,960).Convert('webp').URL}" alt="{$Title.ATT}" width="960" height="960" style="object-position: {$FocusPosition}">
                                             <% end_if %>
                                         </picture>
                                     <% end_with %>
