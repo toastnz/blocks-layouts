@@ -24,11 +24,12 @@
                                             <% if $Extension="svg" %>
                                                 <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}">
                                             <% else %>
-                                                <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
-                                                <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
-                                                <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
-                                                <source media="(max-width: 1919px)" srcset="{$ScaleMaxWidth(1920).URL}">
-                                                <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
+                                                <% with $Convert('webp') %>
+                                                    <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).URL}">
+                                                    <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
+                                                    <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
+                                                    <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
+                                                <% end_with %>
                                             <% end_if %>
                                         </picture>
                                     </div>
