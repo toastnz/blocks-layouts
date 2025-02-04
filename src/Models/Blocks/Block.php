@@ -71,7 +71,12 @@ class Block extends DataObject
 
     public function getContentSummary()
     {
-        return DBField::create_field(DBHTMLText::class, $this->Content)->Summary();
+        if ($this->Content) {
+            return DBField::create_field(DBHTMLText::class, $this->Content)->Summary();
+        } elseif ($this->Heading) {
+            return DBField::create_field(DBHTMLText::class, $this->Heading);
+        }
+        return null;
     }
 
     public function getIconForCMS()
