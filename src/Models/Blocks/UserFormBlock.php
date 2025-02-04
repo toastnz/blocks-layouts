@@ -41,14 +41,4 @@ class UserFormBlock extends Block
             }
         }
     }
-
-
-
-    public function getContentSummary()
-    {
-        if ($page = $this->getParentPage()) {
-            return DBField::create_field('HTMLText', '<strong>Applied to page:</strong><br />' . $page->MenuTitle);
-        }
-    }
-
 }

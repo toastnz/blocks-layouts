@@ -69,6 +69,11 @@ class Block extends DataObject
 
     private static $versioned_gridfield_extensions = true;
 
+    public function getContentSummary()
+    {
+        return DBField::create_field(DBHTMLText::class, $this->Content)->Summary();
+    }
+
     public function getIconForCMS()
     {
         if (self::config()->get('block-icon') == null) {
@@ -408,11 +413,6 @@ class Block extends DataObject
             $this->Template =  $this->getTemplateClass();
         }
         parent::populateDefaults();
-    }
-
-    public function getContentSummary()
-    {
-        return DBField::create_field(DBHTMLText::class, '');
     }
 
     public function getTitle()

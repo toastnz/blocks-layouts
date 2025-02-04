@@ -55,11 +55,6 @@ class MediaTextBlock extends Block
         return parent::getCMSFields();
     }
 
-    public function getContentSummary()
-    {
-        return DBField::create_field(DBHTMLText::class, $this->Content)->Summary();
-    }
-
     public function getCMSValidator()
     {
         $required = new RequiredFields([Image::class, 'Content']);

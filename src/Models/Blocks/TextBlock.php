@@ -24,11 +24,6 @@ class TextBlock extends Block
         return parent::getCMSFields();
     }
 
-    public function getContentSummary()
-    {
-        return $this->dbObject('Content')->LimitCharacters(250);
-    }
-
     public function getCMSValidator()
     {
         $required = new RequiredFields(['Content']);

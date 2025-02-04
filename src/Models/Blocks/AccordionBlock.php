@@ -64,14 +64,6 @@ class AccordionBlock extends Block
         return parent::getCMSFields();
     }
 
-    public function getContentSummary()
-    {
-        if ($this->Items() && $this->Items()->exists()) {
-            return DBField::create_field(DBHTMLText::class, implode(', ', $this->Items()->column('Title')));
-        }
-        return DBField::create_field(DBHTMLText::class, '');
-    }
-
     public function getGroupedItems()
     {
         return GroupedList::create($this->Items());

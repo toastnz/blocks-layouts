@@ -56,9 +56,4 @@ class VideoBlock extends Block
 
         return $required;
     }
-
-    public function getContentSummary()
-    {
-        return DBField::create_field(DBHTMLText::class, $this->Video);
-    }
 }

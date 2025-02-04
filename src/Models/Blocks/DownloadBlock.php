@@ -47,14 +47,4 @@ class DownloadBlock extends Block
 
     }
 
-    public function getContentSummary()
-    {
-        if ($this->Items()) {
-            return DBField::create_field('Text', implode(', ', $this->Items()->column('Title')));
-        }
-
-        return DBField::create_field('Text', $this->Title);
-    }
-
-
 }
