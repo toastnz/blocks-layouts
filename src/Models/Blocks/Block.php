@@ -77,7 +77,7 @@ class Block extends DataObject
         $icon = str_replace('[resources]', TOAST_RESOURCES_DIR, self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '
-            <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
+            <div data-block-id="' . $this->BlockID . '" title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
                 <img style="width:100%;height:100%;display:inline-block !important" src="' . $icon . '">
             </div>
             <span style="font-weight:bold;color:#377cff;display:block;line-height:10px;text-align:center;margin:0px 0 0;padding:0;font-size:10px;text-transform:uppercase;">' . $this->i18n_singular_name() . '</span>
@@ -874,7 +874,7 @@ class Block extends DataObject
             foreach ($blocks as $block) {
                 $active = $block->ID == $this->ID ? 'active' : '';
                 // $icon = $block->IconForCMS ? '<img src="' . $block->IconForCMS . '" alt="Icon" class="cms-icon">' : '';
-                $links[] = '<a class="' . $active . '" href="' . $block->getCMSEditLink() . '">' . $block->IconForCMS . '</a>';
+                $links[] = '<a class="' . $active . '" href="' . $block->getCMSEditLink() . '" data-block-id="' . $this->BlockID . '">' . $block->IconForCMS . '</a>';
             }
 
             return '<div class="content-block-siblings">' . implode('', $links) . '</div>';
