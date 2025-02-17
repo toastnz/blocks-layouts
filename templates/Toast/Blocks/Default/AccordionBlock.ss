@@ -1,4 +1,4 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] {$IncludeClasses} {$ExtraClasses}">
+<colour-block id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] {$IncludeClasses} {$ExtraClasses}" data-state="{$AccordionDisplay}">
     <section>
         <% if $Heading || $Content %>
             <div class="default-accordion__header">
@@ -15,10 +15,10 @@
         <div class="default-accordion__wrap">
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
-                    <div id="{$BlockItemID}" class="default-accordion-item [ js-default-accordion__item js-in-view ] <% if $Top.AccordionDisplay="first-open" && $isFirst || $Top.AccordionDisplay="all-open" %>is-active<% end_if %>">
-                        <div class="default-accordion-item__header [ js-default-accordion__trigger ]">
+                    <div id="{$BlockItemID}" class="default-accordion-item [ js-default-accordion__item js-in-view ]">
+                        <button class="default-accordion-item__header [ js-default-accordion__trigger ]">
                             <span class="default-accordion-item__title">{$Title}</span>
-                        </div>
+                        </button>
 
                         <div class="default-accordion-item__wrap">
                             <div class="default-accordion-item__content">
