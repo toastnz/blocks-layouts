@@ -18,6 +18,8 @@ class TestimonialBlock extends Block
 
     private static $plural_name = 'Testimonial';
 
+    protected static $icon_class = 'font-icon-block-quote';
+
     private static $has_many = [
         'Items' => TestimonialBlockItem::class
     ];
