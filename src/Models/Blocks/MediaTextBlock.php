@@ -21,6 +21,8 @@ class MediaTextBlock extends Block
 
     private static $plural_name = 'Media & Text';
 
+    protected static $icon_class = 'font-icon-block-promo-3';
+
     private static $db = [
         'Video' => VideoLink::class,
         'MediaAlignment'    => 'Enum("left,right", "left")',

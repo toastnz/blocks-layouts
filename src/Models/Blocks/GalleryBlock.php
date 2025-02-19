@@ -19,6 +19,8 @@ class GalleryBlock extends Block
 
     private static $plural_name = 'Media Gallery';
 
+    protected static $icon_class = 'font-icon-block-carousel';
+
     private static $db = [
         'Columns' => 'Varchar(10)',
     ];

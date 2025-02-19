@@ -18,6 +18,8 @@ class LinkBlock extends Block
 
     private static $plural_name = 'Links';
 
+    protected static $icon_class = 'font-icon-block-link';
+
     private static $db = [
         'Columns' => 'Varchar(10)',
     ];

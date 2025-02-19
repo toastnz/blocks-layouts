@@ -16,6 +16,8 @@ class ImageBlock extends Block
 
     private static $plural_name = 'Images';
 
+    protected static $icon_class = 'font-icon-block-file';
+
     private static $has_one = [
         'Image' => File::class
     ];

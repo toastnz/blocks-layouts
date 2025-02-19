@@ -23,6 +23,8 @@ class AccordionBlock extends Block
 
     private static $plural_name = 'Accordions';
 
+    protected static $icon_class = 'font-icon-block-accordion';
+
     private static $db = [
         'AccordionDisplay' => 'Enum("all-closed, all-open, first-open", "all-closed")',
     ];

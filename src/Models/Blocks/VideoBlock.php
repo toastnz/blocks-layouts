@@ -19,6 +19,8 @@ class VideoBlock extends Block
 
     private static $plural_name = 'Videos';
 
+    protected static $icon_class = 'font-icon-block-video';
+
     private static $db = [
         'OpenInModal' => 'Boolean',
         'Video' => VideoLink::class,

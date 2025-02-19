@@ -18,6 +18,8 @@ class UserFormBlock extends Block
 
     private static $plural_name = 'User forms';
 
+    protected static $icon_class = 'font-icon-block-form';
+
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {

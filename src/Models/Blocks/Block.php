@@ -40,6 +40,8 @@ class Block extends DataObject
 
     private static $plural_name = 'Blocks';
 
+    protected static $icon_class = 'font-icon-block-content';
+
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
@@ -82,8 +84,14 @@ class Block extends DataObject
     public function getIconForCMS()
     {
         if (self::config()->get('block-icon') == null) {
-            return;
+            return DBField::create_field('HTMLText', '
+                <div class="toast-block-icon" style="text-align: center; margin: 0 auto; margin; padding: 10px;">
+                    <span class="toast-block-icon__media ' . static::$icon_class . '" style="position: relative; font-size: 40px; line-height: 0;"></span>
+                </div>
+                <span class="toast-block-title" style="display: block; font-size: 10px; font-weight: bold; line-height: 10px; text-transform: uppercase; text-align: center; margin: 0; padding: 0;">' . $this->i18n_singular_name() . '</span>
+            ');
         }
+
         $icon = str_replace('[resources]', TOAST_RESOURCES_DIR, self::config()->get('block-icon'));
 
         return DBField::create_field('HTMLText', '

@@ -19,6 +19,8 @@ class DownloadBlock extends Block
 
     private static $plural_name = 'Downloads';
 
+    protected static $icon_class = 'font-icon-block-attachment';
+
     private static $has_many = [
         'Items' => DownloadBlockItem::class
     ];

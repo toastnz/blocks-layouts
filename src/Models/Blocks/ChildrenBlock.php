@@ -15,6 +15,7 @@ class ChildrenBlock extends Block
     private static $table_name = 'Blocks_ChildrenBlock';
     private static $singular_name = 'Children Block';
     private static $plural_name = 'Children Blocks';
+    protected static $icon_class = 'font-icon-block-layout-2';
 
     private static $db = [
         'Columns' => 'Varchar(10)',

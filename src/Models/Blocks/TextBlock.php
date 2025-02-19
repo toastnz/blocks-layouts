@@ -15,6 +15,8 @@ class TextBlock extends Block
 
     private static $plural_name = 'Text';
 
+    protected static $icon_class = 'font-icon-block-content';
+
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {

@@ -14,6 +14,8 @@ class CodeBlock extends Block
 
     private static $plural_name = 'Codes';
 
+    protected static $icon_class = 'font-icon-code';
+
     private static $db = [
         'Content' => 'HTMLText'
     ];

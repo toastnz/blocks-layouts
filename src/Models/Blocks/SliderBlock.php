@@ -14,6 +14,8 @@ class SliderBlock extends Block
 
     private static $plural_name = 'Media Slider';
 
+    protected static $icon_class = 'font-icon-block-carousel';
+
     private static $many_many = [
         'Images' => Image::class,
     ];
