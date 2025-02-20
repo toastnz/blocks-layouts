@@ -18,7 +18,7 @@ class BlogBlock extends Block
     private static $table_name = 'Blocks_BlogBlock';
     private static $singular_name = 'Blog Block';
     private static $plural_name = 'Blog Blocks';
-    protected static $icon_class = 'font-icon-block-banner';
+    protected static $icon_class = 'font-icon-block-blog-post';
 
     private static $db = [
         'Columns' => 'Varchar(10)',
