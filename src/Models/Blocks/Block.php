@@ -515,6 +515,37 @@ class Block extends DataObject
         return $link;
     }
 
+    // public function getBlockPreviewURL($anchor = null)
+    // {
+    //     // Get the current controller
+    //     $controller = Controller::curr();
+    //     $path = null;
+    //     // Get the base URL
+    //     $baseURL = Director::absoluteBaseURL();
+
+    //     // // Ensure the controller is an instance of CMSMain
+    //     if ($controller instanceof CMSMain) {
+    //         $path = $controller->currentPage()->Link();
+    //     }
+
+    //     // Generate the link
+    //     $link = Controller::join_links($baseURL, $path);
+    //     // Add the necessary query string parameters
+    //     $link .= '?stage=Stage&CMSPreview=1';
+
+    //     if (class_exists(Subsite::class)) {
+    //         // Get the current subsite ID
+    //         $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+    //         // Add the subsite ID to the query string
+    //         $link .= '&SubsiteID=' . $currentSubsiteID;
+    //     }
+
+    //     // Add the block ID as a hash
+    //     $link .= '#' . ($anchor ?: $this->getBlockID());
+
+    //     return $link;
+    // }
+
     public function getAbsoluteLink($action = null)
     {
         // Get the current controller
