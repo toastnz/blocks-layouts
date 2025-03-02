@@ -355,19 +355,17 @@ class Block extends DataObject
     /* ?SubsiteID=1&stage=Stage&CMSPreview=1 */
     public function getBlockPreviewURL($anchor = null)
     {
-        // Get the current controller
-        $controller = Controller::curr();
-
         // Get the base URL
         $baseURL = Director::absoluteBaseURL();
 
-        // // Ensure the controller is an instance of CMSMain
-        if ($controller instanceof CMSMain) {
-            $path = $controller->currentPage()->Link();
-        }
+        // remove any hash
+        $splitLink = explode('#', $this->getLink());
 
-        // Generate the link
-        $link = Controller::join_links($baseURL, $path);
+        $location = $splitLink[0];
+        $hash = $splitLink[1] ?? null;
+
+        $link = Controller::join_links($baseURL, $location);
+
         // Add the necessary query string parameters
         $link .= '?stage=Stage&CMSPreview=1';
 
@@ -378,8 +376,9 @@ class Block extends DataObject
             $link .= '&SubsiteID=' . $currentSubsiteID;
         }
 
-        // Add the block ID as a hash
-        $link .= '#' . ($anchor ?: $this->getBlockID());
+        if ($hash) {
+            $link .= '#' . $hash;
+        }
 
         return $link;
     }
