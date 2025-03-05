@@ -40,6 +40,7 @@ use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\GridField\GridFieldConfig_Base;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
 {
@@ -108,10 +109,8 @@ class Block extends DataObject
     public function getCMSFields()
     {
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/icons.css');
-        Requirements::css('toastnz/blocks-layouts: client/dist/styles/preview.css');
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/page-links.css');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/icons.js');
-        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/preview.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
             if ($this->ID) {
@@ -119,15 +118,12 @@ class Block extends DataObject
                 $linksHtml = Helper::getBlockPageLinksHTMLForCMS($this);
 
                 $fields->addFieldsToTab('Root.More', [
+                    OpenCMSPreview::create($this->getBlockPreviewURL()),
                     HeaderField::create('UsageHeading', 'Link to this block'),
                     LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
                     ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
                     ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
                 ]);
-
-                if ($preview = $this->getPagePreview()) {
-                    $fields->addFieldToTab('Root.More', $preview);
-                }
 
                 $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
                 $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
@@ -155,11 +151,6 @@ class Block extends DataObject
         });
 
         return parent::getCMSFields();
-    }
-
-    public function getPagePreview($anchor = null)
-    {
-        return LiteralField::create('Preview', '<div id="BlockPreviewFrame"><iframe src="' . $this->getBlockPreviewURL($anchor) . '"></iframe></div>');
     }
 
     public function getBlockLayouts()
