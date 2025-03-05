@@ -40,7 +40,7 @@ const aliases = {
 // Our marmalade config (imports the cms theme, dev theme and blocks to the frontend)
 const app = {
   dir,
-  files: ['icons', 'preview', 'page-links'],
+  files: ['icons', 'page-links'],
   entries: {},
   output: {
     publicPath: '/client/dist/scripts/',

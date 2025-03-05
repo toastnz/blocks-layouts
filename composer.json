@@ -30,7 +30,8 @@
     "toastnz/linkable": "^3",
     "undefinedoffset/sortablegridfield": "^2.0.4",
     "axllent/silverstripe-form-fields": "^1.5",
-    "silverstripe/userforms": "^6"
+    "silverstripe/userforms": "^6",
+    "toastnz/open-cms-preview": "^0.0.0"
   },
   "extra": {
     "resources-dir": "_resources",
@@ -38,5 +39,11 @@
         "client/images",
         "client/dist"
     ]
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "silverstripe/vendor-plugin": true
+    }
   }
 }
