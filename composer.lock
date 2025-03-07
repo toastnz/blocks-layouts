@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db74d5216afa0d39eca5d0ab90ce71d6",
+    "content-hash": "e87bb5e746af75c98ec7befc9eb517aa",
     "packages": [
         {
             "name": "axllent/silverstripe-form-fields",
@@ -64,16 +64,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.5.5",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6"
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
-                "reference": "08c50d5ec4c6ced7d0271d2862dec8c1033283e6",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/f65c239c970e7f072f067ab78646e9f0b2935175",
+                "reference": "f65c239c970e7f072f067ab78646e9f0b2935175",
                 "shasum": ""
             },
             "require": {
@@ -120,7 +120,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.5.5"
+                "source": "https://github.com/composer/ca-bundle/tree/1.5.6"
             },
             "funding": [
                 {
@@ -136,7 +136,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-01-08T16:17:16+00:00"
+            "time": "2025-03-06T14:30:56+00:00"
         },
         {
             "name": "composer/installers",
@@ -2613,16 +2613,16 @@
         },
         {
             "name": "silverstripe/framework",
-            "version": "5.3.16",
+            "version": "5.3.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silverstripe/silverstripe-framework.git",
-                "reference": "e1a3a43eb0e29a491bf5e34809ebbe7acec914e6"
+                "reference": "436c92ca8b12041a1e535fe9be778323fcac6036"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silverstripe/silverstripe-framework/zipball/e1a3a43eb0e29a491bf5e34809ebbe7acec914e6",
-                "reference": "e1a3a43eb0e29a491bf5e34809ebbe7acec914e6",
+                "url": "https://api.github.com/repos/silverstripe/silverstripe-framework/zipball/436c92ca8b12041a1e535fe9be778323fcac6036",
+                "reference": "436c92ca8b12041a1e535fe9be778323fcac6036",
                 "shasum": ""
             },
             "require": {
@@ -2742,9 +2742,9 @@
             ],
             "support": {
                 "issues": "https://github.com/silverstripe/silverstripe-framework/issues",
-                "source": "https://github.com/silverstripe/silverstripe-framework/tree/5.3.16"
+                "source": "https://github.com/silverstripe/silverstripe-framework/tree/5.3.17"
             },
-            "time": "2025-03-04T04:52:59+00:00"
+            "time": "2025-03-06T21:10:18+00:00"
         },
         {
             "name": "silverstripe/graphql",
@@ -5318,16 +5318,16 @@
         },
         {
             "name": "toastnz/open-cms-preview",
-            "version": "0.0.0",
+            "version": "0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/toastnz/silverstripe-open-cms-preview.git",
-                "reference": "50d414bdf8d382b7944deb8c70b7c2f81f14b0aa"
+                "reference": "e813e4a7677b61934803d1d9a7bce7ae1124041a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/50d414bdf8d382b7944deb8c70b7c2f81f14b0aa",
-                "reference": "50d414bdf8d382b7944deb8c70b7c2f81f14b0aa",
+                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/e813e4a7677b61934803d1d9a7bce7ae1124041a",
+                "reference": "e813e4a7677b61934803d1d9a7bce7ae1124041a",
                 "shasum": ""
             },
             "require": {
@@ -5362,9 +5362,9 @@
             ],
             "support": {
                 "issues": "https://github.com/toastnz/silverstripe-open-cms-preview/issues",
-                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.0"
+                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.1"
             },
-            "time": "2025-03-05T23:27:22+00:00"
+            "time": "2025-03-06T07:20:12+00:00"
         },
         {
             "name": "unclecheese/display-logic",
