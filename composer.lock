@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e87bb5e746af75c98ec7befc9eb517aa",
+    "content-hash": "7983b8ab172cc2cabe4988c7a942ed2a",
     "packages": [
         {
             "name": "axllent/silverstripe-form-fields",
