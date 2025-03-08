@@ -4,6 +4,7 @@ namespace Toast\Blocks\Items;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\ReadonlyField;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class BlockItem extends DataObject
 {
@@ -17,9 +18,7 @@ class BlockItem extends DataObject
     {
         $this->beforeUpdateCMSFields(function ($fields) {
             if ($this->ID) {
-                if ($preview = $this->getPagePreview()) {
-                    $fields->addFieldToTab('Root.Main', $preview);
-                }
+                $fields->addFieldToTab('Root.Main', OpenCMSPreview::create($this->getBlockPreviewURL()),);
 
                 $fields->addFieldsToTab('Root.More', [
                     ReadonlyField::create('BlockID', 'Item ID', $this->getBlockItemID()),
@@ -32,7 +31,6 @@ class BlockItem extends DataObject
                 'FileTracking',
                 'LinkTracking'
             ]);
-
         });
 
         return parent::getCMSFields();
@@ -43,10 +41,11 @@ class BlockItem extends DataObject
         return $this->Parent()->getBlockID() . '_' . $this->ID;
     }
 
-    public function getPagePreview() {
+    public function getBlockPreviewURL()
+    {
         if ($this->hasMethod('Parent')) {
             $id = $this->getBlockItemID();
-            return $this->Parent()->getPagePreview($id);
+            return $this->Parent()->getBlockPreviewURL($id);
         }
 
         return null;
@@ -86,8 +85,5 @@ class BlockItem extends DataObject
         }
 
         return parent::canCreate($member, $context);
-
     }
-
-
 }

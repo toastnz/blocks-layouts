@@ -499,7 +499,9 @@ class Block extends DataObject
             $link .= '&SubsiteID=' . $currentSubsiteID;
         }
 
-        if ($hash) {
+        if ($anchor) {
+            $link .= '#' . $anchor;
+        } else if ($hash) {
             $link .= '#' . $hash;
         }
 
