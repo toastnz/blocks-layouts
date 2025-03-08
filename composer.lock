@@ -5318,16 +5318,16 @@
         },
         {
             "name": "toastnz/open-cms-preview",
-            "version": "0.0.4",
+            "version": "0.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/toastnz/silverstripe-open-cms-preview.git",
-                "reference": "1ed2b682b634dc0a0e79675481eee9098aa492ac"
+                "reference": "0e18fe4297265c07e3242b2d8385cda99eb326dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/1ed2b682b634dc0a0e79675481eee9098aa492ac",
-                "reference": "1ed2b682b634dc0a0e79675481eee9098aa492ac",
+                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/0e18fe4297265c07e3242b2d8385cda99eb326dd",
+                "reference": "0e18fe4297265c07e3242b2d8385cda99eb326dd",
                 "shasum": ""
             },
             "require": {
@@ -5362,9 +5362,9 @@
             ],
             "support": {
                 "issues": "https://github.com/toastnz/silverstripe-open-cms-preview/issues",
-                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.4"
+                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.5"
             },
-            "time": "2025-03-08T00:24:10+00:00"
+            "time": "2025-03-08T00:34:25+00:00"
         },
         {
             "name": "unclecheese/display-logic",
