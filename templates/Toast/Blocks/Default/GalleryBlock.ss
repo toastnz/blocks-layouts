@@ -60,7 +60,7 @@
                                             <% with $Image %>
                                                 <picture>
                                                     <% if $Extension="svg" %>
-                                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}">
+                                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
                                                     <% else %>
                                                         <% with $Convert('webp') %>
                                                             <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
