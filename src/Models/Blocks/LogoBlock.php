@@ -43,7 +43,7 @@ class LogoBlock extends Block
         $options = [];
 
         // Check to see if there are any columns available in the config
-        $columns = Config::inst()->get(LinkBlock::class, 'available_columns') ?? [2, 3, 4];
+        $columns = Config::inst()->get(LogoBlock::class, 'available_columns') ?? [2, 3, 4];
 
         foreach ($columns as $column) {
             $options[$column] = $column;
