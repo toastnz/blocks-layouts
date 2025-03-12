@@ -66,7 +66,7 @@ class LogoBlock extends Block
 
             $percentageBlockGridField = GridField::create(
                 'Items',
-                'Percentage Block Items',
+                'Logo Items',
                 $this->owner->Items(),
                 $percentageConfig
             );
