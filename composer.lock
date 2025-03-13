@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7983b8ab172cc2cabe4988c7a942ed2a",
+    "content-hash": "aee6549613d1b875bf25175daeb6e4eb",
     "packages": [
         {
             "name": "axllent/silverstripe-form-fields",
@@ -5318,16 +5318,16 @@
         },
         {
             "name": "toastnz/open-cms-preview",
-            "version": "0.0.7",
+            "version": "0.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/toastnz/silverstripe-open-cms-preview.git",
-                "reference": "9d1baf8f7aa79a0c5b31464f97a0b6433ca40fe6"
+                "reference": "3077481713a7c3625dab9807f9a8df1749e7547d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/9d1baf8f7aa79a0c5b31464f97a0b6433ca40fe6",
-                "reference": "9d1baf8f7aa79a0c5b31464f97a0b6433ca40fe6",
+                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/3077481713a7c3625dab9807f9a8df1749e7547d",
+                "reference": "3077481713a7c3625dab9807f9a8df1749e7547d",
                 "shasum": ""
             },
             "require": {
@@ -5362,9 +5362,9 @@
             ],
             "support": {
                 "issues": "https://github.com/toastnz/silverstripe-open-cms-preview/issues",
-                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.7"
+                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.8"
             },
-            "time": "2025-03-08T04:46:09+00:00"
+            "time": "2025-03-13T23:12:37+00:00"
         },
         {
             "name": "unclecheese/display-logic",
