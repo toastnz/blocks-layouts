@@ -31,7 +31,7 @@
     "undefinedoffset/sortablegridfield": "^2.0.4",
     "axllent/silverstripe-form-fields": "^1.5",
     "silverstripe/userforms": "^6",
-    "toastnz/open-cms-preview": "^0.0.8"
+    "toastnz/open-cms-preview": "^0.0.9"
   },
   "extra": {
     "resources-dir": "_resources",
