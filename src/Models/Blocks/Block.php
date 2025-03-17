@@ -921,4 +921,11 @@ class Block extends DataObject
 
         return null;
     }
+
+    public function getBlockSpecificExtraClasses()
+    {
+        $classes = [];
+        $this->extend('updateBlockSpecificExtraClasses', $classes);
+        return $classes;
+    }
 }
