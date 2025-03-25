@@ -26,7 +26,7 @@ class BlocksAdmin extends ModelAdmin
 
     private static $menu_title = 'Blocks';
 
-    private static $menu_icon_class = 'font-icon-list';
+    private static $menu_icon_class = 'font-icon-clone';
 
     private static $managed_models = [
         Block::class => [

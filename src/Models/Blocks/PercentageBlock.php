@@ -18,7 +18,7 @@ class PercentageBlock extends Block
 
     private static $plural_name = 'Percentage Blocks';
 
-    protected static $icon_class = 'font-icon-block-layout-6';
+    protected static $icon_class = 'font-icon-block-layout-5';
 
     private static $has_many = [
         'Items' => PercentageBlockItem::class
