@@ -108,7 +108,7 @@ class Block extends DataObject
         return $this->getIconForCMS();
     }
 
-    public function forTemplate()
+    public function forTemplate(): string
     {
         $template = $this->Template;
 
@@ -861,7 +861,7 @@ class Block extends DataObject
         return $extraRequirements;
     }
 
-    public function getCMSEditLink()
+    public function getCMSEditLink(): ?string
     {
         if ($parent = $this->getCMSParentPage()) {
             $parentID = $parent->ID;

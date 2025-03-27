@@ -25,7 +25,8 @@
     "php": ">=8.3",
     "silverstripe/cms": "^6",
     "silverstripe/userforms": "7.0.0-beta1",
-    "toastnz/open-cms-preview": "6.0.0-beta1"
+    "toastnz/open-cms-preview": "6.0.0-beta1",
+    "axllent/silverstripe-form-fields": "^2.0"
   },
   "extra": {
     "resources-dir": "_resources",
