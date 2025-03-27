@@ -46,6 +46,9 @@ class PageExtension extends Extension
     public function updateCMSFields(FieldList $fields)
     {
         if ($this->owner->exists()) {
+            $fields->removeByName([
+                'ContentBlocks'
+            ]);
             $config = GridFieldConfig_RelationEditor::create(50);
             $config->removeComponentsByType(GridFieldAddNewButton::class)
                 ->removeComponentsByType(GridFieldFilterHeader::class)
