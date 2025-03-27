@@ -445,8 +445,8 @@ class Block extends DataObject
 
         // Ensure the controller is an instance of CMSMain
         if ($controller instanceof CMSMain) {
-            // Call the currentPage() method on the controller instance
-            $parent = $controller->currentPage();
+            // Call the currentRecord() method on the controller instance
+            $parent = $controller->currentRecord();
         } else {
             $parent = $this->getParentPage();
 
@@ -518,7 +518,7 @@ class Block extends DataObject
 
     //     // // Ensure the controller is an instance of CMSMain
     //     if ($controller instanceof CMSMain) {
-    //         $path = $controller->currentPage()->Link();
+    //         $path = $controller->currentRecord()->Link();
     //     }
 
     //     // Generate the link
@@ -548,8 +548,8 @@ class Block extends DataObject
 
         // Ensure the controller is an instance of CMSMain
         if ($controller instanceof CMSMain) {
-            // Call the currentPage() method on the controller instance
-            $link = $controller->currentPage()->AbsoluteLink();
+            // Call the currentRecord() method on the controller instance
+            $link = $controller->currentRecord()->AbsoluteLink();
         }
 
         return $link . '?stage=Stage#' . $this->owner->getBlockID();
@@ -881,8 +881,8 @@ class Block extends DataObject
         $parent = null;
 
         if ($controller instanceof CMSMain) {
-            // Call the currentPage() method on the controller instance
-            $parent = $controller->currentPage();
+            // Call the currentRecord() method on the controller instance
+            $parent = $controller->currentRecord();
         }
 
         if ($parent && $parent->exists()) {
