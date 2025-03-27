@@ -4,7 +4,7 @@ namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\TabSet;
@@ -14,7 +14,7 @@ use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 
-class SiteConfigExtension extends DataExtension
+class SiteConfigExtension extends Extension
 {
   
     public function updateCMSFields(FieldList $fields)

@@ -3,10 +3,10 @@
 namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use Toast\Blocks\Block;
 
-class CmsActionsExtension extends DataExtension
+class CmsActionsExtension extends Extension
 {
     public function updateFormActions(FieldList $actions)
     {

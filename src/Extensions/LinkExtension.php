@@ -4,9 +4,9 @@ namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
-class LinkExtension extends DataExtension
+class LinkExtension extends Extension
 {
     private static $db = [
         'AriaLabel' => 'Varchar(255)',
