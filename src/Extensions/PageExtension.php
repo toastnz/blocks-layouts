@@ -5,7 +5,7 @@ namespace Toast\Blocks\Extensions;
 use Toast\Blocks\Block;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Assets\File;
-use SilverStripe\ORM\ArrayList;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Control\Director;

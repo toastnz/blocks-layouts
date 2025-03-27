@@ -2,13 +2,13 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\TreeDropdownField;
 use Toast\Blocks\Block;
+use SilverStripe\Model\List\ArrayList;
 
 class ChildrenBlock extends Block
 {
