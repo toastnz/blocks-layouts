@@ -17,7 +17,7 @@
                 <% if $Items.Count %>
                     <% loop $Items.Sort('SortOrder') %>
                         <% with $File %>
-                            <a id="{$BlockItemID}" href="{$Link}" class="default-download-item [ js-in-view ]" download="{$Up.Title.ATT}">
+                            <a id="{$Up.BlockItemID}" href="{$Link}" class="default-download-item [ js-in-view ]" download="{$Up.Title.ATT}">
                                 <div class="default-download-item__background"></div>
 
                                 <div class="default-download-item__title">
