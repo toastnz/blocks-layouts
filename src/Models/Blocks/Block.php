@@ -31,6 +31,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Subsites\State\SubsiteState;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
+use SilverStripe\Forms\HiddenField;
 use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
@@ -311,6 +312,9 @@ class Block extends DataObject
         // Flag to check if all matching layouts have icons
         $allHaveIcons = true;
 
+        // Set the field to null by default
+        $field = HiddenField::create('Template', 'Layout', $this->Template);
+
         // Loop all the layouts
         foreach ($layouts as $folder => $templates) {
             // Loop all the templates
@@ -331,6 +335,9 @@ class Block extends DataObject
                 }
             }
         }
+
+        // Return the hidden field if there are no extra options
+        if (count($options) < 2) return $field;
 
         // Create the field based on whether all matching layouts have icons
         if ($allHaveIcons) {
