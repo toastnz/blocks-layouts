@@ -41,7 +41,7 @@ class VideoBlock extends Block
                 CheckboxField::create('OpenInModal', 'Open Video In Modal'),
                 VideoLinkField::create('Video')
                 ->showPreview(500),
-                UploadField::create('Image', 'Preview Image')
+                UploadField::create('Thumbnail', 'Thumbnail Image')
                     ->setFolderName('Uploads/Blocks')
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
             ]);
