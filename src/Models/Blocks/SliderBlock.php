@@ -20,6 +20,10 @@ class SliderBlock extends Block
         'Images' => Image::class,
     ];
 
+    private static $owns = [
+        'Images'
+    ];
+
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function ($fields) {
