@@ -861,7 +861,7 @@ class Block extends DataObject
 
     public function getExtraRequirements()
     {
-        $extraRequirements = [];
+        $extraRequirements = null;
 
         $this->extend('updateExtraRequirements', $extraRequirements);
 
