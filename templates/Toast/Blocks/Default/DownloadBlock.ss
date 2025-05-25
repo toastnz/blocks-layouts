@@ -4,7 +4,7 @@
             <div class="default-download__header">
                 <div class="default-download__content">
                     <% if $Heading %>
-                        <h2 class="default-download__heading">{$Heading.XML}</h2>
+                        <h2 class="default-download__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -21,11 +21,11 @@
                                 <div class="default-download-item__background"></div>
 
                                 <div class="default-download-item__title">
-                                    <span>{$Up.Title.XML}</span>
+                                    <span>{$Up.Title}</span>
                                 </div>
 
                                 <div class="default-download-item__description">
-                                    <span>{$Up.Summary.XML}</span>
+                                    <span>{$Up.Summary}</span>
                                 </div>
 
                                 <div class="default-download-item__info">

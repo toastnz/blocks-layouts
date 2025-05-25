@@ -4,7 +4,7 @@
             <div class="default-percentage__header">
                 <div class="default-percentage__content">
                     <% if $Heading %>
-                        <h2 class="default-percentage__heading">{$Heading.XML}</h2>
+                        <h2 class="default-percentage__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -33,7 +33,7 @@
 
                         <div class="default-percentage-item__details">
                             <% if $Title %>
-                                <span class="default-percentage-item__title">{$Title.XML}</span>
+                                <span class="default-percentage-item__title">{$Title}</span>
                             <% end_if %>
 
                             <% if $Summary %>

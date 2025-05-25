@@ -3,7 +3,7 @@
         <div class="default-image__wrap">
             <div class="default-image__media">
                 <% if $Heading %>
-                    <h2 class="default-image__heading">{$Heading.XML}</h2>
+                    <h2 class="default-image__heading">{$Heading}</h2>
                 <% end_if %>
 
                 <% with $Image %>

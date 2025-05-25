@@ -4,7 +4,7 @@
             <div class="default-blog__header">
                 <div class="default-blog__content">
                     <% if $Heading %>
-                        <h2 class="default-blog__heading">{$Heading.XML}</h2>
+                        <h2 class="default-blog__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -34,11 +34,11 @@
 
                             <div class="default-blog-item__details">
                                 <% if $Title %>
-                                    <span class="default-blog-item__title">{$Title.XML}</span>
+                                    <span class="default-blog-item__title">{$Title}</span>
                                 <% end_if %>
 
                                 <% if $Summary %>
-                                    <p class="default-blog-item__summary">{$Summary.XML}</p>
+                                    <p class="default-blog-item__summary">{$Summary}</p>
                                 <% end_if %>
 
                                 <span class="default-blog-item__button read-more">Read more</span>

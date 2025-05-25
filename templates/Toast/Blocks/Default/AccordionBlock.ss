@@ -4,7 +4,7 @@
             <div class="default-accordion__header">
                 <div class="default-accordion__content">
                     <% if $Heading %>
-                        <h2 class="default-accordion__heading">{$Heading.XML}</h2>
+                        <h2 class="default-accordion__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

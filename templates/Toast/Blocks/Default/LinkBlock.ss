@@ -4,7 +4,7 @@
             <div class="default-link__header">
                 <div class="default-link__content">
                     <% if $Heading %>
-                        <h2 class="default-link__heading">{$Heading.XML}</h2>
+                        <h2 class="default-link__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -34,11 +34,11 @@
 
                             <div class="default-link-item__details">
                                 <% if $Title %>
-                                    <span class="default-link-item__title">{$Title.XML}</span>
+                                    <span class="default-link-item__title">{$Title}</span>
                                 <% end_if %>
 
                                 <% if $Summary %>
-                                    <p class="default-link-item__summary">{$Summary.XML}</p>
+                                    <p class="default-link-item__summary">{$Summary}</p>
                                 <% end_if %>
 
                                 <span class="default-link-item__button read-more">{$Link.Title}</span>
