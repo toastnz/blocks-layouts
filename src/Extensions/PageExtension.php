@@ -89,13 +89,13 @@ class PageExtension extends DataExtension
     public function getBlockStyles()
     {
         $baseFolder = Director::baseFolder();
-        $blocks = $this->owner->ContentBlocks();
-        
+        $blocks = $this->owner->ContentBlocks()->sort('SortOrder');
+
         $components = new ArrayList();
         $components->merge($blocks);
         $this->owner->extend('updateCombinedBlocks', $components);
 
-        $styles = [];   
+        $styles = [];
 
         foreach ($components as $block) {
             // Check if the CSSFile has been stored in the DB, otherwise find it
@@ -109,9 +109,15 @@ class PageExtension extends DataExtension
         }
 
         if (!empty($styles)) {
-            // With the first cssFile, we want to load it directly to the page as critical css
-            $firstCssFile = array_shift($styles);
-            Requirements::customCSS(file_get_contents($baseFolder . '/' . $firstCssFile));
+            // Take the first two CSS files for critical CSS
+            $criticalCssFiles = array_splice($styles, 0, 2);
+            $criticalCss = '';
+            foreach ($criticalCssFiles as $cssFile) {
+                $criticalCss .= file_get_contents($baseFolder . '/' . $cssFile) . "\n";
+            }
+            if ($criticalCss) {
+                Requirements::customCSS($criticalCss);
+            }
         }
 
         if (!empty($styles)) {
