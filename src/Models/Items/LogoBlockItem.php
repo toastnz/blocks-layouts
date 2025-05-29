@@ -53,14 +53,10 @@ class LogoBlockItem extends BlockItem
         $content = '';
 
         if ($this->Image() && $this->Image()->exists()) {
-            // If the image is not svg
-            if ($this->Image()->getExtension() !== 'svg') {
-                $content = $this->Image()->Fit(80, 80)->forTemplate();
-            } else {
-                $imageURL = $this->Image()->getAbsoluteURL();
-                $content = "<img src='{$imageURL}' alt='{$this->Image()->Title}' width='80' height='80' style='object-fit: contain' />";
-            }
+            $imageURL = $this->Image()->getAbsoluteURL();
+            $content = "<img src='{$imageURL}' alt='{$this->Image()->Title}' width='80' height='80' style='object-fit: contain' />";
         }
+
         return DBField::create_field(DBHTMLText::class, $content);
     }
 

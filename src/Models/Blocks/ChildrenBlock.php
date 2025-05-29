@@ -49,7 +49,8 @@ class ChildrenBlock extends Block
                 }
 
                 $fields->addFieldsToTab('Root.Main', [
-                    TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class),
+                    TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class)
+                        ->setDescription('Select the parent page to get the children from. If no parent is selected, the current page will be used.')
                 ]);
             } else {
                 $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
@@ -62,13 +63,24 @@ class ChildrenBlock extends Block
     {
         $items = new ArrayList();
 
-        if ($parent = $this->ParentPage()) {
-            if ($parent->exists()) {
-                if ($children = $parent->Children()) {
-                    foreach ($children as $child) {
-                        $items->push($child);
-                    }
-                }
+        $parent = null;
+        $selectedParent = $this->ParentPage();
+        $page = $this->getPage();
+
+        if ($selectedParent && $selectedParent->exists()) {
+            // If a parent page is selected, use that
+            $parent = $selectedParent;
+        } elseif ($page && $page->exists()) {
+            // Otherwise, use the current page as the parent
+            $parent = $page;
+        } else {
+            // If no parent page is selected and the current page doesn't exist, return empty items
+            return $items;
+        }
+
+        if ($children = $parent->Children()) {
+            foreach ($children as $child) {
+                $items->push($child);
             }
         }
 
