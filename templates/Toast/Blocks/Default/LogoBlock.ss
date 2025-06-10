@@ -12,7 +12,7 @@
             </div>
         <% end_if %>
 
-        <div class="default-logo__wrap columns-{$Columns}">
+        <div class="default-logo__wrap [ js-default-logo__wrap ] columns-{$Columns}">
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image %>
