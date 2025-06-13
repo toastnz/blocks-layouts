@@ -64,10 +64,12 @@ class Block extends DataObject
         'IconForCMS'        => 'Type',
         'Title'             => 'Title',
         'ContentSummary'    => 'Content',
-    ];
+	'LinkedPagesList'   => 'Linked Pages',
+   ];
 
     private static $searchable_fields = [
-        'Title'
+        'Title',
+	'Template
     ];
 
     private static $extensions = [
@@ -402,6 +404,26 @@ class Block extends DataObject
     public function AbsoluteLink($action = null)
     {
         return $this->getAbsoluteLink($action);
+    }
+
+    public function getLinkedPagesList()
+    {
+        $pagesWithBlock = $this->getAllPages();
+        // only show pages 
+        $pages = [];
+        foreach ($pagesWithBlock as $page) {
+            if ($page instanceof SiteTree && $page->exists()) {
+                $pages[] = $page;
+            }
+        }
+        // Sort the pages by title
+        usort($pages, function ($a, $b) {
+            return strcmp($a->Title, $b->Title);
+        });
+        // Return the sorted pages in implode format
+        return implode(', ', array_map(function ($page) {
+            return $page->Title;
+        }, $pages));
     }
 
     public function getAllPages()
