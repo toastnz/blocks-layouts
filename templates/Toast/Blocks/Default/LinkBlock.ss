@@ -34,7 +34,11 @@
 
                             <div class="default-link-item__details">
                                 <% if $Title %>
-                                    <h3 class="default-link-item__title">{$Title}</h3>
+                                    <% if $Top.Heading %>
+                                        <h3 class="default-link-item__title">{$Title}</h3>
+                                    <% else %>
+                                        <h2 class="default-link-item__title">{$Title}</h2>
+                                    <% end_if %>
                                 <% end_if %>
 
                                 <% if $Summary %>

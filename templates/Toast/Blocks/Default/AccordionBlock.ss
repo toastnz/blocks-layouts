@@ -17,7 +17,7 @@
                 <% loop $Items.Sort('SortOrder') %>
                     <div id="{$BlockItemID}" class="default-accordion-item [ js-default-accordion__item js-in-view ]">
                         <button class="default-accordion-item__header [ js-default-accordion__trigger ]">
-                            <h3 class="default-accordion-item__title">{$Title}</h3>
+                            <span class="default-accordion-item__title">{$Title}</span>
                         </button>
 
                         <div class="default-accordion-item__wrap">
