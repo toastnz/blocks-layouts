@@ -33,7 +33,7 @@
 
                         <div class="default-percentage-item__details">
                             <% if $Title %>
-                                <span class="default-percentage-item__title">{$Title}</span>
+                                <h3 class="default-percentage-item__title">{$Title}</h3>
                             <% end_if %>
 
                             <% if $Summary %>

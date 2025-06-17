@@ -34,7 +34,7 @@
 
                             <div class="default-children-item__details">
                                 <% if $Title %>
-                                    <span class="default-children-item__title">{$Title}</span>
+                                    <h3 class="default-children-item__title">{$Title}</h3>
                                 <% end_if %>
 
                                 <% if $Summary %>
