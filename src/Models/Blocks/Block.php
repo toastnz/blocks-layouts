@@ -155,7 +155,8 @@ class Block extends DataObject
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
                 TextField::create('AnchorName', 'Anchor Name')
                     ->setDescription('This will be the name that appears in the URL when linking to this block manually. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong> <br> <strong class="warning">Updating this value will break any existing anchor links pointing to this block!</strong>'),
-                TextField::create('Heading', 'Heading'),
+                TextField::create('Heading', 'Heading')
+                    ->setDescription('&lt;h2&gt;'),
                 HTMLEditorField::create('Content', 'Content')
             ]);
 
@@ -572,7 +573,7 @@ class Block extends DataObject
     public function getLinkedPagesList()
     {
         $pagesWithBlock = $this->getAllPages();
-        // only show pages 
+        // only show pages
         $pages = [];
         foreach ($pagesWithBlock as $page) {
             if ($page instanceof SiteTree && $page->exists()) {
