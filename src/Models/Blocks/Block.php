@@ -13,6 +13,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\Control\Director;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
@@ -395,7 +396,11 @@ class Block extends DataObject
     public function canPublish($member = null)
     {
         if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
-            $member = Member::currentUser();
+            if(method_exists(Member::class, 'currentUser')){
+                $member = Member::currentUser();
+            } else {
+                $member = Security::getCurrentUser();
+            }
         }
 
         if ($member && Permission::checkMember($member, "ADMIN")) {
@@ -472,7 +477,11 @@ class Block extends DataObject
     public function canArchive($member = null)
     {
         if (!$member) {
-            $member = Member::currentUser();
+            if(method_exists(Member::class, 'currentUser')){
+                $member = Member::currentUser();
+            } else {
+                $member = Security::getCurrentUser();
+            }
         }
 
         $extended = $this->extendedCan('canArchive', $member);
