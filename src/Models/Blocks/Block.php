@@ -76,6 +76,7 @@ class Block extends DataObject
         }
 
         $icon = str_replace('[resources]', RESOURCES_DIR, self::config()->get('block-icon'));
+	$this->extend('updateIconForCMS', $icon);
 
         return DBField::create_field('HTMLText', '
             <div title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
