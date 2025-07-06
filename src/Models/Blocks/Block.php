@@ -69,7 +69,7 @@ class Block extends DataObject
 
     private static $searchable_fields = [
         'Title',
-	'Template
+	'Template'
     ];
 
     private static $extensions = [
