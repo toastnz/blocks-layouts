@@ -5,6 +5,7 @@ namespace Toast\Blocks;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\TreeDropdownField;
@@ -19,6 +20,7 @@ class ChildrenBlock extends Block
 
     private static $db = [
         'Columns' => 'Varchar(10)',
+        'ExcludeMenuHiddenItems' => 'Boolean',
     ];
 
     private static $has_one = [
@@ -49,6 +51,7 @@ class ChildrenBlock extends Block
                 }
 
                 $fields->addFieldsToTab('Root.Main', [
+                    CheckboxField::create('ExcludeMenuHiddenItems', 'Exclude child pages that are hidden from menus (Show in menus: false)'),
                     TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class)
                         ->setDescription('Select the parent page to get the children from. If no parent is selected, the current page will be used.')
                 ]);
@@ -78,12 +81,14 @@ class ChildrenBlock extends Block
             return $items;
         }
 
-        if ($children = $parent->Children()) {
+        if ($children = ($this->ExcludeMenuHiddenItems) ? $parent->Children() : $parent->AllChildren()) {
             foreach ($children as $child) {
                 $items->push($child);
             }
         }
 
-        return $items;
+        $this->extend('updateItems', $items, $parent);
+
+        return $items->removeDuplicates();
     }
 }
