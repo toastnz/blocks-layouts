@@ -29,6 +29,8 @@ class CodeBlock extends Block
 
             $fields->addFieldsToTab('Root.Main', [
                 TextareaField::create('Content', 'Code')
+                    ->setAttribute('data-language', 'markup')
+                    ->setAttribute('spellcheck', 'false')
             ]);
         });
 
