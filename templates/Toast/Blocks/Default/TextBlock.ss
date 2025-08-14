@@ -7,9 +7,11 @@
                 </div>
             <% end_if %>
 
-            <div class="default-text__content">
-                {$Content}
-            </div>
+            <% if $Content %>
+                <div class="default-text__content">
+                    {$Content}
+                </div>
+            <% end_if %>
         </div>
     </section>
 
