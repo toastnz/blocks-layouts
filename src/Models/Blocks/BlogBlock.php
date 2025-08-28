@@ -19,8 +19,8 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 class BlogBlock extends Block
 {
     private static $table_name = 'Blocks_BlogBlock';
-    private static $singular_name = 'Blog Block';
-    private static $plural_name = 'Blog Blocks';
+    private static $singular_name = 'News Block';
+    private static $plural_name = 'News Blocks';
     protected static $icon_class = 'font-icon-block-blog-post';
 
     private static $db = [

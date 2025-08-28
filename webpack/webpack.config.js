@@ -4,13 +4,34 @@ const glob = require('glob');
 const webpack = require('webpack');
 const postcssUrl = require('postcss-url');
 const TerserPlugin = require("terser-webpack-plugin");
-const globImporter = require('node-sass-glob-importer');
 const postcssCriticalCSS = require('postcss-critical-css');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { getIfUtils, removeEmpty } = require('webpack-config-utils');
 const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin');
+
+function generateSassIndexFiles(directories) {
+  directories.forEach((directory) => {
+    const subdirectories = fs.readdirSync(directory, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => path.join(directory, dirent.name));
+
+    subdirectories.forEach((subdirectory) => {
+      const files = glob.sync(`${subdirectory}/*.scss`, {
+        ignore: [`${subdirectory}/_index.scss`],
+      });
+
+      const indexPath = path.resolve(subdirectory, '_index.scss');
+      const content = files.map((file) => `@forward '${path.basename(file, '.scss')}';`).join('\n');
+
+      // Ensure the directory exists
+      fs.mkdirSync(path.dirname(indexPath), { recursive: true });
+
+      fs.writeFileSync(indexPath, content);
+    });
+  });
+}
 
 const stats = {
   colors: true,
@@ -33,31 +54,39 @@ const stats = {
 const dir = path.resolve(__dirname, '../');
 // Our aliases
 const aliases = {
-  'styles': path.resolve(__dirname, './client/source/styles/'),
-  'scripts': path.resolve(__dirname, './client/source/scripts/'),
+  'styles': path.resolve(dir, './client/source/styles/'),
+  'scripts': path.resolve(dir, './client/source/scripts/'),
 };
 
-// Our marmalade config (imports the cms theme, dev theme and blocks to the frontend)
+// Glob all JS files in components using path.join for consistency
+const componentFiles = glob.sync(path.join(dir, './client/source/scripts', '*.js'));
+const entries = {};
+
+componentFiles.forEach(filePath => {
+  // Get the filename without extension
+  const name = path.basename(filePath, '.js');
+  entries[name] = filePath;
+});
+
+// Add cms.js as its own entry
+// entries['cms'] = path.resolve(dir, './client/source/scripts/cms.js');
+
 const app = {
   dir,
-  files: ['icons', 'page-links'],
-  entries: {},
+  entries,
   output: {
     publicPath: '/client/dist/scripts/',
-    path: path.resolve(__dirname, './client/dist/scripts'),
+    path: path.resolve(dir, './client/dist/scripts'),
     filename: '[name].js',
     chunkFilename: 'components/[chunkhash].js',
   },
   resolve: { alias: aliases },
 };
 
-/* Loop through the marmalade entry points and add them to the entries object */
-for (let index = 0; index < app.files.length; index++) {
-  const file = app.files[index];
-  app.entries[file] = path.resolve(__dirname, `./client/source/scripts/${file}.js`);
-}
-
 const configs = [];
+
+// Create index files
+generateSassIndexFiles([aliases.styles]);
 
 [app].forEach((config) => {
   configs.push((env, argv) => {
@@ -66,7 +95,7 @@ const configs = [];
     return {
       mode: ifProduction('production', 'development'),
       stats,
-      devtool: 'source-map',
+      devtool: false,
       entry: config.entries,
       output: config.output,
       resolve: config.resolve,
@@ -91,11 +120,25 @@ const configs = [];
                 }
               },
               {
+                loader: 'postcss-loader',
+                options: {
+                  sourceMap: ifProduction(false, true),
+                  postcssOptions: {
+                    plugins: [
+                      postcssUrl({
+                        url: (asset) => asset.url.startsWith('data:') ? asset.url : `/_resources/app/client/${asset.url}?${Date.now()}`,
+                      }),
+                      postcssCriticalCSS({
+                        outputPath: config.criticalCSSOutput,
+                        preserve: false,
+                      }),
+                    ],
+                  },
+                },
+              },
+              {
                 loader: 'sass-loader', options: {
                   sourceMap: ifProduction(false, true),
-                  sassOptions: {
-                    importer: globImporter()
-                  },
                 }
               },
             ]
@@ -111,7 +154,6 @@ const configs = [];
         ]
       },
       plugins: removeEmpty([
-        new CleanWebpackPlugin(),
         new FriendlyErrorsWebpackPlugin(),
         new MiniCssExtractPlugin({
           filename: '../styles/[name].css',
