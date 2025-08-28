@@ -4,7 +4,7 @@
             <div class="default-logo__header">
                 <div class="default-logo__content">
                     <% if $Heading %>
-                        <h2 class="default-logo__heading">{$Heading.XML}</h2>
+                        <h2 class="default-logo__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -12,7 +12,7 @@
             </div>
         <% end_if %>
 
-        <div class="default-logo__wrap columns-{$Columns}">
+        <div class="default-logo__wrap [ js-default-logo__wrap ] columns-{$Columns}">
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image %>

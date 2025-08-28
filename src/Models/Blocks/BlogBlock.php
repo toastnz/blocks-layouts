@@ -3,11 +3,14 @@
 namespace Toast\Blocks;
 
 use Toast\Blocks\Block;
+use Toast\Blocks\BlogBlock;
 use SilverStripe\Blog\Model\Blog;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -69,7 +72,12 @@ class BlogBlock extends Block
                 $grid = GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config);
 
                 $fields->addFieldsToTab('Root.Main', [
-                    LiteralField::create('Notice', '<div class="message notice">Latest blog posts will be displayed if no blog posts are linked, Blog will need to be selected.</div>'),
+                    LiteralField::create('Notice', '<div class="message notice">Select a blog page to automatically pull through the latest blog posts. Alternatively, select the specific posts you wish to display.</div>'),
+                    TreeDropdownField::create('BlogID', 'Parent Page', SiteTree::class)
+                        ->setFilterFunction(function ($node) {
+                            // Filter to only accept pages of type 'Blog' or its subclasses
+                            return is_a($node, \SilverStripe\Blog\Model\Blog::class, true);
+                        }),
                     $grid
                 ]);
             } else {

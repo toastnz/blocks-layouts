@@ -4,7 +4,7 @@
             <div class="default-slider__header">
                 <div class="default-slider__content">
                     <% if $Heading %>
-                        <h2 class="default-slider__heading">{$Heading.XML}</h2>
+                        <h2 class="default-slider__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

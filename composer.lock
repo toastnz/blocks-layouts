@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b37a58534c95af61bcc78e46afa83d9",
+    "content-hash": "b4ae7447e2fe9c716e3ddb147e52be66",
     "packages": [
         {
             "name": "axllent/silverstripe-form-fields",
@@ -5318,23 +5318,22 @@
         },
         {
             "name": "toastnz/open-cms-preview",
-            "version": "0.0.10",
+            "version": "0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/toastnz/silverstripe-open-cms-preview.git",
-                "reference": "5cea407bb48a0a20318733dcb9f122f217f79da1"
+                "reference": "4a811ad783de936a4e5f0b850ad7e4020874475a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/5cea407bb48a0a20318733dcb9f122f217f79da1",
-                "reference": "5cea407bb48a0a20318733dcb9f122f217f79da1",
+                "url": "https://api.github.com/repos/toastnz/silverstripe-open-cms-preview/zipball/4a811ad783de936a4e5f0b850ad7e4020874475a",
+                "reference": "4a811ad783de936a4e5f0b850ad7e4020874475a",
                 "shasum": ""
             },
             "require": {
                 "composer/installers": "*",
-                "php": ">=8.1",
-                "silverstripe/cms": "^5",
-                "silverstripe/framework": "^5"
+                "php": ">=8.3",
+                "silverstripe/cms": "^5.0 || ^6.0"
             },
             "type": "silverstripe-vendormodule",
             "extra": {
@@ -5362,9 +5361,9 @@
             ],
             "support": {
                 "issues": "https://github.com/toastnz/silverstripe-open-cms-preview/issues",
-                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.0.10"
+                "source": "https://github.com/toastnz/silverstripe-open-cms-preview/tree/0.2"
             },
-            "time": "2025-03-16T20:10:48+00:00"
+            "time": "2025-04-15T20:50:31+00:00"
         },
         {
             "name": "unclecheese/display-logic",

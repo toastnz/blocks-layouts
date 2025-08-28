@@ -3,13 +3,15 @@
         <div class="default-text__wrap">
             <% if $Heading %>
                 <div class="default-text__content">
-                    <h2 class="default-text__heading">{$Heading.XML}</h2>
+                    <h2 class="default-text__heading">{$Heading}</h2>
                 </div>
             <% end_if %>
 
-            <div class="default-text__content">
-                {$Content}
-            </div>
+            <% if $Content %>
+                <div class="default-text__content">
+                    {$Content}
+                </div>
+            <% end_if %>
         </div>
     </section>
 

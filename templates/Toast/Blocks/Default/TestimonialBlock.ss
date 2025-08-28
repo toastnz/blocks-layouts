@@ -4,7 +4,7 @@
             <div class="default-testimonial__header">
                 <div class="default-testimonial__content">
                     <% if $Heading %>
-                        <h2 class="default-testimonial__heading">{$Heading.XML}</h2>
+                        <h2 class="default-testimonial__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

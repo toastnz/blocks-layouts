@@ -31,6 +31,7 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Subsites\State\SubsiteState;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
+use SilverStripe\Forms\HiddenField;
 use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
@@ -60,10 +61,12 @@ class Block extends DataObject
         'IconForCMS'        => 'Type',
         'Title'             => 'Title',
         'ContentSummary'    => 'Content',
+        'LinkedPagesList'   => 'Linked Pages',
     ];
 
     private static $searchable_fields = [
-        'Title'
+        'Title',
+        'Template'
     ];
 
     private static $extensions = [
@@ -152,7 +155,8 @@ class Block extends DataObject
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
                 TextField::create('AnchorName', 'Anchor Name')
                     ->setDescription('This will be the name that appears in the URL when linking to this block manually. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong> <br> <strong class="warning">Updating this value will break any existing anchor links pointing to this block!</strong>'),
-                TextField::create('Heading', 'Heading'),
+                TextField::create('Heading', 'Heading')
+                    ->setDescription('&lt;h2&gt;'),
                 HTMLEditorField::create('Content', 'Content')
             ]);
 
@@ -311,6 +315,9 @@ class Block extends DataObject
         // Flag to check if all matching layouts have icons
         $allHaveIcons = true;
 
+        // Set the field to null by default
+        $field = HiddenField::create('Template', 'Layout', $this->Template);
+
         // Loop all the layouts
         foreach ($layouts as $folder => $templates) {
             // Loop all the templates
@@ -331,6 +338,9 @@ class Block extends DataObject
                 }
             }
         }
+
+        // Return the hidden field if there are no extra options
+        if (count($options) < 2) return $field;
 
         // Create the field based on whether all matching layouts have icons
         if ($allHaveIcons) {
@@ -558,6 +568,26 @@ class Block extends DataObject
     public function AbsoluteLink($action = null)
     {
         return $this->getAbsoluteLink($action);
+    }
+
+    public function getLinkedPagesList()
+    {
+        $pagesWithBlock = $this->getAllPages();
+        // only show pages
+        $pages = [];
+        foreach ($pagesWithBlock as $page) {
+            if ($page instanceof SiteTree && $page->exists()) {
+                $pages[] = $page;
+            }
+        }
+        // Sort the pages by title
+        usort($pages, function ($a, $b) {
+            return strcmp($a->Title, $b->Title);
+        });
+        // Return the sorted pages in implode format
+        return implode(', ', array_map(function ($page) {
+            return $page->Title;
+        }, $pages));
     }
 
     public function getAllPages()
@@ -854,7 +884,7 @@ class Block extends DataObject
 
     public function getExtraRequirements()
     {
-        $extraRequirements = [];
+        $extraRequirements = null;
 
         $this->extend('updateExtraRequirements', $extraRequirements);
 

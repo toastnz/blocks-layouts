@@ -4,7 +4,7 @@
             <div class="default-gallery__header">
                 <div class="default-gallery__content">
                     <% if $Heading %>
-                        <h2 class="default-gallery__heading">{$Heading.XML}</h2>
+                        <h2 class="default-gallery__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
@@ -70,6 +70,8 @@
                                                     <% end_if %>
                                                 </picture>
                                             <% end_with %>
+                                        <% else_if $Video %>
+                                            <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
                                         <% end_if %>
 
                                         <% if $Video %>

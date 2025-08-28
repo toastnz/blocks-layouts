@@ -48,7 +48,7 @@
             <div class="default-media-text__content">
                 <div class="default-media-text__text">
                     <% if $Heading %>
-                        <h2 class="default-media-text__heading">{$Heading.XML}</h2>
+                        <h2 class="default-media-text__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

@@ -4,7 +4,7 @@
             <% if $Heading || $Content %>
                 <div class="default-userform__content">
                     <% if $Heading %>
-                        <h2 class="default-userform__heading">{$Heading.XML}</h2>
+                        <h2 class="default-userform__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}
