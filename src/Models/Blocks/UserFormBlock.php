@@ -34,7 +34,7 @@ class UserFormBlock extends Block
     public function Form()
     {
         if ($page = $this->getParentPage()) {
-            if ($page->ClassName == UserDefinedForm::class) {
+            if ($page instanceof UserDefinedForm) {
                 $controller = Controller::curr();
                 $form = UserForm::create($controller, 'Form_' . $page->ID);
                 $form->setFormAction(Controller::join_links($page->Link(), 'Form'));
