@@ -155,6 +155,11 @@ class PageExtension extends Extension
         // Return as html
         return DBField::create_field('HTMLText', $script);
     }
+
+    public function onInit()
+    {
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js');
+    }
 }
 
 class PageControllerExtension extends Extension
