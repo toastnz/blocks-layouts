@@ -146,7 +146,7 @@ class PageExtension extends Extension
         // await import(pathB);
         // })();
 
-        $files = $this->owner->getMarmaladeSSCMSJavaScriptPaths();
+        $files = $this->owner->getBlockPreviewJavaScriptPaths();
 
         $script = '<script type="module" defer>if (window.self !== window.top) (async function() {';
         foreach ($files as $file) $script .= 'await import("' . $file->Path . '");';
