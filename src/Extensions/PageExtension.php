@@ -127,6 +127,34 @@ class PageExtension extends Extension
             Requirements::combine_files('blocks.css', $styles);
         }
     }
+
+    public function getBlockPreviewJavaScriptPaths()
+    {
+        $paths = new ArrayList();
+
+        $paths->push(new ArrayData([
+            'Path' => ModuleResourceLoader::resourceURL('toastnz/blocks-layouts: client/dist/scripts/block-preview-receiver.js')
+        ]));
+
+        return $paths;
+    }
+
+    public function getBlockPreviewScripts()
+    {
+        // Returns a script tag with: (async function() {
+        // await import(pathA);
+        // await import(pathB);
+        // })();
+
+        $files = $this->owner->getMarmaladeSSCMSJavaScriptPaths();
+
+        $script = '<script type="module" defer>if (window.self !== window.top) (async function() {';
+        foreach ($files as $file) $script .= 'await import("' . $file->Path . '");';
+        $script .= '})();</script>';
+
+        // Return as html
+        return DBField::create_field('HTMLText', $script);
+    }
 }
 
 class PageControllerExtension extends Extension

@@ -21,6 +21,10 @@ Toast\Blocks\Extensions\PageExtension:
   available_blocks:
     - Toast\Blocks\TextBlock
 
+SilverStripe\Admin\LeftAndMain:
+  extensions:
+    - Toast\Blocks\Extensions\LeftAndMainExtension
+
 SilverStripe\Assets\File:
   extensions:
     - Toast\Blocks\Extensions\FileExtension
