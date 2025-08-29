@@ -29,7 +29,6 @@
     "axllent/silverstripe-form-fields": "^2.0"
   },
   "extra": {
-    "resources-dir": "_resources",
     "expose": [
         "client/images",
         "client/dist"
