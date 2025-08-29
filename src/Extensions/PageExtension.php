@@ -19,6 +19,7 @@ use SilverStripe\Model\List\ArrayList;
 use SilverStripe\Forms\GridField\GridField;
 use Toast\Blocks\GridFieldContentBlockState;
 use Toast\Blocks\GridFieldVersionedUnlinkAction;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\Forms\GridField\GridField_ActionMenu;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
