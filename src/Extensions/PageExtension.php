@@ -16,6 +16,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Model\List\ArrayList;
+use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Forms\GridField\GridField;
 use Toast\Blocks\GridFieldContentBlockState;
 use Toast\Blocks\GridFieldVersionedUnlinkAction;
