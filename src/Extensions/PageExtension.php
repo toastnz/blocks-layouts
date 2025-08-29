@@ -159,7 +159,7 @@ class PageExtension extends Extension
         return DBField::create_field('HTMLText', $script);
     }
 
-    public function onInit()
+    public function getColourBlockScript()
     {
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js');
     }
