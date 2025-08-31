@@ -14,8 +14,8 @@ use SilverStripe\Model\List\ArrayList;
 class ChildrenBlock extends Block
 {
     private static $table_name = 'Blocks_ChildrenBlock';
-    private static $singular_name = 'Page Links Block';
-    private static $plural_name = 'Page Links Blocks';
+    private static $singular_name = 'Page Links';
+    private static $plural_name = 'Page Links';
     protected static $icon_class = 'font-icon-block-layout-2';
 
     private static $db = [
