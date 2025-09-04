@@ -20,6 +20,12 @@ class SliderBlock extends Block
         'Images' => Image::class,
     ];
 
+     private static $many_many_extraFields = [
+        'Images' => [
+            'Sort' => 'Int'
+        ]
+    ];
+
     private static $owns = [
         'Images'
     ];
@@ -28,7 +34,7 @@ class SliderBlock extends Block
     {
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->addFieldsToTab('Root.Main', [
-                SortableUploadField::create('Images', 'Images')
+                SortableUploadField::create('Images', 'Images')->setSortColumn('Sort')
             ]);
         });
 

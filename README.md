@@ -1,4 +1,4 @@
-# SilverStripe Blocks 
+# SilverStripe Blocks
 
 Simple content blocks system. Nothing fancy, easy to implement.
 
@@ -31,9 +31,29 @@ In your `Layout/Page.ss` template, add the following:
 ### Add / remove available block classes
 
 ```yaml
-Toast\Blocks\Extensions\PageExtension
+Toast\Blocks\Extensions\PageExtension:
   available_blocks:
     - Toast\Blocks\TextBlock
+```
+
+### Position page template content between blocks
+
+```yaml
+Your\Page\Class:
+  extensions:
+    - Toast\Extensions\PageContentBlockPageExtension
+```
+
+```silverstripe
+<% loop $ContentBlocks.Sort('SortOrder') %>
+    <% if $IsPageContentBlock %>
+        <% with $Top %>
+            <%-- Your page content code here --%>
+        <% end_with %>
+    <% else %>
+        {$ForTemplate}
+    <% end_if %>
+<% end_loop %>
 ```
 
 ### Add / remove available alternate block layouts
@@ -49,21 +69,21 @@ Toast\Blocks\Extensions\PageExtension:
   layout_src: 'app/templates/Toast/Blocks'
   layout_icon_src: 'app/client/images/layout-icons'
   layout_dist_dir: 'theme/themename/dist/styles'
-  
+
 ```
 
 Ensure there are at least one CustomBlock.ss and 'customblock.svg' icon in each of the specified directory.
 Layout will be available for all subsites.
 
 ### .ss template naming
-You may have multiple layouts, please ensure you have the block.ss created under a new layout folder in the src directory.   
-e.g. 'app/templates/Toast/Blocks/**CustomLayoutNameOne**/ImageBlock.ss' 
-or  'app/templates/Toast/Blocks/**CustomLayoutNameTwo**/ImageBlock.ss' 
+You may have multiple layouts, please ensure you have the block.ss created under a new layout folder in the src directory.
+e.g. 'app/templates/Toast/Blocks/**CustomLayoutNameOne**/ImageBlock.ss'
+or  'app/templates/Toast/Blocks/**CustomLayoutNameTwo**/ImageBlock.ss'
 
 ### Layout icon naming:
-Please ensure the layout icon are named after the block name are all in lowercase, e.g. customblock.svg.   
-e.g. 'app/client/images/layout-icons/**customlayoutone**/customblock.svg' 
-or  'app/templates/Toast/Blocks/**customlayouttwo**/customblock.svg' 
+Please ensure the layout icon are named after the block name are all in lowercase, e.g. customblock.svg.
+e.g. 'app/client/images/layout-icons/**customlayoutone**/customblock.svg'
+or  'app/templates/Toast/Blocks/**customlayouttwo**/customblock.svg'
 
 ### Icon extensions
 Allowed extension: 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'
@@ -74,14 +94,14 @@ Extend `Block` to create a new block type.
 
 ```php
 <?php
- 
+
 
 class MyBlock extends Toast\Blocks\Block
 {
     private static $singular_name = 'My Block';
     private static $plural_name = 'My Blocks';
     private static $icon = 'mysite/images/blocks/custom.png';
-    
+
     private static $db = [
         'Content' => 'HTMLText'
     ];
@@ -99,4 +119,3 @@ $Content
 ```
 
 ## Todo:
-
