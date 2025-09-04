@@ -41,7 +41,7 @@ Toast\Blocks\Extensions\PageExtension:
 ```yaml
 Your\Page\Class:
   extensions:
-    - Toast\Extensions\PageContentBlockPageExtension
+    - Toast\Blocks\Extensions\PageContentBlockPageExtension
 ```
 
 ```silverstripe
