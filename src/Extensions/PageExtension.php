@@ -165,14 +165,14 @@ class PageExtension extends Extension
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js');
     }
     
-    public function onBeforeWrite()
-    {
+     //PAGECONTENTBLOCK: added to remove PageContentBlock if the config variable is false or doesnt no exists on the page type
+    public function onAfterWrite()
+    { 
         // how to check if pageContentBlockLinked variable exists
-        if(!method_exists($this->owner, 'getHasPageContentBlock') || !self::$pageContentBlockLinked){
+        if (!$this->owner->config()->get('pageContentBlockLinked')) {
             // remove PageContentBlock from ContentBlocks relation
             $blocks = $this->owner->ContentBlocks();
             if($blocks && $blocks->count()){
-
                 if($pageContentBlock = $blocks->filter('ClassName', PageContentBlock::class)->first()){
                     if($pageContentBlock && $pageContentBlock->exists()){
                         $blocks->remove($pageContentBlock);
