@@ -7,7 +7,7 @@ use Toast\Blocks\PageContentBlock;
 
 class PageContentBlockPageExtension extends Extension
 {
-    private $pageContentBlockLinked = false;
+    private static $pageContentBlockLinked = true;
 
     public function getOrCreatePageContentBlock()
     {
@@ -27,10 +27,6 @@ class PageContentBlockPageExtension extends Extension
 
     public function addPageContentBlock()
     {
-        // Avoid running multiple times
-        if ($this->pageContentBlockLinked) return;
-
-        $this->pageContentBlockLinked = true;
 
         try {
             // Grab the page content block
@@ -48,8 +44,20 @@ class PageContentBlockPageExtension extends Extension
         }
     }
 
+    public function getHasPageContentBlock()
+    {
+        if (self::$pageContentBlockLinked) return true;
+
+        return false;
+    }
+
+
     public function onBeforeWrite()
     {
-        $this->owner->addPageContentBlock();
+        // Check if this is a new record (not yet in database before write)
+        if (!$this->owner->isInDB()) {
+            $this->owner->addPageContentBlock();
+
+        }
     }
 }
