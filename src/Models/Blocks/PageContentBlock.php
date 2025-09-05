@@ -10,10 +10,10 @@ use SilverStripe\CMS\Controllers\ModelAsController;
 
 class PageContentBlock extends Block
 {
-    private static $singular_name = 'Blocks_Page Content Block';
+    private static $singular_name = 'Page Content Block';
     private static $plural_name = 'Page Content Blocks';
     private static $description = 'Used to position page template content within a flexible content area';
-    private static $table_name = 'PageContentBlock';
+    private static $table_name = 'Blocks_PageContentBlock';
     protected static $icon_class = 'font-icon-block-virtual-page';
 
     public function getCMSFields()
@@ -55,7 +55,7 @@ class PageContentBlock extends Block
     public function renderParentLayout(): string
     {
         $parent = $this->getParentPage();
-
+        
         if (!$parent || !$parent->exists()) {
             return '';
         }
@@ -70,14 +70,14 @@ class PageContentBlock extends Block
         }
         // fallback on Layout/PageName
         $layoutTemplates[] = 'Layout/' . $shortName;
-
+        
         if(empty($layoutTemplates)){
             return '';
         }
 
         $viewer = SSViewer::create($layoutTemplates);
 
-        return $viewer->process($controller);
+        return $viewer->process($controller); 
     }
 
     // Override this to prevent "Linked Pages" from showing because the list could be massive
@@ -86,4 +86,14 @@ class PageContentBlock extends Block
         return '';
     }
 
+    // the belows are to prevent deletion and unlinking of this block type
+    public function canEdit($member = null)
+    {
+        return false;
+    }
+    
+    public function canDelete($member = null)
+    {
+        return false;
+    }
 }
