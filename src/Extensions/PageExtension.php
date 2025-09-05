@@ -167,7 +167,7 @@ class PageExtension extends Extension
     
      //PAGECONTENTBLOCK: added to remove PageContentBlock if the config variable is false or doesnt no exists on the page type
     public function onAfterWrite()
-    { 
+    {
         // how to check if pageContentBlockLinked variable exists
         if (!$this->owner->config()->get('pageContentBlockLinked')) {
             // remove PageContentBlock from ContentBlocks relation
