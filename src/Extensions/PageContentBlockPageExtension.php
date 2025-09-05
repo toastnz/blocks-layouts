@@ -55,9 +55,29 @@ class PageContentBlockPageExtension extends Extension
     public function onBeforeWrite()
     {
         // Check if this is a new record (not yet in database before write)
-        if (!$this->owner->isInDB()) {
+        // if (!$this->owner->isInDB()) {
             $this->owner->addPageContentBlock();
 
-        }
+        // }
+    }
+
+    
+    public function getViewerTemplate()
+    {
+        return SSViewer::get_templates_by_class($this->owner->ClassName);
+    }
+
+    public function getNamespace()
+    {
+         // Build layout templates in a namespace-aware way
+        $reflection = new \ReflectionClass($this->owner);
+        return  $reflection->getNamespaceName(); // e.g. Toast\Pages
+     
+    }
+
+    public function getShortName()
+    {
+        $reflection = new \ReflectionClass($this->owner);
+        return  $reflection->getShortName(); // e.g. GeneralHolderPage
     }
 }
