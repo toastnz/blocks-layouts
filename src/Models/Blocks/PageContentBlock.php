@@ -3,6 +3,7 @@
 namespace Toast\Blocks;
 
 use SilverStripe\Forms\LiteralField;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class PageContentBlock extends Block
 {
@@ -30,8 +31,11 @@ class PageContentBlock extends Block
         // Remove all fields
         $fields->removeByName($fieldNames);
 
-        // Add a literal field to explain the purpose of this block
-        $fields->addFieldToTab('Root.Main', LiteralField::create('Info', '<p class="message">This block is used to position the main page content within the flexible content area. It does not have its own editable content.</p>'));
+        // Add a literal field to explain the purpose of this block, as well as a preview
+        $fields->addFieldsToTab('Root.Main', [
+            OpenCMSPreview::create($this->getBlockPreviewURL()),
+            LiteralField::create('Info', '<p class="message">This block is used to position the main page content within the flexible content area. It does not have its own editable content.</p>'),
+        ]);
 
         return $fields;
     }
