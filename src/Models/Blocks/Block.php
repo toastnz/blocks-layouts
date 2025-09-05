@@ -111,7 +111,7 @@ class Block extends DataObject
         return $this->getIconForCMS();
     }
 
-    public function forTemplate()
+    public function forTemplate(): string
     {
         $template = $this->Template;
 
