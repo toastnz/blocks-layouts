@@ -11,7 +11,7 @@ class PageContentBlock extends Block
     private static $plural_name = 'Page Content Blocks';
     private static $description = 'Used to position page template content within a flexible content area';
     private static $table_name = 'PageContentBlock';
-    protected static $icon_class = 'font-icon-block-virtual-page';
+    protected static $icon_class = 'font-icon-p-alt';
 
     public function getCMSFields()
     {
