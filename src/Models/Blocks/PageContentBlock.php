@@ -55,7 +55,7 @@ class PageContentBlock extends Block
     public function renderParentLayout(): string
     {
         $parent = $this->getParentPage();
-        
+
         if (!$parent || !$parent->exists()) {
             return '';
         }
@@ -70,14 +70,14 @@ class PageContentBlock extends Block
         }
         // fallback on Layout/PageName
         $layoutTemplates[] = 'Layout/' . $shortName;
-        
+
         if(empty($layoutTemplates)){
             return '';
         }
 
         $viewer = SSViewer::create($layoutTemplates);
 
-        return $viewer->process($controller); 
+        return $viewer->process($controller);
     }
 
     // Override this to prevent "Linked Pages" from showing because the list could be massive
