@@ -16,7 +16,7 @@
             <% if $Items.Count %>
                 <% loop $Items.Sort('SortOrder') %>
                     <% if $Image %>
-                        <div id="{$BlockItemID}" class="default-logo-item [ js-in-view ]">
+                        <div id="{$BlockItemID}" class="default-logo-item [ js-in-view ]" data-title="{$Title.ATT}">
                             <% if $BrandLink %>
                                 <a href="{$BrandLink}" class="default-logo-item__link" target="_blank" aria-label="Visit the website for {$Title.ATT}. (Opens in a new tab)">
                             <% end_if %>
@@ -24,10 +24,10 @@
                             <% with $Image %>
                                 <picture class="default-logo-item__picture">
                                     <% if $Extension="svg" %>
-                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" {$SizeAttr} loading="lazy" alt="">
                                     <% else %>
                                         <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).Convert('webp').URL}">
-                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$ScaleMaxWidth(960).Convert('webp').URL}" alt="{$Title.ATT}" {$ScaleMaxWidth(960).SizeAttr}>
+                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$ScaleMaxWidth(960).Convert('webp').URL}" alt="" {$ScaleMaxWidth(960).SizeAttr}>
                                     <% end_if %>
                                 </picture>
                             <% end_with %>
