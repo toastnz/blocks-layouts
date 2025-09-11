@@ -47,13 +47,13 @@ class PageContentBlock extends Block
         return true;
     }
     // Render the parent page's content within this block
-    public function forTemplate(): string
+    public function forTemplate()
     {
         // return the parent page's layout
         return $this->renderParentLayout();
     }
 
-    public function renderParentLayout(): string
+    public function renderParentLayout()
     {
         $parent = $this->getParentPage();
 
