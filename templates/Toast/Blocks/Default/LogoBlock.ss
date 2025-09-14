@@ -22,7 +22,7 @@
                             <% end_if %>
 
                             <% with $Image %>
-                                <picture class="default-logo-item__picture">
+                                <picture class="default-logo-item__picture" data-title="{$Title.ATT}">
                                     <% if $Extension="svg" %>
                                         <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" {$SizeAttr} loading="lazy" alt="">
                                     <% else %>
