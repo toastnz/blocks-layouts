@@ -21,13 +21,13 @@
                                 <a href="{$BrandLink}" class="default-logo-item__link" target="_blank" aria-label="Visit the website for {$Title.ATT}. (Opens in a new tab)">
                             <% end_if %>
 
-                            <picture class="default-logo-item__picture" data-title="{$Title.ATT}">
+                            <picture class="default-logo-item__picture">
                                 <% with $Image %>
                                     <% if $Extension="svg" %>
-                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" {$SizeAttr} loading="lazy" alt="">
+                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
                                     <% else %>
                                         <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).Convert('webp').URL}">
-                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$ScaleMaxWidth(960).Convert('webp').URL}" alt="" {$ScaleMaxWidth(960).SizeAttr}>
+                                        <img class="[ js-default-logo__image ]" loading="lazy" src="{$ScaleMaxWidth(960).Convert('webp').URL}" alt="{$Title.ATT}" {$ScaleMaxWidth(960).SizeAttr}>
                                     <% end_if %>
                                 <% end_with %>
                             </picture>
