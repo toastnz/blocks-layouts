@@ -30,7 +30,7 @@
                                                 <% if $Extension="svg" %>
                                                     <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
                                                 <% else %>
-                                                    <img class="default-testimonial-item__image" src="{$FocusFill(100,100).Convert('webp').URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
+                                                    <img class="default-testimonial-item__image" src="{$FocusFill(200,200).Convert('webp').URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
                                                 <% end_if %>
                                             <% end_with %>
                                         <% end_if %>
