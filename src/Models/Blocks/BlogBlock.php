@@ -93,10 +93,18 @@ class BlogBlock extends Block
 
         if (!$this->BlogPosts()->exists()) {
             if ($this->BlogID) {
-                return BlogPost::get()->filter(["ParentID" => $this->BlogID])->limit($limit);
+                return BlogPost::get()
+                    ->filter([
+                        "ParentID" => $this->BlogID,
+                        "ID:not" => $this->getPage()->ID
+                    ])
+                    ->limit($limit);
             }
         }
 
-        return $this->BlogPosts()->sort('SortOrder')->limit($limit);
+        return $this->BlogPosts()
+            ->filter(["ID:not" => $this->getPage()->ID])
+            ->sort('SortOrder')
+            ->limit($limit);
     }
 }
