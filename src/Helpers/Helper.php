@@ -44,7 +44,7 @@ class Helper
 
                     foreach ($subsitePages as $page) {
                         // Get the icon class for the page
-                        $iconClass = $page->config()->get('icon_class');
+                        $iconClass = $page->config()->get('cms_icon_class');
 
                         // Construct the HTML with the icon class and link
                         $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
@@ -53,7 +53,7 @@ class Helper
             } else {
                 foreach ($pages as $page) {
                     // Get the icon class for the page
-                    $iconClass = $page->config()->get('icon_class');
+                    $iconClass = $page->config()->get('cms_icon_class');
 
                     // Construct the HTML with the icon class and link
                     $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
