@@ -1,14 +1,11 @@
 const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
-const webpack = require('webpack');
 const postcssUrl = require('postcss-url');
 const TerserPlugin = require("terser-webpack-plugin");
 const postcssCriticalCSS = require('postcss-critical-css');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const { getIfUtils, removeEmpty } = require('webpack-config-utils');
 const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin');
 
 function generateSassIndexFiles(directories) {
@@ -90,10 +87,11 @@ generateSassIndexFiles([aliases.styles]);
 
 [app].forEach((config) => {
   configs.push((env, argv) => {
-    const { ifProduction } = getIfUtils(argv.mode);
+    const isProduction = argv.mode === 'production';
+    const isDevelopment = !isProduction;
 
     return {
-      mode: ifProduction('production', 'development'),
+      mode: isProduction ? 'production' : 'development',
       stats,
       devtool: false,
       entry: config.entries,
@@ -105,7 +103,7 @@ generateSassIndexFiles([aliases.styles]);
             test: /\.js$/,
             exclude: /node_modules/,
             use: [
-              { loader: 'babel-loader', options: { sourceMap: ifProduction(false, true) } },
+              { loader: 'babel-loader', options: { sourceMap: isDevelopment } },
             ],
           },
           {
@@ -115,14 +113,14 @@ generateSassIndexFiles([aliases.styles]);
               {
                 loader: 'css-loader',
                 options: {
-                  sourceMap: ifProduction(false, true),
+                  sourceMap: isDevelopment,
                   url: false,
                 }
               },
               {
                 loader: 'postcss-loader',
                 options: {
-                  sourceMap: ifProduction(false, true),
+                  sourceMap: isDevelopment,
                   postcssOptions: {
                     plugins: [
                       postcssUrl({
@@ -138,7 +136,7 @@ generateSassIndexFiles([aliases.styles]);
               },
               {
                 loader: 'sass-loader', options: {
-                  sourceMap: ifProduction(false, true),
+                  sourceMap: isDevelopment,
                 }
               },
             ]
@@ -153,13 +151,13 @@ generateSassIndexFiles([aliases.styles]);
           new CssMinimizerPlugin()
         ]
       },
-      plugins: removeEmpty([
+      plugins: [
         new FriendlyErrorsWebpackPlugin(),
         new MiniCssExtractPlugin({
           filename: '../styles/[name].css',
           chunkFilename: '[name].css'
         }),
-      ]),
+      ].filter(Boolean),
     }
   });
 });

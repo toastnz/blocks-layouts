@@ -1,0 +1,9 @@
+---
+Name: blockroutes
+After:
+  - "#rootroutes"
+  - "#coreroutes"
+---
+SilverStripe\Control\Director:
+  rules:
+    "blocks-api//$Method": "Toast\\Blocks\\Controllers\\BlocksApiController"

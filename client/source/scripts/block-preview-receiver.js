@@ -163,7 +163,7 @@ class BlockPreviewReceiver {
     this.xhr.abort();
 
     // Set up the API URL
-    let API = `/api/getBlock?BlockID=${blockID}&nocache=${new Date().getTime()}`;
+    let API = `/blocks-api/getBlock?BlockID=${blockID}&nocache=${new Date().getTime()}`;
 
     // Return if the block ID is not set
     if (!blockID) return;
