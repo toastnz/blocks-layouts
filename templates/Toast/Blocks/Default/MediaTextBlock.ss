@@ -22,6 +22,8 @@
                         <% else_if $Video %>
                             <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
                         <% end_if %>
+
+                        <div class="default-media-text__icon"></div>
                     </div>
                 <% else %>
                     <div class="default-media-text__image">
