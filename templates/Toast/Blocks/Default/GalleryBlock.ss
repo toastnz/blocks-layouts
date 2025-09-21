@@ -76,7 +76,7 @@
 
                                         <% if $Video %>
                                             <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}">
-                                                <div class="default-gallery-item__icon"></div>
+                                                <div class="default-gallery-modal__icon"></div>
                                             </div>
                                         <% end_if %>
                                     </div>
