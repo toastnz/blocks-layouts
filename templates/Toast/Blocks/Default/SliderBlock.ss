@@ -16,7 +16,7 @@
             <div class="default-slider__container [ js-default-slider__container ]">
                 <div class="default-slider__slider [ js-default-slider__slider ]">
                     <% if $Images.Count %>
-                        <% loop $Images %>
+                        <% loop $Images.Sort('Sort') %>
                             <div class="default-slider-item">
                                 <div class="default-slider-item__layout">
                                     <div class="default-slider-item__media">
