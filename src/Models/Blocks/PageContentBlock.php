@@ -11,10 +11,10 @@ use SilverStripe\CMS\Controllers\ModelAsController;
 
 class PageContentBlock extends Block
 {
-    private static $singular_name = 'Blocks_Page Content Block';
+    private static $table_name = 'Blocks_PageContentBlock';
+    private static $singular_name = 'Page Content Block';
     private static $plural_name = 'Page Content Blocks';
     private static $description = 'Used to position page template content within a flexible content area';
-    private static $table_name = 'PageContentBlock';
     protected static $icon_class = 'font-icon-p-alt';
 
     public function getCMSFields()
