@@ -88,8 +88,10 @@ class BlogBlock extends Block
         return parent::getCMSFields();
     }
 
-    public function getPosts($limit = 3)
+    public function getPosts($limit = null)
     {
+        // if the $limit is a number, use it, otherwise default to $this->Columns
+        $limit = is_numeric($limit) ? (int)$limit : (int)$this->Columns;
 
         if (!$this->BlogPosts()->exists()) {
             if ($this->BlogID) {
