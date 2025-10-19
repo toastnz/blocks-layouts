@@ -4,13 +4,15 @@ namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Core\Extension;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\CMS\Model\SiteTree;
 
 class SiteTreeExtension extends Extension
 {
     public function updateAnchorsOnPage(&$anchors)
     {
         // Get custom anchors from the configuration
-        $customAnchors = Config::inst()->get(__CLASS__, 'custom_anchors');
+        $customAnchors = Config::inst()->get(SiteTree::class, 'custom_anchors');
+
         if (is_array($customAnchors)) {
             $anchors = array_merge($customAnchors, $anchors);
         }
