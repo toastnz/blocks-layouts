@@ -1,240 +1,201 @@
-const blocks = [];
-const parents = [];
-const colorCache = new Map();
+const colourBlocks = [];
+const parentElements = [];
+const hexColorCache = new Map();
 
-const padding = '--block-padding';
+const blockPaddingVar = '--block-padding';
 
-let root = null;
-let nullFallback = null;
-let treatNullValueAs = null;
+let bodyComputedStyle = null;
+let bodyPrimaryColorFallback = null;
+let transparentColorHex = null;
 
-// Styles have a transition in iframes, so we need to delay the resize function until after they have changed colour
-const delay = (window.self !== window.top) ? 150 : 0;
+// Delay for transition in iframes
+const transitionDelay = (window.self !== window.top) ? 150 : 0;
 
-const debounce = (func, wait) => {
+const colourBlockMutationObserver = new MutationObserver(debounceFn(() => {
+  colourBlocks.forEach(block => block.resize());
+}, transitionDelay));
+
+// Utility: Debounce function
+function debounceFn(fn, wait) {
   let timeout;
+
   return function (...args) {
-    const context = this;
     clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(context, args), wait);
+    timeout = setTimeout(() => fn.apply(this, args), wait);
   };
-};
+}
 
-const ColourBlockObserver = new MutationObserver(debounce(() => {
-  blocks.forEach(block => block.resize());
-}, delay));
+// Utility: Convert color string to hex
+function toHexColor(colorStr) {
+  if (!colorStr) return;
+  if (hexColorCache.has(colorStr)) return hexColorCache.get(colorStr);
 
-function convertToHex(color) {
-  if (!color) return;
-
-  if (colorCache.has(color)) {
-    return colorCache.get(color);
-  }
-
-  // Helper function to ensure hex code format
+  // Helper: RGB to hex
   function rgbToHex(r, g, b) {
-    const toHex = (n) => {
-      const hex = n.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    };
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    return `#${[r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')}`;
   }
 
-  // Remove any extra whitespace and convert to lowercase
-  color = color.trim().toLowerCase();
+  colorStr = colorStr.trim().toLowerCase();
 
-  // Check if it's a hex color code (with or without #)
-  if (/^#([0-9a-f]{3}){1,2}$/i.test(color)) {
-    // Normalize 3-digit hex to 6-digit
-    if (color.length === 4) {
-      color = `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
+  // Hex format
+  if (/^#([0-9a-f]{3}){1,2}$/i.test(colorStr)) {
+    if (colorStr.length === 4) {
+      colorStr = `#${colorStr[1]}${colorStr[1]}${colorStr[2]}${colorStr[2]}${colorStr[3]}${colorStr[3]}`;
     }
-    colorCache.set(color, color);
-    return color;
+
+    hexColorCache.set(colorStr, colorStr);
+
+    return colorStr;
   }
 
-  // Check if it's an rgb or rgba color
-  const rgbaMatch = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(color);
+  // RGB/RGBA format
+  const rgbaMatch = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(colorStr);
   if (rgbaMatch) {
     const [_, r, g, b, a] = rgbaMatch.map(Number);
+
     if (a === 0) {
-      colorCache.set(color, treatNullValueAs);
-      return treatNullValueAs; // Special value for transparency
+      hexColorCache.set(colorStr, transparentColorHex);
+      return transparentColorHex;
     }
+
     const hexColor = rgbToHex(r, g, b);
-    colorCache.set(color, hexColor);
+    hexColorCache.set(colorStr, hexColor);
+
     return hexColor;
   }
 
-  // If none of the formats matched, throw an error
-  console.warn("Unsupported color format", color);
+  console.warn("Unsupported color format", colorStr);
   return null;
 }
 
+// Custom Element: ColourBlock
 class ColourBlock extends HTMLElement {
   constructor() {
     super();
+    this.ensureStyleTag();
+    colourBlocks.push(this);
 
-    // Grab the style tag for the block
-    this.styles = document.querySelector(`[data-styles-for="${this.id}"]`);
+    this.debouncedUpdate = debounceFn(this.resize.bind(this), 100);
+    requestAnimationFrame(() => this.debouncedUpdate());
 
-    // If the style tag doesn't exist, create it
-    if (!this.styles) {
-      this.styles = document.createElement('style');
-      this.styles.setAttribute('data-styles-for', this.id);
-
-      // Add the styles to the head
-      document.head.appendChild(this.styles);
-    }
-
-    // Get the default styles
-    this.getStyles();
-
-    // Add the block to the list of blocks
-    blocks.push(this);
-
-    // Resize the block
-    this.debouncedResize = debounce(this.resize.bind(this), 100);
-    requestAnimationFrame(() => this.debouncedResize());
-
-    // Observe the block for changes
-    ColourBlockObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
+    colourBlockMutationObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
   }
 
-  getStyles(options = {}) {
+  // Ensure style tag exists for this block
+  ensureStyleTag() {
+    this.styleTag = document.querySelector(`[data-styles-for="${this.id}"]`);
+    if (!this.styleTag) {
+      this.styleTag = document.createElement('style');
+      this.styleTag.setAttribute('data-styles-for', this.id);
+      document.head.appendChild(this.styleTag);
+    }
+    this.applyBlockStyles();
+  }
+
+  // Generate and apply styles for this block
+  applyBlockStyles({ paddingTop = `var(${blockPaddingVar})`, paddingBottom = `var(${blockPaddingVar})` } = {}) {
     if (!this.id) return console.warn('ColourBlock must have an ID');
 
-    const settings = Object.assign({
-      paddingTop: `var(${padding})`,
-      paddingBottom: `var(${padding})`,
-    }, options);
+    const transitions = (window.self !== window.top)
+      ? `
+        transition:
+          color 0.1s,
+          margin-top 0.2s,
+          padding-top 0.2s,
+          margin-bottom 0.2s,
+          padding-bottom 0.2s,
+          background-color 0.1s;
+      `
+      : '';
 
-    const styles = `
-      padding-top: ${settings.paddingTop};
-      padding-bottom: ${settings.paddingBottom};
-    `;
-
-    // Add transitions if the block is in an iframe
-    const transitions = `
-      transition:
-        color 0.1s,
-        margin-top 0.2s,
-        padding-top 0.2s,
-        margin-bottom 0.2s,
-        padding-bottom 0.2s,
-        background-color 0.1s;
-    `;
-
-    // Update the styles
-    this.styles.textContent = `
+    this.styleTag.textContent = `
       #${this.id} {
-        ${styles}
-        ${(window.self !== window.top) ? transitions : ''}
+        padding-top: ${paddingTop};
+        padding-bottom: ${paddingBottom};
+        ${transitions}
       }
     `;
   }
 
+  // Efficiently update padding and collapsed classes
   resize() {
-    requestAnimationFrame(() => {
-      const prevSibling = this.previousElementSibling;
-      const nextSibling = this.nextElementSibling;
+    const previousBlock = this.previousElementSibling;
+    const nextBlock = this.nextElementSibling;
+    const previousBlockColor = previousBlock ? this.getSiblingHexColor(previousBlock) : null;
+    const nextBlockColor = nextBlock ? this.getSiblingHexColor(nextBlock) : null;
+    const isPreviousSame = previousBlock && this.isSameHexColor(previousBlockColor);
+    const isNextSame = nextBlock && this.isSameHexColor(nextBlockColor);
 
-      // Read computed styles before any DOM writes
-      let prevColour = prevSibling ? this.getSiblingColour(prevSibling) : null;
-      let nextColour = nextSibling ? this.getSiblingColour(nextSibling) : null;
-      let isPrevSame = prevSibling && this.isSameColour(prevColour);
-      let isNextSame = nextSibling && this.isSameColour(nextColour);
+    window.requestAnimationFrame(() => {
+      let paddingTop = `var(${blockPaddingVar})`;
+      let paddingBottom = `var(${blockPaddingVar})`;
 
-      window.requestAnimationFrame(() => {
+      this.classList.remove('collapsed--top', 'collapsed--bottom');
 
-        // Grab the default padding
-        let paddingTop = `var(${padding})`;
-        let paddingBottom = `var(${padding})`;
+      if (isPreviousSame) {
+        paddingTop = `calc(var(${blockPaddingVar}) / 2)`;
+        this.classList.add('collapsed--top');
+      }
 
-        // Remove the collapsed classes
-        this.classList.remove('collapsed--top', 'collapsed--bottom');
+      if (isNextSame) {
+        paddingBottom = `calc(var(${blockPaddingVar}) / 2)`;
+        this.classList.add('collapsed--bottom');
+      }
 
-        if (isPrevSame) {
-          paddingTop = `calc(var(${padding}) / 2)`;
-          this.classList.add('collapsed--top');
-        }
-
-        // If the next sibling is has the same colour, adjust the padding
-        if (isNextSame) {
-          paddingBottom = `calc(var(${padding}) / 2)`;
-          this.classList.add('collapsed--bottom');
-        }
-
-        this.getStyles({
-          paddingTop,
-          paddingBottom,
-        });
-      });
+      this.applyBlockStyles({ paddingTop, paddingBottom });
     });
   }
 
-  isSameColour(colour) {
-    // Get the current block's property value
-    let property = getComputedStyle(this).backgroundColor;
+  // Compare this block's colour to another
+  isSameHexColor(hexColor) {
+    const blockBgColor = getComputedStyle(this).backgroundColor;
 
-    // If we want to override the null value, do that now!
-    if (treatNullValueAs !== undefined && !colour) colour = treatNullValueAs;
+    if (transparentColorHex !== undefined && !hexColor) hexColor = transparentColorHex;
 
-    // If the currentBackgroundColour is transparent, add a transparent class
-    this.classList.toggle('transparent', (property === 'rgba(0, 0, 0, 0)' || property === 'transparent'));
+    this.classList.toggle('transparent', (blockBgColor === 'rgba(0, 0, 0, 0)' || blockBgColor === 'transparent'));
 
-    if (property) {
-      // Convert the value to HEX
-      let currentBackgroundColour = convertToHex(property);
-
-      // Compare the colours
-      return currentBackgroundColour == colour;
+    if (blockBgColor) {
+      return toHexColor(blockBgColor) == hexColor;
     }
 
-    // If the property is not found, return true if the colour is null
-    if (treatNullValueAs !== undefined) return treatNullValueAs === colour;
+    if (transparentColorHex !== undefined) return transparentColorHex === hexColor;
 
-    if (!colour) return true;
-
-    return false;
+    return !hexColor;
   }
 
-  getSiblingColour(sibling) {
-    // Check if the sibling is a ColourBlock
-    if (!sibling) return null;
+  // Get sibling's colour in hex
+  getSiblingHexColor(siblingBlock) {
+    if (!siblingBlock) return null;
+    if (!(siblingBlock instanceof ColourBlock)) return 'null';
 
-    // Make sure the sibling is a ColourBlock
-    if (!(sibling instanceof ColourBlock)) return 'null';
+    const siblingBgColor = getComputedStyle(siblingBlock).backgroundColor;
 
-    let property = getComputedStyle(sibling).backgroundColor;
+    if (!siblingBgColor) return null;
 
-    // Check if the property is not found
-    if (!property) return null;
+    let hexColor = siblingBgColor.trim();
 
-    // Get the sibling's property value
-    let siblingBackgroundColour = property.trim();
+    if (hexColor.startsWith('rgb')) {
+      hexColor = toHexColor(hexColor);
+    }
 
-    // Convert the RGB value to HEX
-    if (siblingBackgroundColour.indexOf('rgb') === 0) siblingBackgroundColour = convertToHex(siblingBackgroundColour);
-
-    return siblingBackgroundColour;
+    return hexColor;
   }
 }
 
-// Define the custom element
+// Register custom element
 window.customElements.define('colour-block', ColourBlock);
 
-// Observe the body for changes
-const observe = () => {
-  root = getComputedStyle(document.body);
-  nullFallback = root.getPropertyValue('--body-primary-colour') || root.getPropertyValue('--colour-white');
+// Observe body for changes and set up null fallback
+function setupBodyObserver() {
+  bodyComputedStyle = getComputedStyle(document.body);
+  bodyPrimaryColorFallback = bodyComputedStyle.getPropertyValue('--body-primary-colour') || bodyComputedStyle.getPropertyValue('--colour-white');
+  transparentColorHex = toHexColor(bodyPrimaryColorFallback);
+  colourBlockMutationObserver.observe(document.body, { childList: true, subtree: true });
+}
 
-  // Set the default value for null, leave as null if you don't want transparent colours to interact with coloured blocks
-  treatNullValueAs = convertToHex(nullFallback);
-
-  // Observe the body for changes
-  ColourBlockObserver.observe(document.body, { childList: true, subtree: true });
-};
-
-// When the document is ready, observe the body for changes
-(document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', () => observe()) : observe();
+// DOMContentLoaded handler
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupBodyObserver);
+} else {
+  setupBodyObserver();
+}
