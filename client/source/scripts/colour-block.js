@@ -139,27 +139,36 @@ class ColourBlock extends HTMLElement {
       const prevSibling = this.previousElementSibling;
       const nextSibling = this.nextElementSibling;
 
-      // Grab the default padding
-      let paddingTop = `var(${padding})`;
-      let paddingBottom = `var(${padding})`;
+      // Read computed styles before any DOM writes
+      let prevColour = prevSibling ? this.getSiblingColour(prevSibling) : null;
+      let nextColour = nextSibling ? this.getSiblingColour(nextSibling) : null;
+      let isPrevSame = prevSibling && this.isSameColour(prevColour);
+      let isNextSame = nextSibling && this.isSameColour(nextColour);
 
-      // Remove the collapsed classes
-      this.classList.remove('collapsed--top', 'collapsed--bottom');
+      window.requestAnimationFrame(() => {
 
-      if (prevSibling && this.isSameColour(this.getSiblingColour(prevSibling))) {
-        paddingTop = `calc(var(${padding}) / 2)`;
-        this.classList.add('collapsed--top');
-      }
+        // Grab the default padding
+        let paddingTop = `var(${padding})`;
+        let paddingBottom = `var(${padding})`;
 
-      // If the next sibling is has the same colour, adjust the padding
-      if (nextSibling && this.isSameColour(this.getSiblingColour(nextSibling))) {
-        paddingBottom = `calc(var(${padding}) / 2)`;
-        this.classList.add('collapsed--bottom');
-      }
+        // Remove the collapsed classes
+        this.classList.remove('collapsed--top', 'collapsed--bottom');
 
-      this.getStyles({
-        paddingTop,
-        paddingBottom,
+        if (isPrevSame) {
+          paddingTop = `calc(var(${padding}) / 2)`;
+          this.classList.add('collapsed--top');
+        }
+
+        // If the next sibling is has the same colour, adjust the padding
+        if (isNextSame) {
+          paddingBottom = `calc(var(${padding}) / 2)`;
+          this.classList.add('collapsed--bottom');
+        }
+
+        this.getStyles({
+          paddingTop,
+          paddingBottom,
+        });
       });
     });
   }
