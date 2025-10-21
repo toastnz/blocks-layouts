@@ -119,13 +119,29 @@ class ColourBlock extends HTMLElement {
 
   // Efficiently update padding and collapsed classes
   resize() {
+    // Batch all reads before writes
     const previousBlock = this.previousElementSibling;
     const nextBlock = this.nextElementSibling;
-    const previousBlockColor = previousBlock ? this.getSiblingHexColor(previousBlock) : null;
-    const nextBlockColor = nextBlock ? this.getSiblingHexColor(nextBlock) : null;
-    const isPreviousSame = previousBlock && this.isSameHexColor(previousBlockColor);
-    const isNextSame = nextBlock && this.isSameHexColor(nextBlockColor);
 
+    // Read computed styles for siblings first
+    let previousBlockColor = null;
+    let nextBlockColor = null;
+    let isPreviousSame = false;
+    let isNextSame = false;
+
+    if (previousBlock && previousBlock instanceof ColourBlock) {
+      const prevBgColor = getComputedStyle(previousBlock).backgroundColor;
+      previousBlockColor = prevBgColor ? toHexColor(prevBgColor.trim()) : null;
+      isPreviousSame = this.isSameHexColor(previousBlockColor);
+    }
+
+    if (nextBlock && nextBlock instanceof ColourBlock) {
+      const nextBgColor = getComputedStyle(nextBlock).backgroundColor;
+      nextBlockColor = nextBgColor ? toHexColor(nextBgColor.trim()) : null;
+      isNextSame = this.isSameHexColor(nextBlockColor);
+    }
+
+    // Now batch all DOM/class/style writes
     window.requestAnimationFrame(() => {
       let paddingTop = `var(${blockPaddingVar})`;
       let paddingBottom = `var(${blockPaddingVar})`;
@@ -142,7 +158,15 @@ class ColourBlock extends HTMLElement {
         this.classList.add('collapsed--bottom');
       }
 
-      this.applyBlockStyles({ paddingTop, paddingBottom });
+      // Only update styles if changed
+      if (
+        this._lastPaddingTop !== paddingTop ||
+        this._lastPaddingBottom !== paddingBottom
+      ) {
+        this.applyBlockStyles({ paddingTop, paddingBottom });
+        this._lastPaddingTop = paddingTop;
+        this._lastPaddingBottom = paddingBottom;
+      }
     });
   }
 
