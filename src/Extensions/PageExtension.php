@@ -162,9 +162,9 @@ class PageExtension extends Extension
 
     public function getColourBlockScript()
     {
-        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js');
+        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js', ['defer' => true]);
     }
-    
+
      //PAGECONTENTBLOCK: added to remove PageContentBlock if the config variable is false or doesnt no exists on the page type
     public function onAfterWrite()
     {
