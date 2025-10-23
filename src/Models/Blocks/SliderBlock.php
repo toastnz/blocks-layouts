@@ -10,9 +10,9 @@ class SliderBlock extends Block
 {
     private static $table_name = 'Blocks_SliderBlock';
 
-    private static $singular_name = 'Media Slider';
+    private static $singular_name = 'Image Slider';
 
-    private static $plural_name = 'Media Slider';
+    private static $plural_name = 'Image Slider';
 
     protected static $icon_class = 'font-icon-block-carousel';
 
