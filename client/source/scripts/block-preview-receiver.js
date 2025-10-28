@@ -30,7 +30,8 @@ class BlockPreviewReceiver {
       contrasts: {
         dark: 'var(--global-contrast-colour-light, #ffffff)',
         light: 'var(--global-contrast-colour-dark, #000000)',
-        body: 'var(--body-text-colour)',
+        bodyContrast: 'var(--body-background-colour-contrast, #000000)',
+        bodyOnContrast: 'var(--body-background-colour-on-contrast, #ffffff)',
       }
     }
 
@@ -209,14 +210,12 @@ class BlockPreviewReceiver {
     // Update the colours object
     this.colours.properties[name] = { value, brightness };
 
-    if (value == 'rgba(0, 0, 0, 0)') {
-      delete this.colours.properties[name];
-      brightness = 'body';
-    }
-
     const styles = Object.entries(this.colours.properties).reduce((acc, [name, data]) => {
-      const { value, brightness } = data;
-      const onContrast = (brightness === 'body') ? 'body' : (brightness === 'dark' ? 'light' : 'dark');
+      let { value, brightness } = data;
+
+      if (value == 'rgba(0, 0, 0, 0)') brightness = 'bodyContrast';
+
+      const onContrast = (brightness === 'bodyContrast') ? 'bodyOnContrast' : (brightness === 'dark') ? 'light' : 'dark';
 
       return `
         ${acc}
@@ -227,6 +226,8 @@ class BlockPreviewReceiver {
         }
       `;
     }, '');
+
+    console.log('Block Preview Receiver updating colours:', styles);
 
     // Update the styles
     this.colours.styles.innerHTML = styles;
