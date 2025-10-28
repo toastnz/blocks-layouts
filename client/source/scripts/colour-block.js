@@ -1,70 +1,113 @@
 const colourBlocks = [];
-const parentElements = [];
-const hexColorCache = new Map();
+const hexColourCache = new Map();
 
-const blockPaddingVar = '--block-padding';
+let bodyBackgroundColour = null;
 
-let bodyComputedStyle = null;
-let bodyPrimaryColorFallback = null;
-let transparentColorHex = null;
-
-// Delay for transition in iframes
-const transitionDelay = (window.self !== window.top) ? 150 : 0;
-
-const colourBlockMutationObserver = new MutationObserver(debounceFn(() => {
+const colourBlockMutationObserver = new MutationObserver(() => {
   colourBlocks.forEach(block => block.resize());
-}, transitionDelay));
+});
 
-// Utility: Debounce function
-function debounceFn(fn, wait) {
-  let timeout;
+// Helper: RGB(A) to hex
+function rgbToHex(r, g, b, a = undefined) {
+  // Clamp values
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  let hex = `#${[r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')}`;
+  if (typeof a === 'number') {
+    // Convert alpha (0-1) to 2-digit hex
+    hex += (Math.round(a * 255)).toString(16).padStart(2, '0');
+  }
+  return hex;
+}
 
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn.apply(this, args), wait);
-  };
+// Utility: Convert rgba() string to hex
+function toRgbaToHex(rgbaStr) {
+  const match = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(rgbaStr.trim().toLowerCase());
+  if (!match) return null;
+  const [, r, g, b, a] = match;
+  if (typeof a !== 'undefined') {
+    return rgbToHex(Number(r), Number(g), Number(b), Number(a));
+  }
+  return rgbToHex(Number(r), Number(g), Number(b));
 }
 
 // Utility: Convert color string to hex
-function toHexColor(colorStr) {
+function toHexColour(colorStr) {
+  // If there is no color string, return
   if (!colorStr) return;
-  if (hexColorCache.has(colorStr)) return hexColorCache.get(colorStr);
+  // Always use the original argument as the cache key
+  const cacheKey = colorStr;
+  // Check if the cache has this key and return it if it does
+  if (hexColourCache.has(cacheKey)) return hexColourCache.get(cacheKey);
 
-  // Helper: RGB to hex
-  function rgbToHex(r, g, b) {
-    return `#${[r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')}`;
-  }
-
-  colorStr = colorStr.trim().toLowerCase();
-
-  // Hex format
-  if (/^#([0-9a-f]{3}){1,2}$/i.test(colorStr)) {
-    if (colorStr.length === 4) {
-      colorStr = `#${colorStr[1]}${colorStr[1]}${colorStr[2]}${colorStr[2]}${colorStr[3]}${colorStr[3]}`;
-    }
-
-    hexColorCache.set(colorStr, colorStr);
-
-    return colorStr;
-  }
+  // Begin processing the color string
+  let processedColorStr = colorStr.trim().toLowerCase();
 
   // RGB/RGBA format
-  const rgbaMatch = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(colorStr);
-  if (rgbaMatch) {
-    const [_, r, g, b, a] = rgbaMatch.map(Number);
+  const rgbaMatch = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(processedColorStr);
 
-    if (a === 0) {
-      hexColorCache.set(colorStr, transparentColorHex);
-      return transparentColorHex;
+  // Hex format (with optional alpha)
+  const hexMatch = /^#([0-9a-f]{3,8})$/i.exec(processedColorStr);
+
+  if (hexMatch) {
+    let hex = hexMatch[1];
+
+    // Expand short hex (#rgb or #rgba)
+    if (hex.length === 3 || hex.length === 4) {
+      hex = hex.split('').map(c => c + c).join('');
     }
 
-    const hexColor = rgbToHex(r, g, b);
-    hexColorCache.set(colorStr, hexColor);
+    // Handle 8-digit hex (#RRGGBBAA)
+    if (hex.length === 8) {
+      const alpha = parseInt(hex.slice(6, 8), 16) / 255;
 
-    return hexColor;
+      if (alpha === 0) {
+        hexColourCache.set(cacheKey, bodyBackgroundColour);
+        return bodyBackgroundColour;
+      }
+
+      processedColorStr = `#${hex.slice(0, 6)}${hex.slice(6, 8)}`;
+      hexColourCache.set(cacheKey, processedColorStr);
+      return processedColorStr;
+    }
+
+    // Handle 4-digit hex (#RGBA)
+    if (hex.length === 4) {
+      const alpha = parseInt(hex[3] + hex[3], 16) / 255;
+
+      if (alpha === 0) {
+        hexColourCache.set(cacheKey, bodyBackgroundColour);
+        return bodyBackgroundColour;
+      }
+
+      processedColorStr = `#${hex.slice(0, 3)}${hex[3] + hex[3]}`;
+      hexColourCache.set(cacheKey, processedColorStr);
+      return processedColorStr;
+    }
+
+    // Ensure full 6-digit hex
+    if (hex.length === 6) {
+      processedColorStr = `#${hex}`;
+      hexColourCache.set(cacheKey, processedColorStr);
+      return processedColorStr;
+    }
   }
 
-  console.warn("Unsupported color format", colorStr);
+  if (rgbaMatch) {
+    const [_, r, g, b, a] = rgbaMatch;
+    const alpha = typeof a !== 'undefined' ? Number(a) : undefined;
+    // If alpha is 0, return body background colour
+    if (alpha === 0) {
+      hexColourCache.set(cacheKey, bodyBackgroundColour);
+      return bodyBackgroundColour;
+    }
+    const hexColour = rgbToHex(Number(r), Number(g), Number(b), alpha);
+    hexColourCache.set(cacheKey, hexColour);
+    return hexColour;
+  }
+
+  console.warn("Unsupported color format", processedColorStr);
   return null;
 }
 
@@ -72,137 +115,52 @@ function toHexColor(colorStr) {
 class ColourBlock extends HTMLElement {
   constructor() {
     super();
-    this.ensureStyleTag();
+
+    // Store this block element in the global array
     colourBlocks.push(this);
-
-    this.debouncedUpdate = debounceFn(this.resize.bind(this), 100);
-    requestAnimationFrame(() => this.debouncedUpdate());
-
+    // Observe this block for style changes
     colourBlockMutationObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
+    // Initial resize
+    requestAnimationFrame(() => this.resize());
   }
 
-  // Ensure style tag exists for this block
-  ensureStyleTag() {
-    this.styleTag = document.querySelector(`[data-styles-for="${this.id}"]`);
-    if (!this.styleTag) {
-      this.styleTag = document.createElement('style');
-      this.styleTag.setAttribute('data-styles-for', this.id);
-      document.head.appendChild(this.styleTag);
-    }
-    this.applyBlockStyles();
+  // Check if this block has the same colour as another block
+  hasSameColourAsOtherBlock(block) {
+    if (!block) return false;
+    if (!(block instanceof ColourBlock)) return false;
+
+    const backgroundColour = window.getComputedStyle(block).backgroundColor;
+    const hexColour = backgroundColour ? toHexColour(backgroundColour) : null;
+
+    return this.hasBackgroundColourEqualTo(hexColour);
   }
 
-  // Generate and apply styles for this block
-  applyBlockStyles({ paddingTop = `var(${blockPaddingVar})`, paddingBottom = `var(${blockPaddingVar})` } = {}) {
-    if (!this.id) return console.warn('ColourBlock must have an ID');
-
-    const transitions = (window.self !== window.top)
-      ? `
-        transition:
-          color 0.1s,
-          margin-top 0.2s,
-          padding-top 0.2s,
-          margin-bottom 0.2s,
-          padding-bottom 0.2s,
-          background-color 0.1s;
-      `
-      : '';
-
-    this.styleTag.textContent = `
-      #${this.id} {
-        padding-top: ${paddingTop};
-        padding-bottom: ${paddingBottom};
-        ${transitions}
-      }
-    `;
-  }
-
-  // Efficiently update padding and collapsed classes
+  // Toggle collapsed classes based on neighbouring block colours
   resize() {
-    // Batch all reads before writes
-    const previousBlock = this.previousElementSibling;
-    const nextBlock = this.nextElementSibling;
-
-    // Read computed styles for siblings first
-    let previousBlockColor = null;
-    let nextBlockColor = null;
-    let isPreviousSame = false;
-    let isNextSame = false;
-
-    if (previousBlock && previousBlock instanceof ColourBlock) {
-      const prevBgColor = getComputedStyle(previousBlock).backgroundColor;
-      previousBlockColor = prevBgColor ? toHexColor(prevBgColor.trim()) : null;
-      isPreviousSame = this.isSameHexColor(previousBlockColor);
-    }
-
-    if (nextBlock && nextBlock instanceof ColourBlock) {
-      const nextBgColor = getComputedStyle(nextBlock).backgroundColor;
-      nextBlockColor = nextBgColor ? toHexColor(nextBgColor.trim()) : null;
-      isNextSame = this.isSameHexColor(nextBlockColor);
-    }
-
-    // Now batch all DOM/class/style writes
     window.requestAnimationFrame(() => {
-      let paddingTop = `var(${blockPaddingVar})`;
-      let paddingBottom = `var(${blockPaddingVar})`;
-
-      this.classList.remove('collapsed--top', 'collapsed--bottom');
-
-      if (isPreviousSame) {
-        paddingTop = `calc(var(${blockPaddingVar}) / 2)`;
-        this.classList.add('collapsed--top');
-      }
-
-      if (isNextSame) {
-        paddingBottom = `calc(var(${blockPaddingVar}) / 2)`;
-        this.classList.add('collapsed--bottom');
-      }
-
-      // Only update styles if changed
-      if (
-        this._lastPaddingTop !== paddingTop ||
-        this._lastPaddingBottom !== paddingBottom
-      ) {
-        this.applyBlockStyles({ paddingTop, paddingBottom });
-        this._lastPaddingTop = paddingTop;
-        this._lastPaddingBottom = paddingBottom;
-      }
+      this.classList.toggle('collapsed-top', this.hasSameColourAsOtherBlock(this.previousElementSibling));
+      this.classList.toggle('collapsed-bottom', this.hasSameColourAsOtherBlock(this.nextElementSibling));
     });
   }
 
   // Compare this block's colour to another
-  isSameHexColor(hexColor) {
-    const blockBgColor = getComputedStyle(this).backgroundColor;
+  hasBackgroundColourEqualTo(value) {
+    // Grab the computed background color of this block
+    const backgroundColour = window.getComputedStyle(this).backgroundColor;
 
-    if (transparentColorHex !== undefined && !hexColor) hexColor = transparentColorHex;
+    // If no value provided, use body background color as fallback to test against
+    if (bodyBackgroundColour !== undefined && !value) value = bodyBackgroundColour;
 
-    this.classList.toggle('transparent', (blockBgColor === 'rgba(0, 0, 0, 0)' || blockBgColor === 'transparent'));
+    // Add a transparent class is this block has a transparent background colour
+    this.classList.toggle('transparent', (backgroundColour === 'rgba(0, 0, 0, 0)' || backgroundColour === 'transparent'));
 
-    if (blockBgColor) {
-      return toHexColor(blockBgColor) == hexColor;
-    }
+    // If the block has a background colour, compare it to the provided value
+    if (backgroundColour) return toHexColour(backgroundColour) == value;
 
-    if (transparentColorHex !== undefined) return transparentColorHex === hexColor;
+    // If no background colour, compare to body background colour if defined
+    if (bodyBackgroundColour !== undefined) return bodyBackgroundColour === value;
 
-    return !hexColor;
-  }
-
-  // Get sibling's colour in hex
-  getSiblingHexColor(siblingBlock) {
-    if (!siblingBlock) return null;
-    if (!(siblingBlock instanceof ColourBlock)) return 'null';
-
-    const siblingBgColor = getComputedStyle(siblingBlock).backgroundColor;
-
-    if (!siblingBgColor) return null;
-
-    let hexColor = siblingBgColor.trim();
-
-    if (hexColor.startsWith('rgb')) {
-      hexColor = toHexColor(hexColor);
-    }
-
-    return hexColor;
+    return !value;
   }
 }
 
@@ -210,16 +168,10 @@ class ColourBlock extends HTMLElement {
 window.customElements.define('colour-block', ColourBlock);
 
 // Observe body for changes and set up null fallback
-function setupBodyObserver() {
-  bodyComputedStyle = getComputedStyle(document.body);
-  bodyPrimaryColorFallback = bodyComputedStyle.getPropertyValue('--body-primary-colour') || bodyComputedStyle.getPropertyValue('--colour-white');
-  transparentColorHex = toHexColor(bodyPrimaryColorFallback);
+function init() {
+  bodyBackgroundColour = toHexColour(window.getComputedStyle(document.body).backgroundColor);
   colourBlockMutationObserver.observe(document.body, { childList: true, subtree: true });
 }
 
-// DOMContentLoaded handler
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupBodyObserver);
-} else {
-  setupBodyObserver();
-}
+// Init when DOM is ready
+(document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', init) : init();
