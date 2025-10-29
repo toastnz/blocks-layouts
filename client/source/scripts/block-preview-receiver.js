@@ -63,7 +63,7 @@ class BlockPreviewReceiver {
   }
 
   resizeBlocks(block) {
-    // Update the block's current background colour
+    block.classList.add('cms-preview');
     block.getCurrentBackgroundColour();
 
     // Collect the relevant blocks that are COLOUR-BLOCK
@@ -234,11 +234,7 @@ class BlockPreviewReceiver {
     this.colours.styles.innerHTML = styles;
 
     if (block) {
-      block.classList.add('cms-preview');
-
-      clearTimeout(this.colours.timeout);
-
-      this.colours.timeout = setTimeout(() => this.resizeBlocks(block), 500);
+      window.requestAnimationFrame(() => this.resizeBlocks(block));
     }
   }
 
