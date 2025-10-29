@@ -63,6 +63,9 @@ class BlockPreviewReceiver {
   }
 
   resizeBlocks(block) {
+    // Update the block's current background colour
+    block.getCurrentBackgroundColour();
+
     // Collect the relevant blocks that are COLOUR-BLOCK
     const blocks = [
       block,
@@ -226,8 +229,6 @@ class BlockPreviewReceiver {
         }
       `;
     }, '');
-
-    console.log('Block Preview Receiver updating colours:', styles);
 
     // Update the styles
     this.colours.styles.innerHTML = styles;

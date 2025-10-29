@@ -4,7 +4,7 @@ const hexColourCache = new Map();
 let bodyBackgroundColour = null;
 
 const colourBlockMutationObserver = new MutationObserver(() => {
-  colourBlocks.forEach(block => block.resize());
+  colourBlocks.forEach((block) => block.resize());
 });
 
 // Helper: RGB(A) to hex
@@ -116,12 +116,25 @@ class ColourBlock extends HTMLElement {
   constructor() {
     super();
 
+    // Store the background colour
+    this.getCurrentBackgroundColour();
+
+    // Observe this block for background colour changes
+    const ColourObserver = new MutationObserver(() => this.getCurrentBackgroundColour());
+
     // Store this block element in the global array
     colourBlocks.push(this);
     // Observe this block for style changes
     colourBlockMutationObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
+    // Observe this block for background style changes
+    ColourObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
     // Initial resize
     requestAnimationFrame(() => this.resize());
+  }
+
+  getCurrentBackgroundColour() {
+    this.backgroundColour = window.getComputedStyle(this).backgroundColor;
+    return this.backgroundColour;
   }
 
   // Check if this block has the same colour as another block
@@ -129,8 +142,7 @@ class ColourBlock extends HTMLElement {
     if (!block) return false;
     if (!(block instanceof ColourBlock)) return false;
 
-    const backgroundColour = window.getComputedStyle(block).backgroundColor;
-    const hexColour = backgroundColour ? toHexColour(backgroundColour) : null;
+    const hexColour = block.backgroundColour ? toHexColour(block.backgroundColour) : null;
 
     return this.hasBackgroundColourEqualTo(hexColour);
   }
@@ -146,7 +158,7 @@ class ColourBlock extends HTMLElement {
   // Compare this block's colour to another
   hasBackgroundColourEqualTo(value) {
     // Grab the computed background color of this block
-    const backgroundColour = window.getComputedStyle(this).backgroundColor;
+    const backgroundColour = this.backgroundColour;
 
     // If no value provided, use body background color as fallback to test against
     if (bodyBackgroundColour !== undefined && !value) value = bodyBackgroundColour;
