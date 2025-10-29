@@ -2,9 +2,39 @@ const colourBlocks = [];
 const hexColourCache = new Map();
 
 let bodyBackgroundColour = null;
+let mutationTimeout = null;
 
-const colourBlockMutationObserver = new MutationObserver(() => {
-  colourBlocks.forEach((block) => block.resize());
+const colourBlockMutationObserver = new MutationObserver((mutations) => {
+  clearTimeout(mutationTimeout);
+
+  mutationTimeout = setTimeout(() => {
+    let shouldResize = false;
+
+    // Determine if any of the mutations affect ColourBlock elements
+    for (let i = 0; i < mutations.length; i++) {
+      const mutation = mutations[i];
+      const addedNodes = [...mutation.addedNodes];
+      const removedNodes = [...mutation.removedNodes];
+
+      if (mutation.target instanceof ColourBlock) {
+        shouldResize = true;
+        break;
+      }
+
+      if (
+        addedNodes.filter(node => node instanceof ColourBlock).length > 0
+        ||
+        removedNodes.filter(node => node instanceof ColourBlock).length > 0
+      ) {
+        shouldResize = true;
+        break;
+      }
+    }
+
+    if (!shouldResize) return;
+
+    colourBlocks.forEach(block => block.resize());
+  }, 100);
 });
 
 // Helper: RGB(A) to hex
@@ -124,8 +154,15 @@ class ColourBlock extends HTMLElement {
 
     // Store this block element in the global array
     colourBlocks.push(this);
+
     // Observe this block for style changes
-    colourBlockMutationObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
+    colourBlockMutationObserver.observe(this, {
+      attributes: true,
+      attributeFilter: ['style'],
+      childList: true,
+      subtree: true
+    });
+
     // Observe this block for background style changes
     ColourObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
     // Initial resize
