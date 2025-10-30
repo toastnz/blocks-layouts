@@ -389,6 +389,9 @@ class Block extends DataObject
         // Construct the full path to the CSS file
         $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
 
+        // Allow other extensions to update the CSS file path
+        $this->extend('updateBlockTemplateCSS', $cssFilePath);
+
         // If the CSS file doesn't exist, return null
         if (!file_exists($cssFilePath)) {
             return null;
@@ -396,9 +399,6 @@ class Block extends DataObject
 
         // Construct the relative path to the CSS file
         $cssFilePath = $cssDir . '/' . $cssFileName;
-
-        // Allow other extensions to update the CSS file path
-        $this->extend('updateBlockTemplateCSS', $cssFilePath);
 
         // Return the CSS file path
         return $cssFilePath;
