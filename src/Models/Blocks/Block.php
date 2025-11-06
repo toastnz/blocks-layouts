@@ -117,7 +117,10 @@ class Block extends DataObject
 
         $this->extend('updateBlockTemplate', $template);
 
-        return $this->renderWith([$template, 'Toast\Blocks\Default\Block']);
+        // Default layout as fallback
+        $defaultTemplate = 'Toast\Blocks\Default\\' . $this->getBlockTemplateName();
+
+        return $this->renderWith([$template, $defaultTemplate, 'Toast\Blocks\Default\Block']);
     }
 
     public function getCMSFields()
@@ -669,9 +672,7 @@ class Block extends DataObject
 
     public function getHtmlID()
     {
-        $reflect = new ReflectionClass($this);
-
-        $templateName = $reflect->getShortName() ?: $this->ClassName;
+        $templateName = $this->getBlockTemplateName() ?: $this->ClassName;
 
         return $templateName . '_' . $this->ID;
     }
