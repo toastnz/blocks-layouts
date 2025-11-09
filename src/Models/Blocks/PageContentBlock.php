@@ -6,6 +6,7 @@ use SilverStripe\View\SSViewer;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 use SilverStripe\CMS\Controllers\ModelAsController;
 
 class PageContentBlock extends Block
@@ -35,7 +36,10 @@ class PageContentBlock extends Block
         $fields->removeByName($fieldNames);
 
         // Add a literal field to explain the purpose of this block
-        $fields->addFieldToTab('Root.Main', LiteralField::create('Info', '<p class="message">This block is used to position the main page content within the flexible content area. It does not have its own editable content.</p>'));
+        $fields->addFieldsToTab('Root.Main', [
+            LiteralField::create('Info', '<p class="message">This block is used to position the main page content within the flexible content area. It does not have its own editable content.</p>'),
+            OpenCMSPreview::create($this->getBlockPreviewURL()),
+        ]);
 
         return $fields;
     }
@@ -55,7 +59,7 @@ class PageContentBlock extends Block
     public function renderParentLayout(): string
     {
         $parent = $this->getParentPage();
-        
+
         if (!$parent || !$parent->exists()) {
             return '';
         }
@@ -70,14 +74,14 @@ class PageContentBlock extends Block
         }
         // fallback on Layout/PageName
         $layoutTemplates[] = 'Layout/' . $shortName;
-        
+
         if(empty($layoutTemplates)){
             return '';
         }
 
         $viewer = SSViewer::create($layoutTemplates);
 
-        return $viewer->process($controller); 
+        return $viewer->process($controller);
     }
 
     // Override this to prevent "Linked Pages" from showing because the list could be massive
@@ -91,7 +95,7 @@ class PageContentBlock extends Block
     {
         return false;
     }
-    
+
     public function canDelete($member = null)
     {
         return false;
