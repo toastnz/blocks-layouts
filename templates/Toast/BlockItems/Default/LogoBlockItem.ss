@@ -8,7 +8,7 @@
             <% if $Extension="svg" %>
                 <img class="[ js-default-logo__image ]" loading="lazy" src="{$URL}" {$SizeAttr} loading="lazy" alt="{$Up.Title.ATT}">
             <% else %>
-                <source media="(max-width: 479px)" srcset="{$ScaleMaxWidth(480).Convert('webp').URL}">
+                <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).Convert('webp').URL}">
                 <img class="[ js-default-logo__image ]" loading="lazy" src="{$ScaleMaxWidth(960).Convert('webp').URL}" alt="{$Up.Title.ATT}" {$ScaleMaxWidth(960).SizeAttr}>
             <% end_if %>
         <% end_with %>
