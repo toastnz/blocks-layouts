@@ -90,8 +90,9 @@ class BlogBlock extends Block
 
     public function getPosts($limit = null)
     {
+        $columns = (int)$this->Columns ?: 3;
         // if the $limit is a number, use it, otherwise default to $this->Columns
-        $limit = is_numeric($limit) ? (int)$limit : (int)$this->Columns;
+        $limit = is_numeric($limit) ? (int)$limit : $columns;
 
         if (!$this->BlogPosts()->exists()) {
             if ($this->BlogID) {
