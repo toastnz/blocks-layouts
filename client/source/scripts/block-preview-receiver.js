@@ -216,9 +216,7 @@ class BlockPreviewReceiver {
     const styles = Object.entries(this.colours.properties).reduce((acc, [name, data]) => {
       let { value, brightness } = data;
 
-      if (value == 'rgba(0, 0, 0, 0)') brightness = 'bodyContrast';
-
-      const onContrast = (brightness === 'bodyContrast') ? 'bodyOnContrast' : (brightness === 'dark') ? 'light' : 'dark';
+      if (value == 'rgba(0, 0, 0, 0)') return acc;
 
       return `
         ${acc}
