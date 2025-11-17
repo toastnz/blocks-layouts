@@ -218,6 +218,8 @@ class BlockPreviewReceiver {
 
       if (value == 'rgba(0, 0, 0, 0)') return acc;
 
+      const onContrast = (brightness === 'dark') ? 'light' : 'dark';
+
       return `
         ${acc}
         .cms-preview #${blockID}.cms-preview {
