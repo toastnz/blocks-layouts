@@ -68,18 +68,34 @@ class PageContentBlock extends Block
         $layoutTemplates = [];
         $namespace = $parent->getNamespace();
         $shortName = $parent->getShortName();
-        // Namespaced template: Toast/Pages/Layout/GeneralHolderPage.ss
-        if ($namespace && $shortName) {
-            $layoutTemplates[] =  str_replace('\\', '/', $namespace) . '/Layout/' . $shortName;
+        // get all templates that has $namespace/Layout/$parentShortName
+        $allTemplates = SSViewer::get_templates_by_class(get_class($parent));
+        // convert template name to Layout template
+        foreach ($allTemplates as $template) {
+            if (is_string($template)) {
+                // Check if template contains $namespace 
+                if ($namespace && strpos($template, $namespace) !== false) {
+                    // split $template into two parts at $namespace
+                    $parts = explode($namespace, $template);
+                    // reassemble to form Layout template
+                    $layoutTemplates[] = str_replace('\\', '\\', $namespace) . '\Layout' . $parts[1];
+                } 
+            }
         }
-        // fallback on Layout/PageName
-        $layoutTemplates[] = 'Layout/' . $shortName;
-
+        // var_dump($layoutTemplates);die();
         if(empty($layoutTemplates)){
             return '';
         }
-
+        
         $viewer = SSViewer::create($layoutTemplates);
+        if($templateEngine = SSTemplateEngine::create($parent)){
+            // Check if any of the layout templates exist
+            foreach ($layoutTemplates as $template) {
+                if($templateEngine->hasTemplate($template)){
+                    $viewer = SSViewer::create($layoutTemplates, $templateEngine);
+                }
+            }
+        }
 
         return $viewer->process($controller);
     }
