@@ -7,6 +7,7 @@ use SilverStripe\Model\ArrayData;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
 use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
+use SilverStripe\TemplateEngine\SSTemplateEngine;
 use SilverStripe\CMS\Controllers\ModelAsController;
 
 class PageContentBlock extends Block
