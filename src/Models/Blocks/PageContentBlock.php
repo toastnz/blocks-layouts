@@ -3,6 +3,8 @@
 namespace Toast\Blocks;
 
 use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Blog\Model\Blog;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\LiteralField;
@@ -59,46 +61,73 @@ class PageContentBlock extends Block
 
     public function renderParentLayout(): string
     {
-        $parent = $this->getParentPage();
-
+       $parent = $this->getParentPage();
+    
         if (!$parent || !$parent->exists()) {
             return '';
         }
+        
         $controller = ModelAsController::controller_for($parent);
-
-        $layoutTemplates = [];
-        $namespace = $parent->getNamespace();
-        $shortName = $parent->getShortName();
-        // get all templates that has $namespace/Layout/$parentShortName
-        $allTemplates = SSViewer::get_templates_by_class(get_class($parent));
-        // convert template name to Layout template
-        foreach ($allTemplates as $template) {
-            if (is_string($template)) {
-                // Check if template contains $namespace 
-                if ($namespace && strpos($template, $namespace) !== false) {
-                    // split $template into two parts at $namespace
-                    $parts = explode($namespace, $template);
-                    // reassemble to form Layout template
-                    $layoutTemplates[] = str_replace('\\', '\\', $namespace) . '\Layout' . $parts[1];
-                } 
-            }
-        }
-        // var_dump($layoutTemplates);die();
-        if(empty($layoutTemplates)){
+        $layoutTemplates = $this->getParentLayoutTemplates($parent);
+        
+        if (empty($layoutTemplates)) {
             return '';
         }
         
         $viewer = SSViewer::create($layoutTemplates);
-        if($templateEngine = SSTemplateEngine::create($parent)){
-            // Check if any of the layout templates exist
-            foreach ($layoutTemplates as $template) {
-                if($templateEngine->hasTemplate($template)){
-                    $viewer = SSViewer::create($layoutTemplates, $templateEngine);
-                }
-            }
-        }
-
         return $viewer->process($controller);
+    }
+
+    protected function getParentLayoutTemplates($parent): array
+    {
+        $templates = [];
+        $classTemplates = SSViewer::get_templates_by_class(get_class($parent));
+        
+        // Normalize and add Layout versions
+        foreach ($classTemplates as $templateGroup) {
+            $templates = array_merge(
+                $templates, 
+                $this->normalizeTemplateGroup($templateGroup)
+            );
+        }
+        
+        return array_unique($templates);
+    }
+
+    protected function normalizeTemplateGroup($templateGroup): array
+    {
+        if (is_string($templateGroup)) {
+            return $this->generateTemplateVariations($templateGroup);
+        }
+        
+        if (is_array($templateGroup)) {
+            $variations = [];
+            foreach ($templateGroup as $template) {
+                $variations = array_merge($variations, $this->generateTemplateVariations($template));
+            }
+            return $variations;
+        }
+        
+        return [];
+    }
+
+    protected function generateTemplateVariations(string $template): array
+    {
+        $normalized = str_replace('\\', '/', $template);
+        $variations = [$normalized];
+        
+        // Add Layout version
+        $parts = explode('/', $normalized);
+        $className = array_pop($parts);
+        $namespace = implode('/', $parts);
+        
+        if ($namespace) {
+            $variations[] = "{$namespace}/Layout/{$className}";
+        } else {
+            $variations[] = "Layout/{$className}";
+        }
+        
+        return $variations;
     }
 
     // Override this to prevent "Linked Pages" from showing because the list could be massive
