@@ -36,15 +36,15 @@ class BlockPreviewReceiver {
     }
 
     // Set up some vars specific to template updates
-    this.templates = {
-      styles: document.createElement('style'),
-      memory: {},
-      current: null,
-    }
+    // this.templates = {
+    //   styles: document.createElement('style'),
+    //   memory: {},
+    //   current: null,
+    // }
 
     // Append the styles to the head
     document.head.appendChild(this.colours.styles);
-    document.head.appendChild(this.templates.styles);
+    // document.head.appendChild(this.templates.styles);
 
 
     // Let the parent window know that the block previews are ready
@@ -79,131 +79,131 @@ class BlockPreviewReceiver {
     });
   }
 
-  learnTemplate(templateResponse) {
-    const { blockID, templatePath, elements, styles } = templateResponse;
+  // learnTemplate(templateResponse) {
+  //   const { blockID, templatePath, elements, styles } = templateResponse;
 
-    let index = 0;
+  //   let index = 0;
 
-    // Look at the elements, and find the index of the block with the blockID
-    elements.forEach((element, i) => {
-      if (element.id === blockID) {
-        index = i;
-      }
-    });
+  //   // Look at the elements, and find the index of the block with the blockID
+  //   elements.forEach((element, i) => {
+  //     if (element.id === blockID) {
+  //       index = i;
+  //     }
+  //   });
 
-    // Update the block memory
-    this.templates.memory[templatePath] = {
-      blockID,
-      elements,
-      styles,
-      index,
-      length: elements.length,
-    };
+  //   // Update the block memory
+  //   this.templates.memory[templatePath] = {
+  //     blockID,
+  //     elements,
+  //     styles,
+  //     index,
+  //     length: elements.length,
+  //   };
 
-    // If there is no current template, just set it
-    if (!this.templates.current) {
-      this.templates.current = templatePath;
-    }
+  //   // If there is no current template, just set it
+  //   if (!this.templates.current) {
+  //     this.templates.current = templatePath;
+  //   }
 
 
-    // Otherwise we will update the current template
-    else {
-      // Update the template
-      this.updateTemplate(templatePath);
-    }
-  }
+  //   // Otherwise we will update the current template
+  //   else {
+  //     // Update the template
+  //     this.updateTemplate(templatePath);
+  //   }
+  // }
 
-  updateTemplate(templatePath) {
-    const { blockID, index, length } = this.templates.memory[this.templates.current];
-    const { elements, styles, } = this.templates.memory[templatePath];
-    // Find the block using the blockID
-    let block = this.getBlock(blockID);
+  // updateTemplate(templatePath) {
+  //   const { blockID, index, length } = this.templates.memory[this.templates.current];
+  //   const { elements, styles, } = this.templates.memory[templatePath];
+  //   // Find the block using the blockID
+  //   let block = this.getBlock(blockID);
 
-    // If the block is not found, return
-    if (!block) return console.error('Block not found', blockID);
+  //   // If the block is not found, return
+  //   if (!block) return console.error('Block not found', blockID);
 
-    // Remove the block element's siblings based on the index and length, for example, if the length is 2, and the index is 1, remove the previous sibling
-    for (let i = 0; i < length; i++) {
-      if (i < index) {
-        block.previousElementSibling.remove();
-      }
+  //   // Remove the block element's siblings based on the index and length, for example, if the length is 2, and the index is 1, remove the previous sibling
+  //   for (let i = 0; i < length; i++) {
+  //     if (i < index) {
+  //       block.previousElementSibling.remove();
+  //     }
 
-      if (i > index) {
-        block.nextElementSibling.remove();
-      }
-    }
+  //     if (i > index) {
+  //       block.nextElementSibling.remove();
+  //     }
+  //   }
 
-    // Convert the elements to a string containing all their HTML
-    let template = elements.reduce((acc, element) => {
-      return `${acc}${element.outerHTML}`;
-    }, '');
+  //   // Convert the elements to a string containing all their HTML
+  //   let template = elements.reduce((acc, element) => {
+  //     return `${acc}${element.outerHTML}`;
+  //   }, '');
 
-    // Replace the block outerHTML with the new template
-    block.outerHTML = template;
+  //   // Replace the block outerHTML with the new template
+  //   block.outerHTML = template;
 
-    // Find the new block
-    block = this.getBlock(blockID)
+  //   // Find the new block
+  //   block = this.getBlock(blockID)
 
-    // If the block is not found, return
-    if (!block) return console.error('Block not found', blockID);
+  //   // If the block is not found, return
+  //   if (!block) return console.error('Block not found', blockID);
 
-    // Add the CMS preview class to the block
-    block.classList.add('cms-preview');
+  //   // Add the CMS preview class to the block
+  //   block.classList.add('cms-preview');
 
-    // Update the styles
-    this.templates.styles.innerHTML = styles;
+  //   // Update the styles
+  //   this.templates.styles.innerHTML = styles;
 
-    // Update the current template
-    this.templates.current = templatePath;
+  //   // Update the current template
+  //   this.templates.current = templatePath;
 
-    // Scroll to the block
-    this.scrollTo({ blockID });
-  }
+  //   // Scroll to the block
+  //   this.scrollTo({ blockID });
+  // }
 
-  getTemplate(data = {}) {
-    const { blockID, templatePath } = data;
+  // getTemplate(data = {}) {
+  //   const { blockID, templatePath } = data;
 
-    // Abort the current request
-    this.xhr.abort();
+  //   // Abort the current request
+  //   this.xhr.abort();
 
-    // Set up the API URL
-    let API = `/blocks-api/getBlock?BlockID=${blockID}&nocache=${new Date().getTime()}`;
+  //   // Set up the API URL
+  //   let API = `/blocks-api/getBlock?BlockID=${blockID}&nocache=${new Date().getTime()}`;
 
-    // Return if the block ID is not set
-    if (!blockID) return;
+  //   // Return if the block ID is not set
+  //   if (!blockID) return;
 
-    // Add the templatePath to the API URL if it is set
-    if (templatePath) API += `&Template=${templatePath}`;
+  //   // Add the templatePath to the API URL if it is set
+  //   if (templatePath) API += `&Template=${templatePath}`;
 
-    // Open a new request
-    this.xhr.open('GET', API, true);
+  //   // Open a new request
+  //   this.xhr.open('GET', API, true);
 
-    // Set the request headers
-    this.xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  //   // Set the request headers
+  //   this.xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-    // Set the request callback
-    this.xhr.onreadystatechange = () => {
-      if (this.xhr.readyState === 4 && this.xhr.status === 200) {
-        const parser = new DOMParser();
-        const response = JSON.parse(this.xhr.responseText);
+  //   // Set the request callback
+  //   this.xhr.onreadystatechange = () => {
+  //     if (this.xhr.readyState === 4 && this.xhr.status === 200) {
+  //       const parser = new DOMParser();
+  //       const response = JSON.parse(this.xhr.responseText);
 
-        let template = response.template;
-        let styles = response.styles;
+  //       let template = response.template;
+  //       let styles = response.styles;
 
-        // convert the template to html
-        template = parser.parseFromString(template, 'text/html');
+  //       // convert the template to html
+  //       template = parser.parseFromString(template, 'text/html');
 
-        // Get the children of the template
-        let elements = [...template.body.children];
+  //       // Get the children of the template
+  //       let elements = [...template.body.children];
 
-        // Learn the new template data
-        this.learnTemplate({ blockID, templatePath, elements, styles });
-      }
-    };
+  //       // Learn the new template data
+  //       this.learnTemplate({ blockID, templatePath, elements, styles });
+  //     }
+  //   };
 
-    // Send the request
-    this.xhr.send();
-  }
+  //   // Send the request
+  //   this.xhr.send();
+  // }
 
   updateColours(data = {}) {
     let { blockID, name, value, brightness } = data;

@@ -91,8 +91,10 @@ class BlockPreviewMessenger {
     this.updateColours();
     // Prepare to scroll to the block
     this.prepareToScroll();
+
+    // Removed because <% require %> statements in the template do not get updated live causing rendering issues
     // Prepare to update the template
-    this.prepareTemplateUpdates();
+    // this.prepareTemplateUpdates();
   }
 
   iframeExists() {
@@ -200,57 +202,66 @@ class BlockPreviewMessenger {
     });
   }
 
-  prepareTemplateUpdates() {
-    const allInputs = [];
+  // Removed because <% require %> statements in the template do not get updated live causing rendering issues
+  // prepareTemplateUpdates() {
+  //   const onChange = (input) => {
+  //     if (!this.iframeExists()) return;
 
-    const onChange = (input) => {
-      if (!this.iframeExists()) return;
+  //     // Update the colours
+  //     this.updateColours();
 
-      // Update the colours
-      this.updateColours();
+  //     // Post a message to the iframe
+  //     this.previewIframe.contentWindow.postMessage({
+  //       action: 'getTemplate',
+  //       templatePath: input.value,
+  //       blockID: this.getBlockID(),
+  //     }, window.location.origin);
+  //   }
 
-      // Post a message to the iframe
-      this.previewIframe.contentWindow.postMessage({
-        action: 'getTemplate',
-        templatePath: input.value,
-        blockID: this.getBlockID(),
-      }, window.location.origin);
-    }
+  //   // Watch for changes to the template select field
+  //   CMSObserver.observe('#Form_ItemEditForm_Template_Holder [name="Template"]', (inputs) => {
+  //     if (inputs.length === 0) return;
 
-    // Watch for changes to the template select field
-    CMSObserver.observe('#Form_ItemEditForm_Template_Holder [name="Template"]', (inputs) => {
-      inputs.forEach((input) => {
-        try {
-          jQuery(input).on('change', () => onChange(input));
-        } catch (err) {
-          input.addEventListener('change', () => onChange(input));
-        }
+  //     // If the input is a select element, handle it differently
+  //     if (inputs[0].tagName.toLowerCase() === 'select') {
+  //       const select = inputs[0];
 
-        if (input.checked) onChange(input);
+  //       try {
+  //         jQuery(select).on('change', () => onChange(select));
+  //       } catch (err) {
+  //         select.addEventListener('change', () => onChange(select));
+  //       }
 
-        if (OpenCMSPreviewController) {
-          OpenCMSPreviewController.on('refresh', () => {
-            if (input.checked) onChange(input);
-          });
-        }
+  //       // Trigger the onChange event if there is a value
+  //       if (select.value) onChange(select);
 
-        // Add the input to the allInputs array
-        allInputs.push(input);
-      });
-    });
+  //       if (OpenCMSPreviewController) {
+  //         OpenCMSPreviewController.on('refresh', () => {
+  //           if (select.value) onChange(select);
+  //         });
+  //       }
 
-    // If the iframe reloads we need to send the on change event again
-    window.addEventListener('message', (event) => {
-      allInputs.forEach((input) => {
-        // If the checkbox is no longer checked, return
-        if (!input.checked) return;
-        // Make sure this input is still on the page
-        if (document.body.contains(input) == false) return;
-        // Make sure the message is from the preview iframe
-        if (event.data.action === 'block-previews-ready') onChange(input);
-      });
-    });
-  }
+  //       return;
+  //     }
+
+  //     // Otherwise, assume they are radio inputs
+  //     inputs.forEach((input) => {
+  //       try {
+  //         jQuery(input).on('change', () => onChange(input));
+  //       } catch (err) {
+  //         input.addEventListener('change', () => onChange(input));
+  //       }
+
+  //       if (input.checked) onChange(input);
+
+  //       if (OpenCMSPreviewController) {
+  //         OpenCMSPreviewController.on('refresh', () => {
+  //           if (input.checked) onChange(input);
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
 }
 
 new BlockPreviewMessenger();
