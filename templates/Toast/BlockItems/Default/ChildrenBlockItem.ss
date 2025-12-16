@@ -24,8 +24,8 @@
                 <% end_if %>
             <% end_if %>
 
-            <% if $PageSummary %>
-                <p class="default-children-item__summary">{$PageSummary}</p>
+            <% if $Summary %>
+                <p class="default-children-item__summary">{$Summary}</p>
             <% end_if %>
 
             <span class="default-children-item__button read-more">Read more</span>
