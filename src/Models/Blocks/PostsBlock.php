@@ -171,7 +171,7 @@ class PostsBlock extends Block
      * @param string $sort
      * @return ArrayList
      */
-    public function getPosts($sort = 'Date ASC'): ArrayList
+    public function getPosts($sort = 'PublishDate DESC'): ArrayList
     {
         $items = new ArrayList();
 
