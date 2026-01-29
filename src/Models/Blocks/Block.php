@@ -44,6 +44,8 @@ class Block extends DataObject
 
     protected static $icon_class = 'font-icon-block-content';
 
+    private static $common_block_classes = [];
+
     private static $first_block_classes = [
         'first',
         'in-view'
@@ -455,9 +457,13 @@ class Block extends DataObject
                 $extraClasses = array_merge($extraClasses, $lastBlockClasses);
             }
         } else {
-            if ($blockClasses = $blockConfig->get('block_classes')) {
+            if ($blockClasses = $blockConfig->get('other_block_classes')) {
                 $extraClasses = array_merge($extraClasses, $blockClasses);
             }
+        }
+
+        if ($commonBlockClasses = $blockConfig->get('common_block_classes')) {
+            $extraClasses = array_merge($extraClasses, $commonBlockClasses);
         }
 
         // Return the array as a string

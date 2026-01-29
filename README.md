@@ -28,13 +28,27 @@ In your `Layout/Page.ss` template, add the following:
 
 ## Configuration
 
-### Add / remove available block classes
+### Add / remove available blocks
 
 ```yaml
 Toast\Blocks\Extensions\PageExtension:
   available_blocks:
     - Toast\Blocks\TextBlock
 ```
+
+### Configure your own extra block classes
+
+```yaml
+Toast\Blocks\Block:
+  common_block_classes:
+    - 'block'
+  first_block_classes:
+    - 'first'
+    - 'in-view'
+  last_block_classes:
+    - 'last'
+  other_block_classes:
+    - 'js-in-view'
 
 ### Position page template content between blocks
 
@@ -45,15 +59,13 @@ Your\Page\Class:
 ```
 
 ```silverstripe
-<% loop $ContentBlocks.Sort('SortOrder') %>
-    <% if $IsPageContentBlock %>
-        <% with $Top %>
-            <%-- Your page content code here --%>
-        <% end_with %>
-    <% else %>
+<% if $HasPageContentBlock %>
+    <% loop $ContentBlocks.Sort('SortOrder') %>
         {$ForTemplate}
-    <% end_if %>
-<% end_loop %>
+    <% end_loop %>
+<% else %>
+    {$Layout}
+<% end_if %>
 ```
 
 ### Add / remove available alternate block layouts
@@ -63,6 +75,8 @@ Your\Page\Class:
 "layout_dist_dir": specificed the css for block layouts
 
 CSS file will only be included with the syntax of 'theme/themename/dist/styles/$LayoutName-$BlockType.css"
+
+You can update this syntax using `updateBlockTemplateCSS` in a BlockExtension.
 
 ```yaml
 Toast\Blocks\Extensions\PageExtension:
