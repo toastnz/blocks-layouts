@@ -74,7 +74,7 @@ Your\Page\Class:
 "layout_icon_src": directory that holds all the layout icons
 "layout_dist_dir": specificed the css for block layouts
 
-CSS file will only be included with the syntax of 'theme/themename/dist/styles/$LayoutName-$BlockType.css"
+By default CSS file will only be included with the syntax of 'theme/themename/dist/styles/$LayoutName-$BlockType.css"
 
 You can update this syntax using `updateBlockTemplateCSS` in a BlockExtension.
 
