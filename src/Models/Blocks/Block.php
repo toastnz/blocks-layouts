@@ -44,6 +44,19 @@ class Block extends DataObject
 
     protected static $icon_class = 'font-icon-block-content';
 
+    private static $first_block_classes = [
+        'first',
+        'in-view'
+    ];
+
+    private static $last_block_classes = [
+        'last'
+    ];
+
+    private static $block_classes = [
+        'js-in-view'
+    ];
+
     private static $db = [
         'Title'         => 'Varchar(255)',
         'Template'      => 'Varchar',
@@ -405,6 +418,50 @@ class Block extends DataObject
 
         // Return the CSS file path
         return $cssFilePath;
+    }
+
+    public function isFirstBlock()
+    {
+        if ($page = $this->getPage()) {
+            if ($firstBlock = $page->ContentBlocks()->Sort('SortOrder')->first()) {
+                return $this->ID === $firstBlock->ID;
+            }
+        }
+    }
+
+    public function isLastBlock()
+    {
+        if ($page = $this->getPage()) {
+            if ($lastBlock = $page->ContentBlocks()->Sort('SortOrder', 'DESC')->first()) {
+                return $this->ID === $lastBlock->ID;
+            }
+        }
+    }
+
+    public function getExtraClasses()
+    {
+        // extra classes as array of strings
+        $extraClasses = [];
+
+        // Read the block's config to get first_block_classes, last_block_classes and block_classes
+        $blockConfig = Config::forClass(get_class($this));
+
+        if ($this->isFirstBlock()) {
+            if ($firstBlockClasses = $blockConfig->get('first_block_classes')) {
+                $extraClasses = array_merge($extraClasses, $firstBlockClasses);
+            }
+        } elseif ($this->isLastBlock()) {
+            if ($lastBlockClasses = $blockConfig->get('last_block_classes')) {
+                $extraClasses = array_merge($extraClasses, $lastBlockClasses);
+            }
+        } else {
+            if ($blockClasses = $blockConfig->get('block_classes')) {
+                $extraClasses = array_merge($extraClasses, $blockClasses);
+            }
+        }
+
+        // Return the array as a string
+        return implode(' ', $extraClasses);
     }
 
     public function onBeforeWrite()

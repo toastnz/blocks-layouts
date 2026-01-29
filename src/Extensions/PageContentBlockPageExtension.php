@@ -18,11 +18,16 @@ class PageContentBlockPageExtension extends Extension
             $block = PageContentBlock::create();
             $block->Title = 'Page Content Block';
             $block->write();
+            $block->publishSingle();
         }
 
-        $block->publishSingle();
 
         return $block;
+    }
+
+    public function getPageContentBlock()
+    {
+        return $this->getOrCreatePageContentBlock();
     }
 
     public function addPageContentBlock()
@@ -61,7 +66,7 @@ class PageContentBlockPageExtension extends Extension
         // }
     }
 
-    
+
     public function getViewerTemplate()
     {
         return SSViewer::get_templates_by_class($this->owner->ClassName);
@@ -72,7 +77,7 @@ class PageContentBlockPageExtension extends Extension
          // Build layout templates in a namespace-aware way
         $reflection = new \ReflectionClass($this->owner);
         return  $reflection->getNamespaceName(); // e.g. Toast\Pages
-     
+
     }
 
     public function getShortName()
