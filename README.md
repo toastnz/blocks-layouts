@@ -49,6 +49,7 @@ Toast\Blocks\Block:
     - 'last'
   other_block_classes:
     - 'js-in-view'
+```
 
 ### Position page template content between blocks
 
@@ -67,6 +68,8 @@ Your\Page\Class:
     {$Layout}
 <% end_if %>
 ```
+
+Do not add the blocks loop to the page template if you are using this extension. Infinite loops will occur.
 
 ### Add / remove available alternate block layouts
 
