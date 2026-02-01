@@ -52,10 +52,11 @@ class Block extends DataObject
     ];
 
     private static $last_block_classes = [
+        'js-in-view',
         'last'
     ];
 
-    private static $block_classes = [
+    private static $other_block_classes = [
         'js-in-view'
     ];
 
@@ -447,22 +448,20 @@ class Block extends DataObject
 
         // Read the block's config to get first_block_classes, last_block_classes and block_classes
         $blockConfig = Config::forClass(get_class($this));
+
         if ($this->isFirstBlock()) {
             if ($firstBlockClasses = $blockConfig->get('first_block_classes')) {
                 $extraClasses = array_merge($extraClasses, $firstBlockClasses);
             }
-        } else {
-            if ($blockClasses = $blockConfig->get('block_classes')) {
-                $extraClasses = array_merge($extraClasses, $blockClasses);
-            }
-        }
-
-        if ($this->isLastBlock()) {
+        } elseif ($this->isLastBlock()) {
             if ($lastBlockClasses = $blockConfig->get('last_block_classes')) {
                 $extraClasses = array_merge($extraClasses, $lastBlockClasses);
             }
+        } else {
+            if ($otherBlockClasses = $blockConfig->get('other_block_classes')) {
+                $extraClasses = array_merge($extraClasses, $otherBlockClasses);
+            }
         }
-
 
         if ($commonBlockClasses = $blockConfig->get('common_block_classes')) {
             $extraClasses = array_merge($extraClasses, $commonBlockClasses);
