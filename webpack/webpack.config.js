@@ -6,6 +6,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const postcssCriticalCSS = require('postcss-critical-css');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin');
 
 function generateSassIndexFiles(directories) {
@@ -76,6 +77,7 @@ const app = {
     path: path.resolve(dir, './client/dist/scripts'),
     filename: '[name].js',
     chunkFilename: 'components/[chunkhash].js',
+    clean: true,
   },
   resolve: { alias: aliases },
 };
@@ -152,6 +154,7 @@ generateSassIndexFiles([aliases.styles]);
         ]
       },
       plugins: [
+        new RemoveEmptyScriptsPlugin(),
         new FriendlyErrorsWebpackPlugin(),
         new MiniCssExtractPlugin({
           filename: '../styles/[name].css',
