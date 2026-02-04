@@ -238,6 +238,9 @@ class Block extends DataObject
         // Construct the CSS file name
         $cssFileName = $layoutName . '-' . $blockTemplateName . '.css';
 
+        // Allow other extensions to update the CSS file path
+        $this->extend('updateBlockTemplateCSS', $cssFileName);
+
         // Construct the full path to the CSS file
         $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
 
@@ -248,9 +251,6 @@ class Block extends DataObject
 
         // Construct the relative path to the CSS file
         $cssFilePath = $cssDir . '/' . $cssFileName;
-
-        // Allow other extensions to update the CSS file path
-        $this->extend('updateBlockTemplateCSS', $cssFilePath);
 
         // Return the CSS file path
         return $cssFilePath;
