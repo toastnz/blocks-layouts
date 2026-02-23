@@ -46,7 +46,9 @@ class BlockItem extends DataObject
     public function getPagePreview() {
         if ($this->hasMethod('Parent')) {
             $id = $this->getBlockItemID();
-            return $this->Parent()->getPagePreview($id);
+            if(method_exists($this->Parent(), 'getPagePreview')) {
+                return $this->Parent()->getPagePreview($id);
+            }
         }
 
         return null;
