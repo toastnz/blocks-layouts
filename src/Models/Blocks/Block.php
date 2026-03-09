@@ -13,6 +13,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
@@ -29,10 +30,9 @@ use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Subsites\State\SubsiteState;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
-use SilverStripe\Forms\HiddenField;
-use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
 {
@@ -77,6 +77,7 @@ class Block extends DataObject
         'IconForCMS'        => 'Type',
         'Title'             => 'Title',
         'ContentSummary'    => 'Content',
+        'BlockLayoutName'   => 'Layout',
         'LinkedPagesList'   => 'Linked Pages',
     ];
 
@@ -732,6 +733,16 @@ class Block extends DataObject
         $templateName = $reflect->getShortName() ?: '';
 
         return $templateName;
+    }
+
+    public function getBlockLayoutName(): string
+    {
+        $templateParts = explode('\\', $this->Template);
+        if (count($templateParts) >= 3) {
+            return $templateParts[2];
+        }
+
+        return 'Default';
     }
 
     public function getHtmlID()
