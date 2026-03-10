@@ -3,15 +3,13 @@
 namespace Toast\Blocks;
 
 use SilverStripe\Assets\File;
-use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\RequiredFields;
-use SilverStripe\ORM\FieldType\DBField;
-use Sheadawson\Linkable\Forms\LinkField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\LinkField\Models\Link;
+use SilverStripe\LinkField\Form\LinkField;
 
 class MediaTextBlock extends Block
 {
@@ -34,7 +32,8 @@ class MediaTextBlock extends Block
     ];
 
     private static $owns = [
-        'Image'
+        'Image',
+        'CTALink',
     ];
 
     public function getCMSFields()
@@ -49,7 +48,7 @@ class MediaTextBlock extends Block
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
-                LinkField::create('CTALinkID', 'Link'),
+                LinkField::create('CTALink', 'Link'),
             ]);
 
         });

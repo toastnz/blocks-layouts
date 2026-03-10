@@ -5,10 +5,10 @@ namespace Toast\Blocks\Items;
 use Toast\Blocks\LinkBlock;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\TextField;
-use Sheadawson\Linkable\Models\Link;
 use SilverStripe\Forms\TextareaField;
-use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\LinkField\Models\Link;
+use SilverStripe\LinkField\Form\LinkField;
 
 class LinkBlockItem extends BlockItem
 {
@@ -30,6 +30,7 @@ class LinkBlockItem extends BlockItem
     ];
     private static $owns = [
         'Image',
+        'Link'
     ];
 
     public function getCMSFields()
@@ -42,7 +43,7 @@ class LinkBlockItem extends BlockItem
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
-                LinkField::create('LinkID', 'Link'),
+                LinkField::create('Link', 'Link'),
             ]);
 
         });

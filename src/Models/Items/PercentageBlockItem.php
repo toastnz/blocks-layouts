@@ -6,10 +6,10 @@ use SilverStripe\Assets\File;
 use Toast\Blocks\PercentageBlock;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Core\Config\Config;
-use Sheadawson\Linkable\Models\Link;
+use SilverStripe\LinkField\Models\Link;
+use SilverStripe\LinkField\Form\LinkField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\DropdownField;
-use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class PercentageBlockItem extends BlockItem
@@ -35,6 +35,7 @@ class PercentageBlockItem extends BlockItem
     ];
     private static $owns = [
         'Image',
+        'Link'
     ];
 
     public function getCMSFields()
@@ -75,7 +76,7 @@ class PercentageBlockItem extends BlockItem
                 TextField::create('Title', 'Title'),
                 TextareaField::create('Summary', 'Summary'),
                 // DropdownField::create('Width', 'Width', $this->dbObject('Width')->enumValues())->setEmptyString('--- Please select ---'),
-                LinkField::create('LinkID', 'Link'),
+                LinkField::create('Link', 'Link'),
             ]);
 
             // Add the dropdown field to the main tab

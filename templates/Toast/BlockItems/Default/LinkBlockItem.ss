@@ -1,5 +1,5 @@
 <div id="{$BlockItemID}" class="default-link-item [ js-in-view ]">
-    <a href="{$Link.LinkURL}" {$Link.LinkAttributes} class="default-link-item__link">
+    <a href="{$Link.URL}" {$Link.LinkAttributes} class="default-link-item__link">
         <% if $Image %>
             <div class="default-link-item__media">
                 <% with $Image %>
