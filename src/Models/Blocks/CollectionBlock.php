@@ -24,7 +24,7 @@ class CollectionBlock extends Block
     ];
 
     private static $has_one = [
-        'TargetPage' => SiteTree::class,
+        'RelatedPage' => SiteTree::class,
     ];
 
     public function getCMSFields()
@@ -35,10 +35,10 @@ class CollectionBlock extends Block
         $columns = $this->getAvailableColumns();
 
         $fields->addFieldsToTab('Root.Main', [
-            TreeDropdownField::create('TargetPageID', 'Target Page', SiteTree::class)
-                ->setDescription('Select the target page to get the relevant content from. If no target page is selected, the current page will be used.'),
+            TreeDropdownField::create('RelatedPageID', 'Display pages related to:', SiteTree::class)
+                ->setDescription('Select the target page to get the relevant content from. If no page is selected, the current page will be used.'),
             DropdownField::create('Columns', 'Columns', $columns),
-            DropdownField::create('Type', 'Type', [
+            DropdownField::create('Type', 'Collection of pages to display', [
                 'siblings' => 'Sibling Pages',
                 'children' => 'Child Pages',
             ]),
@@ -78,7 +78,7 @@ class CollectionBlock extends Block
         // Get the type of pages to return (siblings or children)
         $type = $this->Type ?: 'siblings';
         // Get the target page, or the page that the block is rendering on
-        $page = $this->TargetPageID ? $this->TargetPage() : $this->getPage();
+        $page = $this->RelatedPageID ? $this->RelatedPage() : $this->getPage();
         // Get the parent page if there is one, otherwise use the current page
         $parent = $page->Parent() ?? $page;
         // If the type is children, return the children of the current page, otherwise return the children of the parent page excluding the current page (siblings)
