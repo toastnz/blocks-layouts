@@ -77,8 +77,8 @@ class CollectionBlock extends Block
     {
         // Get the type of pages to return (siblings or children)
         $type = $this->Type ?: 'siblings';
-        // Get the page the block is rendering on
-        $page = $this->getPage();
+        // Get the target page, or the page that the block is rendering on
+        $page = $this->TargetPageID ? $this->TargetPage() : $this->getPage();
         // Get the parent page if there is one, otherwise use the current page
         $parent = $page->Parent() ?? $page;
         // If the type is children, return the children of the current page, otherwise return the children of the parent page excluding the current page (siblings)
