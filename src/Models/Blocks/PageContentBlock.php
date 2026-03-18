@@ -62,7 +62,7 @@ class PageContentBlock extends Block
    /**
      * Render the parent page's Layout template content
      * This allows the page's main content area to be positioned within blocks
-     * 
+     *
      * @return string Rendered HTML from the parent page's Layout template
      */
     public function renderParentLayout(): string
@@ -72,17 +72,17 @@ class PageContentBlock extends Block
         if (!$parent || !$parent->exists()) {
             return '';
         }
-        
+
         // Get the controller for the parent page to provide proper context
         $controller = ModelAsController::controller_for($parent);
-        
+
         // Get all possible Layout template paths for this page type
         $layoutTemplates = $this->getParentLayoutTemplates($parent);
-        
+
         if (empty($layoutTemplates)) {
             return '';
         }
-        
+
         // Render the Layout template with the parent page's controller context
         $viewer = SSViewer::create($layoutTemplates);
         return $viewer->process($controller);
@@ -91,25 +91,25 @@ class PageContentBlock extends Block
     /**
      * Get all possible Layout template paths for the parent page
      * Converts class-based templates to Layout/ClassName format
-     * 
+     *
      * @param SiteTree $parent The parent page object
      * @return array Array of template paths in priority order
      */
     protected function getParentLayoutTemplates($parent): array
     {
         $templates = [];
-        
+
         // Get all templates for this class and its ancestors (e.g., ProjectsHolderPage, Blog, Page)
         $classTemplates = SSViewer::get_templates_by_class(get_class($parent));
-        
+
         // Normalize each template and add Layout versions
         foreach ($classTemplates as $templateGroup) {
             $templates = array_merge(
-                $templates, 
+                $templates,
                 $this->normalizeTemplateGroup($templateGroup)
             );
         }
-        
+
         // Remove duplicates while preserving order
         return array_unique($templates);
     }
@@ -117,7 +117,7 @@ class PageContentBlock extends Block
     /**
      * Normalize a template or group of templates
      * Handles both single template strings and arrays of templates
-     * 
+     *
      * @param string|array $templateGroup Template name(s) to normalize
      * @return array Normalized template variations
      */
@@ -127,7 +127,7 @@ class PageContentBlock extends Block
         if (is_string($templateGroup)) {
             return $this->generateTemplateVariations($templateGroup);
         }
-        
+
         // Array of templates (process each)
         if (is_array($templateGroup)) {
             $variations = [];
@@ -136,19 +136,19 @@ class PageContentBlock extends Block
             }
             return $variations;
         }
-        
+
         return [];
     }
 
     /**
      * Generate template path variations for a given template name
      * Converts namespaced class names to template paths and adds Layout versions
-     * 
+     *
      * Examples:
      * - "SilverStripe\Blog\Model\Blog" → ["SilverStripe/Blog/Model/Blog", "SilverStripe/Blog/Model/Layout/Blog"]
      * - "Toast\Pages\ProjectsHolderPage" → ["Toast/Pages/ProjectsHolderPage", "Toast/Pages/Layout/ProjectsHolderPage"]
      * - "Page" → ["Page", "Layout/Page"]
-     * 
+     *
      * @param string $template Template name (may include namespace backslashes)
      * @return array Array containing original and Layout template paths
      */
@@ -157,12 +157,12 @@ class PageContentBlock extends Block
         // Convert namespace backslashes to forward slashes for template paths
         $normalized = str_replace('\\', '/', $template);
         $variations = [$normalized];
-        
+
         // Split the path to separate namespace from class name
         $parts = explode('/', $normalized);
         $className = array_pop($parts); // Get the class name (last part)
         $namespace = implode('/', $parts); // Rejoin the namespace parts
-        
+
         // Add the Layout version of the template
         if ($namespace) {
             // Namespaced: Namespace/Layout/ClassName
@@ -171,7 +171,7 @@ class PageContentBlock extends Block
             // Non-namespaced: Layout/ClassName
             $variations[] = "Layout/{$className}";
         }
-        
+
         return $variations;
     }
 
@@ -182,12 +182,12 @@ class PageContentBlock extends Block
     }
 
     // the belows are to prevent deletion and unlinking of this block type
-    public function canEdit($member = null)
+    public function canEdit($member = null): bool
     {
         return false;
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         return false;
     }

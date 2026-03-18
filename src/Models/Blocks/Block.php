@@ -6,7 +6,7 @@ namespace Toast\Blocks;
 use Page;
 use ReflectionClass;
 use SilverStripe\ORM\DB;
-use SilverStripe\Assets\Image;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\TextField;
@@ -99,6 +99,7 @@ class Block extends DataObject
         } elseif ($this->Heading) {
             return DBField::create_field(DBHTMLText::class, $this->Heading);
         }
+
         return null;
     }
 
@@ -142,27 +143,12 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
+        // Require the block's CSS and JS files in the CMS
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/blocks.css');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/blocks.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
-            if ($this->ID) {
-                // Generate HTML for the list of links
-                $linksHtml = Helper::getBlockPageLinksHTMLForCMS($this);
-
-                $fields->addFieldsToTab('Root.More', [
-                    OpenCMSPreview::create($this->getBlockPreviewURL()),
-                    HeaderField::create('UsageHeading', 'Link to this block'),
-                    LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
-                    ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
-                ]);
-
-                $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
-                $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
-                $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
-            }
-
+            // Start by removing fields we don't want to show
             $fields->removeByName([
                 'Template',
                 'CSSFile'
@@ -174,14 +160,26 @@ class Block extends DataObject
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
                 TextField::create('AnchorName', 'Anchor Name')
                     ->setDescription('This will be the name that appears in the URL when linking to this block manually. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong> <br> <strong class="warning">Updating this value will break any existing anchor links pointing to this block!</strong>'),
+                $this->getTemplateOptionsField(),
                 TextField::create('Heading', 'Heading')
                     ->setDescription('&lt;h2&gt;'),
                 HTMLEditorField::create('Content', 'Content')
             ]);
 
-            if ($layoutOptionsField = $this->getTemplateOptionsField()) {
-                $fields->insertAfter('AnchorName', $layoutOptionsField);
-            }
+            // Exit here if the block hasn't been saved yet
+            if (!$this->exists()) return;
+
+            $fields->addFieldsToTab('Root.More', [
+                OpenCMSPreview::create($this->getBlockPreviewURL()),
+                HeaderField::create('UsageHeading', 'Link to this block'),
+                LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
+                ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
+                ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
+            ]);
+
+            $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
+            $fields->insertBefore('Title', LiteralField::create('PageLinks', Helper::getBlockPageLinksHTMLForCMS($this)));
+            $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
         });
 
         return parent::getCMSFields();
@@ -424,25 +422,29 @@ class Block extends DataObject
         return $cssFilePath;
     }
 
-    public function isFirstBlock()
+    public function isFirstBlock(): bool
     {
         if ($page = $this->getPage()) {
             if ($firstBlock = $page->ContentBlocks()->Sort('SortOrder')->first()) {
                 return $this->ID === $firstBlock->ID;
             }
         }
+
+        return false;
     }
 
-    public function isLastBlock()
+    public function isLastBlock(): bool
     {
         if ($page = $this->getPage()) {
             if ($lastBlock = $page->ContentBlocks()->Sort('SortOrder', 'DESC')->first()) {
                 return $this->ID === $lastBlock->ID;
             }
         }
+
+        return false;
     }
 
-    public function getExtraClasses()
+    public function getExtraClasses(): string
     {
         // extra classes as array of strings
         $extraClasses = [];
@@ -470,12 +472,17 @@ class Block extends DataObject
 
         // Allow extensions to modify the extra classes
         $extraClasses = $this->updateExtraClasses($extraClasses);
+        // Get any block specific extra classes from extensions / other blocks
+        $blockSpecificClasses = $this->getBlockSpecificExtraClasses();
+
+        // Merge the block specific classes with the other extra classes
+        $extraClasses = array_merge($extraClasses, $blockSpecificClasses);
 
         // Return the array as a string
         return implode(' ', $extraClasses);
     }
 
-    public function updateExtraClasses($classes)
+    public function updateExtraClasses(array $classes): array
     {
         // Allow extensions to modify the extra classes
         $this->extend('updateExtraClasses', $classes);
@@ -483,7 +490,23 @@ class Block extends DataObject
         return $classes;
     }
 
-    public function onBeforeWrite()
+    public function getBlockSpecificExtraClasses(): array
+    {
+        // Set up an empty array for the classes
+        $classes = [];
+
+        // Return the classes as an array
+        return $this->updateBlockSpecificExtraClasses($classes);
+    }
+
+    public function updateBlockSpecificExtraClasses(array &$classes): array
+    {
+        // Allow extensions to add block specific extra classes
+        $this->extend('updateBlockSpecificExtraClasses', $classes);
+        return $classes;
+    }
+
+    public function onBeforeWrite(): void
     {
         if (!$this->Template) {
             $this->Template =  $this->getTemplateClass();
@@ -494,12 +517,12 @@ class Block extends DataObject
         parent::onBeforeWrite();
     }
 
-    public function getTemplateClass()
+    public function getTemplateClass(): string
     {
         return 'Toast\Blocks\\Default\\' . $this->getBlockTemplateName();
     }
 
-    public function populateDefaults()
+    public function populateDefaults(): void
     {
         if (!$this->Template) {
             $this->Template =  $this->getTemplateClass();
@@ -507,21 +530,20 @@ class Block extends DataObject
         parent::populateDefaults();
     }
 
-    public function getTitle()
+    public function getTitle(): string
     {
-        if ($this->ID) {
-            return $this->getField('Title') ?: $this->i18n_singular_name();
-        } else {
-            return $this->getField('Title');
-        }
+        // If the block exists, return the Title field.
+        if ($this->exists()) return $this->getField('Title');
+        // Otherwise, return the singular name of the block as a default title for new blocks.
+        return $this->getField('Title') ?: $this->i18n_singular_name();
     }
 
-    public function getApiURL()
+    public function getApiURL(): string
     {
         return Controller::join_links(Controller::curr()->AbsoluteLink(), 'Block', $this->ID);
     }
 
-    public function getLink($action = null)
+    public function getLink($action = null): string
     {
         // Get the current controller
         $controller = Controller::curr();
@@ -550,7 +572,7 @@ class Block extends DataObject
         return '';
     }
 
-    public function Link($action = null)
+    public function Link($action = null): string
     {
         return $this->getLink($action);
     }
@@ -564,7 +586,7 @@ class Block extends DataObject
         return '';
     }
 
-    public function getBlockPreviewURL($anchor = null)
+    public function getBlockPreviewURL($anchor = null): string
     {
         // Get the base URL
         $baseURL = Director::absoluteBaseURL();
@@ -596,38 +618,7 @@ class Block extends DataObject
         return $link;
     }
 
-    // public function getBlockPreviewURL($anchor = null)
-    // {
-    //     // Get the current controller
-    //     $controller = Controller::curr();
-    //     $path = null;
-    //     // Get the base URL
-    //     $baseURL = Director::absoluteBaseURL();
-
-    //     // // Ensure the controller is an instance of CMSMain
-    //     if ($controller instanceof CMSMain) {
-    //         $path = $controller->currentRecord()->Link();
-    //     }
-
-    //     // Generate the link
-    //     $link = Controller::join_links($baseURL, $path);
-    //     // Add the necessary query string parameters
-    //     $link .= '?stage=Stage&CMSPreview=1';
-
-    //     if (class_exists(Subsite::class)) {
-    //         // Get the current subsite ID
-    //         $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
-    //         // Add the subsite ID to the query string
-    //         $link .= '&SubsiteID=' . $currentSubsiteID;
-    //     }
-
-    //     // Add the block ID as a hash
-    //     $link .= '#' . ($anchor ?: $this->getBlockID());
-
-    //     return $link;
-    // }
-
-    public function getAbsoluteLink($action = null)
+    public function getAbsoluteLink($action = null): string
     {
         // Get the current controller
         $controller = Controller::curr();
@@ -643,32 +634,32 @@ class Block extends DataObject
         return $link . '?stage=Stage#' . $this->owner->getBlockID();
     }
 
-    public function AbsoluteLink($action = null)
+    public function AbsoluteLink($action = null): string
     {
         return $this->getAbsoluteLink($action);
     }
 
-    public function getLinkedPagesList()
-    {
-        $pagesWithBlock = $this->getAllPages();
-        // only show pages
-        $pages = [];
-        foreach ($pagesWithBlock as $page) {
-            if ($page instanceof SiteTree && $page->exists()) {
-                $pages[] = $page;
-            }
-        }
-        // Sort the pages by title
-        usort($pages, function ($a, $b) {
-            return strcmp($a->Title, $b->Title);
-        });
-        // Return the sorted pages in implode format
-        return implode(', ', array_map(function ($page) {
-            return $page->Title;
-        }, $pages));
-    }
+    // public function getLinkedPagesList()
+    // {
+    //     $pagesWithBlock = $this->getAllPages();
+    //     // only show pages
+    //     $pages = [];
+    //     foreach ($pagesWithBlock as $page) {
+    //         if ($page instanceof SiteTree && $page->exists()) {
+    //             $pages[] = $page;
+    //         }
+    //     }
+    //     // Sort the pages by title
+    //     usort($pages, function ($a, $b) {
+    //         return strcmp($a->Title, $b->Title);
+    //     });
+    //     // Return the sorted pages in implode format
+    //     return implode(', ', array_map(function ($page) {
+    //         return $page->Title;
+    //     }, $pages));
+    // }
 
-    public function getAllPages()
+    public function getAllPages(): array
     {
         $pages = array_merge($this->getPagesFromMainSite(), $this->getPagesFromSubsites());
 
@@ -676,7 +667,7 @@ class Block extends DataObject
         return array_unique($pages, SORT_REGULAR);
     }
 
-    public function getPagesFromSiteTree()
+    public function getPagesFromSiteTree(): array
     {
         $pages = SiteTree::get()
             ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
@@ -686,7 +677,7 @@ class Block extends DataObject
         return $pages->toArray();
     }
 
-    public function getPagesFromMainSite()
+    public function getPagesFromMainSite(): array
     {
         $pages = $this->getPagesFromSiteTree();
 
@@ -705,7 +696,7 @@ class Block extends DataObject
         return $pages;
     }
 
-    public function getPagesFromSubsites()
+    public function getPagesFromSubsites(): array
     {
         $allPages = [];
 
@@ -737,7 +728,7 @@ class Block extends DataObject
         return [];
     }
 
-    public function getBlockTemplateName()
+    public function getBlockTemplateName(): string
     {
         $reflect = new ReflectionClass($this);
 
@@ -756,14 +747,14 @@ class Block extends DataObject
         return 'Default';
     }
 
-    public function getHtmlID()
+    public function getHtmlID(): string
     {
         $templateName = $this->getBlockTemplateName() ?: $this->ClassName;
 
         return $templateName . '_' . $this->ID;
     }
 
-    public function getDisplayTitle()
+    public function getDisplayTitle(): string
     {
         $title = $this->Title;
 
@@ -776,23 +767,7 @@ class Block extends DataObject
         return $title;
     }
 
-    public function getImageFocusPosition($imageid = null)
-    {
-        // If we don't have an image, return nothing
-        if (!$imageid) return;
-        // get image by id
-        if (!$image = Image::get()->byID($imageid)) return;
-        // Make sure the image is an instance of Image
-        if (!$image instanceof Image) return;
-        // Make sure there is a focus point
-        if (!$image->FocusPoint) return;
-
-        // Get the image focus point
-        $focusPoint = $image->FocusPoint;
-        return $focusPoint->PercentageX() . '% ' . $focusPoint->PercentageY() . '%';
-    }
-
-    public function canView($member = null)
+    public function canView($member = null): bool
     {
         if ($member && Permission::checkMember($member, ["ADMIN", "SITETREE_VIEW_ALL"])) {
             return true;
@@ -807,22 +782,22 @@ class Block extends DataObject
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canEdit($member = null)
+    public function canEdit($member = null): bool
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canDelete($member = null)
+    public function canDelete($member = null): bool
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canCreate($member = null, $context = [])
+    public function canCreate($member = null, $context = []): bool
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canDeleteFromLive($member = null)
+    public function canDeleteFromLive($member = null): bool
     {
         $extended = $this->extendedCan('canDeleteFromLive', $member);
 
@@ -833,7 +808,7 @@ class Block extends DataObject
         return $this->canPublish($member);
     }
 
-    public function canPublish($member = null)
+    public function canPublish($member = null): bool
     {
         if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
             $member = Security::getCurrentUser();
@@ -851,7 +826,7 @@ class Block extends DataObject
         return $this->canEdit($member);
     }
 
-    public function isPublished()
+    public function isPublished(): bool
     {
         if ($this->isNew()) {
             return false;
@@ -862,7 +837,7 @@ class Block extends DataObject
             : false;
     }
 
-    public function isNew()
+    public function isNew(): bool
     {
         if (empty($this->ID)) {
             return true;
@@ -875,7 +850,7 @@ class Block extends DataObject
         return stripos($this->ID, 'new') === 0;
     }
 
-    public function getParentPage()
+    public function getParentPage(): ?SiteTree
     {
         if ($controller = Controller::curr()) {
             if (!$controller instanceof CMSPageEditController) {
@@ -889,9 +864,11 @@ class Block extends DataObject
                 }
             }
         }
+
+        return null;
     }
 
-    public function doArchive()
+    public function doArchive(): bool
     {
         $this->invokeWithExtensions('onBeforeArchive', $this);
 
@@ -910,7 +887,7 @@ class Block extends DataObject
         return false;
     }
 
-    public function canArchive($member = null)
+    public function canArchive($member = null): bool
     {
         if (!$member) {
             $member = Security::getCurrentUser();
@@ -932,7 +909,7 @@ class Block extends DataObject
         return true;
     }
 
-    public function getPage()
+    public function getPage(): ?Page
     {
         $currentController = Controller::curr();
 
@@ -948,10 +925,10 @@ class Block extends DataObject
             }
         }
 
-        return;
+        return null;
     }
 
-    public function getBlockID()
+    public function getBlockID(): string
     {
         // Set an ID var
         $id = '';
@@ -968,7 +945,7 @@ class Block extends DataObject
         return (strlen($id) > 0) ? $id : $this->getHtmlID();
     }
 
-    public function getExtraRequirements()
+    public function getExtraRequirements(): mixed
     {
         $extraRequirements = null;
 
@@ -981,15 +958,17 @@ class Block extends DataObject
     {
         if ($parent = $this->getCMSParentPage()) {
             $parentID = $parent->ID;
-            $parentEditLink = $this->getCMSParentPage()->CMSEditLink();
+            $parentEditLink = $this->getCMSParentPage()->getCMSEditLink();
             // Replace /show/$ID with /EditForm/$ID
             $parentEditFormLink = str_replace("/show/$parentID", "/EditForm/$parentID", $parentEditLink);
 
             return $parentEditFormLink . '/field/ContentBlocks/item/' . $this->ID . '/edit';
         }
+
+        return null;
     }
 
-    public function getCMSParentPage()
+    public function getCMSParentPage(): ?Page
     {
         // Get the current controller
         $controller = Controller::curr();
@@ -1008,7 +987,7 @@ class Block extends DataObject
         return null;
     }
 
-    public function getCMSSiblingBlocks()
+    public function getCMSSiblingBlocks(): ?DataList
     {
         $parent = $this->getCMSParentPage();
 
@@ -1019,7 +998,7 @@ class Block extends DataObject
         return null;
     }
 
-    public function getCMSSiblingBlocksLinks()
+    public function getCMSSiblingBlocksLinks(): ?string
     {
         $blocks = $this->getCMSSiblingBlocks();
 
@@ -1036,12 +1015,5 @@ class Block extends DataObject
         }
 
         return null;
-    }
-
-    public function getBlockSpecificExtraClasses()
-    {
-        $classes = [];
-        $this->extend('updateBlockSpecificExtraClasses', $classes);
-        return $classes;
     }
 }
