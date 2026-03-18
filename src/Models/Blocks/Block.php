@@ -468,8 +468,19 @@ class Block extends DataObject
             $extraClasses = array_merge($extraClasses, $commonBlockClasses);
         }
 
+        // Allow extensions to modify the extra classes
+        $extraClasses = $this->updateExtraClasses($extraClasses);
+
         // Return the array as a string
         return implode(' ', $extraClasses);
+    }
+
+    public function updateExtraClasses($classes)
+    {
+        // Allow extensions to modify the extra classes
+        $this->extend('updateExtraClasses', $classes);
+
+        return $classes;
     }
 
     public function onBeforeWrite()
