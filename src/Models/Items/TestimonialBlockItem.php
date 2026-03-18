@@ -4,9 +4,9 @@ namespace Toast\Blocks\Items;
 
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\TextField;
+use Toast\Blocks\TestimonialBlock;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use Toast\Blocks\TestimonialBlock;
 
 class TestimonialBlockItem extends BlockItem
 {

@@ -6,8 +6,6 @@ use SilverStripe\Assets\File;
 use Toast\Blocks\DownloadBlock;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TextareaField;
-use SilverStripe\Security\Permission;
-use SilverStripe\Forms\RequiredFields;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class DownloadBlockItem extends BlockItem
@@ -55,45 +53,45 @@ class DownloadBlockItem extends BlockItem
         return parent::getCMSFields();
     }
 
-    public function getCMSValidator()
-    {
-        $required = new RequiredFields([
-            'File'
-        ]);
-        $this->extend('updateCMSValidator', $required);
-        return $required;
+    // public function getCMSValidator()
+    // {
+    //     $required = new RequiredFields([
+    //         'File'
+    //     ]);
+    //     $this->extend('updateCMSValidator', $required);
+    //     return $required;
 
-    }
+    // }
 
-    public function canView($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canView($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canView($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canView($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canEdit($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canEdit($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canEdit($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canEdit($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canDelete($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canDelete($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canDelete($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canDelete($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canCreate($member = null, $context = [])
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canCreate($member, $context);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canCreate($member = null, $context = [])
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canCreate($member, $context);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 }

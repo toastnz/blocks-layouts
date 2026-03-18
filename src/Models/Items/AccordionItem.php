@@ -4,8 +4,6 @@ namespace Toast\Blocks\Items;
 
 use Toast\Blocks\AccordionBlock;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Security\Permission;
-use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
@@ -65,48 +63,48 @@ class AccordionItem extends BlockItem
         }
     }
 
-    public function getCMSValidator()
-    {
-        $required = new RequiredFields(['Heading', 'Content']);
-        $this->extend('updateCMSValidator', $required);
-        return $required;
+    // public function getCMSValidator()
+    // {
+    //     $required = new RequiredFields(['Heading', 'Content']);
+    //     $this->extend('updateCMSValidator', $required);
+    //     return $required;
 
-    }
+    // }
 
-    public function GroupNumber()
-    {
-        return 'group' . ceil($this->SortOrder / 2);
-    }
+    // public function GroupNumber()
+    // {
+    //     return 'group' . ceil($this->SortOrder / 2);
+    // }
 
-    public function canView($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canView($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canView($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canView($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canEdit($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canEdit($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canEdit($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canEdit($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canDelete($member = null)
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canDelete($member);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canDelete($member = null)
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canDelete($member);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 
-    public function canCreate($member = null, $context = [])
-    {
-        if ($this->Parent()) {
-            return $this->Parent()->canCreate($member, $context);
-        }
-        return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
-    }
+    // public function canCreate($member = null, $context = [])
+    // {
+    //     if ($this->Parent()) {
+    //         return $this->Parent()->canCreate($member, $context);
+    //     }
+    //     return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
+    // }
 }

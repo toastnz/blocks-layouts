@@ -7,7 +7,6 @@ use SilverStripe\Assets\File;
 use SilverStripe\Forms\TextField;
 use Toast\Blocks\Items\BlockItem;
 use SilverStripe\ORM\FieldType\DBField;
-use Sheadawson\Linkable\Forms\LinkField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
@@ -60,8 +59,8 @@ class LogoBlockItem extends BlockItem
         return DBField::create_field(DBHTMLText::class, $content);
     }
 
-    public function canCreate($member = null, $context = [])
-    {
-        return parent::canCreate($member);
-    }
+    // public function canCreate($member = null, $context = [])
+    // {
+    //     return parent::canCreate($member);
+    // }
 }

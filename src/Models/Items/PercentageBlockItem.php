@@ -3,13 +3,13 @@
 namespace Toast\Blocks\Items;
 
 use SilverStripe\Assets\File;
-use Toast\Blocks\PercentageBlock;
 use SilverStripe\Forms\TextField;
+use Toast\Blocks\PercentageBlock;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\LinkField\Models\Link;
 use SilverStripe\LinkField\Form\LinkField;
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\DropdownField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class PercentageBlockItem extends BlockItem
@@ -90,8 +90,8 @@ class PercentageBlockItem extends BlockItem
         return parent::getCMSFields();
     }
 
-    public function canCreate($member = null, $context = [])
-    {
-        return parent::canCreate($member);
-    }
+    // public function canCreate($member = null, $context = [])
+    // {
+    //     return parent::canCreate($member);
+    // }
 }

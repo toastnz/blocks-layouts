@@ -2,8 +2,8 @@
 
 namespace Toast\Blocks\Items;
 
-use Toast\Blocks\GalleryBlock;
 use SilverStripe\Assets\File;
+use Toast\Blocks\GalleryBlock;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -13,7 +13,7 @@ class GalleryBlockItem extends BlockItem
     private static $table_name = 'GalleryBlockItem';
 
     private static $db = [
-        'Video'         => VideoLink::class,
+        'Video' => VideoLink::class,
     ];
 
     private static $has_one = [
@@ -28,6 +28,7 @@ class GalleryBlockItem extends BlockItem
     private static $summary_fields = [
         'Image.CMSThumbnail' => 'Image'
     ];
+
     private static $default_sort = 'SortOrder ASC';
 
     public function getCMSFields()
@@ -45,6 +46,4 @@ class GalleryBlockItem extends BlockItem
 
         return $fields;
     }
-
-
 }
