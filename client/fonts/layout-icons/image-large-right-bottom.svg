@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000px" height="1000px" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="image-large-right-bottom" transform="translate(500.000000, 499.776500) scale(1, -1) translate(-500.000000, -499.776500) translate(100.000000, 147.000000)" fill="#000000" fill-rule="nonzero">
+            <path d="M94.118,564.706 L800,564.706 L800,611.765 L94.118,611.765 L94.118,564.706 Z M329.412,705.553 L800,705.553 L800,658.494 L329.412,658.494 L329.412,705.553 Z M800,0 L800,517.647 L0,517.647 L0,0 L800,0 Z M752.941,47.059 L47.06,47.059 L47.06,470.589 L752.941,470.589 L752.941,47.059 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>
