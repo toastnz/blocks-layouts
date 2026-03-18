@@ -90,7 +90,9 @@ Allowed extension: 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'
 
 ### Per-layout configuration (labels, icons, disabling)
 
-Use `layout_config` on any block class to customise the label or icon shown in the CMS layout picker, or to disable a layout entirely. Keys are short layout folder names (e.g. `Default`, `Stacked`).
+Use `layout_config` on any block class to customise the label or icon shown in the CMS layout picker, or to disable a layout entirely. Keys are short layout folder names (e.g. `Default`, `Split`).
+
+View the available icon classes here: `client/fonts/layout-icons/font/preview.html`
 
 ```yaml
 Toast\Blocks\TextBlock:
@@ -98,9 +100,9 @@ Toast\Blocks\TextBlock:
     Default:
       label: 'Default'
       layout_icon_path: '[resources]/app/client/images/layout-icons/default/textblock.svg'
-    Stacked:
-      label: 'Stacked'
-      layout_icon_class: 'layout-icons-layout-stacked'
+    Split:
+      label: 'Split'
+      layout_icon_class: 'layout-icons-text-columns'
       disabled: true
 ```
 
