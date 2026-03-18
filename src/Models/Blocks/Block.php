@@ -6,14 +6,13 @@ namespace Toast\Blocks;
 use Page;
 use ReflectionClass;
 use SilverStripe\ORM\DB;
-use SilverStripe\ORM\DataList;
+use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use Toast\Blocks\Helpers\Helper;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\HeaderField;
-use SilverStripe\Forms\HiddenField;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
@@ -30,9 +29,10 @@ use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Subsites\State\SubsiteState;
-use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
+use SilverStripe\Forms\HiddenField;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
 {
@@ -44,21 +44,31 @@ class Block extends DataObject
 
     protected static $icon_class = 'font-icon-block-content';
 
-    private static $common_block_classes = [];
+    /**
+     * Per-layout configuration, keyed by short layout name.
+     * Supports: label (string), icon (path, supports [resources] token), disabled (bool).
+     *
+     * Example YAML (in your project's _config/blocks.yml):
+     *
+     *   Toast\Blocks\TextBlock:
+     *     layout_config:
+     *       Default:
+     *         label: 'Default'
+     *         layout_icon_path: '[resources]/themes/main/client/images/layout-icons/default/textblock.svg'
+     *       Stacked:
+     *         label: 'Stacked'
+     *         layout_icon_path: '[resources]/themes/main/client/images/layout-icons/stacked/textblock.svg'
+     *         disabled: true
+     *     exclude_layouts:
+     *       - Legacy
+     *
+     * Full class-name keys are still supported for backward compatibility.
+     */
+    private static $layout_config = [];
 
-    private static $first_block_classes = [
-        'first',
-        'in-view'
-    ];
+    private static $exclude_layouts = [];
 
-    private static $last_block_classes = [
-        'js-in-view',
-        'last'
-    ];
-
-    private static $other_block_classes = [
-        'js-in-view'
-    ];
+    protected static $available_layouts_cache = [];
 
     private static $db = [
         'Title'         => 'Varchar(255)',
@@ -77,7 +87,6 @@ class Block extends DataObject
         'IconForCMS'        => 'Type',
         'Title'             => 'Title',
         'ContentSummary'    => 'Content',
-        'BlockLayoutName'   => 'Layout',
         'LinkedPagesList'   => 'Linked Pages',
     ];
 
@@ -99,7 +108,6 @@ class Block extends DataObject
         } elseif ($this->Heading) {
             return DBField::create_field(DBHTMLText::class, $this->Heading);
         }
-
         return null;
     }
 
@@ -114,7 +122,7 @@ class Block extends DataObject
             ');
         }
 
-        $icon = str_replace('[resources]', TOAST_RESOURCES_DIR, self::config()->get('block-icon'));
+        $icon = $this->replaceResourcesToken(self::config()->get('block-icon'), TOAST_RESOURCES_DIR);
 
         return DBField::create_field('HTMLText', '
             <div data-block-id="' . $this->BlockID . '" title="' . $this->i18n_singular_name() . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">
@@ -131,24 +139,38 @@ class Block extends DataObject
 
     public function forTemplate(): string
     {
-        $template = $this->Template;
+        $template = $this->resolveTemplateWithFallback($this->Template);
 
         $this->extend('updateBlockTemplate', $template);
 
-        // Default layout as fallback
-        $defaultTemplate = 'Toast\Blocks\Default\\' . $this->getBlockTemplateName();
+        $defaultTemplate = $this->getDefaultTemplateClass();
 
         return $this->renderWith([$template, $defaultTemplate, 'Toast\Blocks\Default\Block']);
     }
 
     public function getCMSFields()
     {
-        // Require the block's CSS and JS files in the CMS
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/blocks.css');
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/blocks.js');
 
         $this->beforeUpdateCMSFields(function ($fields) {
-            // Start by removing fields we don't want to show
+            if ($this->ID) {
+                // Generate HTML for the list of links
+                $linksHtml = Helper::getBlockPageLinksHTMLForCMS($this);
+
+                $fields->addFieldsToTab('Root.More', [
+                    OpenCMSPreview::create($this->getBlockPreviewURL()),
+                    HeaderField::create('UsageHeading', 'Link to this block'),
+                    LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
+                    ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
+                    ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
+                ]);
+
+                $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
+                $fields->insertBefore('Title', LiteralField::create('PageLinks', $linksHtml));
+                $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
+            }
+
             $fields->removeByName([
                 'Template',
                 'CSSFile'
@@ -160,157 +182,526 @@ class Block extends DataObject
                     ->setDescription('Title used for internal reference only and does not appear on the site.'),
                 TextField::create('AnchorName', 'Anchor Name')
                     ->setDescription('This will be the name that appears in the URL when linking to this block manually. <br> <strong class="warning">Please ensure this heading is unique on the page.</strong> <br> <strong class="warning">Updating this value will break any existing anchor links pointing to this block!</strong>'),
-                $this->getTemplateOptionsField(),
                 TextField::create('Heading', 'Heading')
                     ->setDescription('&lt;h2&gt;'),
                 HTMLEditorField::create('Content', 'Content')
             ]);
 
-            // Exit here if the block hasn't been saved yet
-            if (!$this->exists()) return;
+            if ($layoutOptionsField = $this->getTemplateOptionsField()) {
+                $fields->insertAfter('AnchorName', $layoutOptionsField);
+            }
 
-            $fields->addFieldsToTab('Root.More', [
-                OpenCMSPreview::create($this->getBlockPreviewURL()),
-                HeaderField::create('UsageHeading', 'Link to this block'),
-                LiteralField::create('BlockLink', 'Block Link <br><a href="' . $this->AbsoluteLink() . '" target="_blank">' . $this->AbsoluteLink() . '</a><hr>'),
-                ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
-                ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
-            ]);
-
-            $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
-            $fields->insertBefore('Title', LiteralField::create('PageLinks', Helper::getBlockPageLinksHTMLForCMS($this)));
-            $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
+            if ($notice = $this->getTemplateMissingNoticeField()) {
+                $fields->insertAfter('AnchorName', $notice);
+            }
         });
 
         return parent::getCMSFields();
     }
 
-    public function getAvailableLayouts($className = null)
+    protected function getLayoutConfig(): array
     {
-        // This will be a unique list of layouts
-        $layouts = [];
-        // These will come from the module
-        $moduleLayouts = [];
-        // These will come from the theme
-        $additionalLayouts = [];
+        $layoutConfig = (array) ($this->config()->get('layout_config') ?: []);
 
-        // Get the module's layouts directory
-        $moduleLayoutsDir = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR;
-        // Get the additional layouts directory
-        $additionalLayoutsDir = BASE_PATH . '/' . Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_src');
+        // Be forgiving if exclude_layouts was mistakenly nested under layout_config.
+        unset($layoutConfig['exclude_layouts']);
 
-        // Get the folder name of the module layouts
-        $moduleLayoutsName = basename($moduleLayoutsDir);
+        return $layoutConfig;
+    }
 
-        // Scan the module's layouts directory to get all the templates
-        $moduleTemplates = array_values(array_diff(scandir('/' . $moduleLayoutsDir), array('.', '..')));
+    protected function getExcludedLayouts(): array
+    {
+        $excludeLayouts = (array) ($this->config()->get('exclude_layouts') ?: []);
+        $layoutConfig = (array) ($this->config()->get('layout_config') ?: []);
 
-        // Loop all the module templates and add them to the $moduleLayouts array
-        foreach ($moduleTemplates as $template) {
-            $moduleLayouts[$moduleLayoutsName][] = $template;
+        if (!empty($layoutConfig['exclude_layouts']) && is_array($layoutConfig['exclude_layouts'])) {
+            $excludeLayouts = array_merge($excludeLayouts, $layoutConfig['exclude_layouts']);
         }
 
-        // If there are additional layouts, scan the directory to get all the templates
-        if (file_exists($additionalLayoutsDir)) {
-            // Get an array of all the subdirectories in the additional layouts directory
-            $additionalLayoutFolders = array_diff(scandir('/' . $additionalLayoutsDir), array('.', '..'));
+        return array_values(array_unique(array_map('strval', $excludeLayouts)));
+    }
 
-            // Loop all the additional layout folders
-            foreach ($additionalLayoutFolders as $folder) {
-                // Construct the path to the folder
-                $path = '/' . $additionalLayoutsDir . DIRECTORY_SEPARATOR . $folder;
+    protected function getLayoutClassName(string $layout, string $templateName): string
+    {
+        return 'Toast\\Blocks\\' . $layout . '\\' . $templateName;
+    }
 
-                // Check if the path is a directory
-                if (is_dir($path)) {
-                    // Scan the $folder directory to get all the templates (.ss files)
-                    $additionalTemplates = array_values(array_diff(scandir($path), array('.', '..')));
+    protected function getLayoutConfigEntry(string $layout, string $templateName): array
+    {
+        $layoutConfig = $this->getLayoutConfig();
+        $className = $this->getLayoutClassName($layout, $templateName);
 
-                    // Make sure the $additionalTemplates are all files that have the .ss extension
-                    $additionalTemplates = array_filter($additionalTemplates, function ($template) {
-                        return pathinfo($template, PATHINFO_EXTENSION) === 'ss';
-                    });
+        if (!empty($layoutConfig[$layout]) && is_array($layoutConfig[$layout])) {
+            return $layoutConfig[$layout];
+        }
 
-                    // Loop all the additional templates and add them to the $additionalLayouts array
-                    foreach ($additionalTemplates as $template) {
-                        $additionalLayouts[$folder][] = $template;
-                    }
-                }
+        if (!empty($layoutConfig[$className]) && is_array($layoutConfig[$className])) {
+            return $layoutConfig[$className];
+        }
+
+        return [];
+    }
+
+    protected function isLayoutDisabled(string $layout, string $templateName): bool
+    {
+        $config = $this->getLayoutConfigEntry($layout, $templateName);
+
+        if (array_key_exists('disabled', $config)) {
+            return (bool) $config['disabled'];
+        }
+
+        return in_array($layout, $this->getExcludedLayouts(), true);
+    }
+
+    protected function getLayoutDiscoveryCacheKey(): string
+    {
+        return md5(json_encode([
+            BASE_PATH,
+            TOAST_BLOCKS_DIR,
+            TOAST_BLOCKS_TEMPLATE_DIR,
+            Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_src'),
+        ]));
+    }
+
+    protected function replaceResourcesToken(?string $path, string $replacement): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        return str_replace('[resources]', $replacement, $path);
+    }
+
+    protected function resolvePublicResourcePath(?string $path): ?string
+    {
+        $resolvedPath = $this->replaceResourcesToken($path, RESOURCES_DIR);
+
+        if (!$resolvedPath) {
+            return null;
+        }
+
+        return Director::publicFolder() . '/' . $resolvedPath;
+    }
+
+    protected function getTemplateFileName(string $template): string
+    {
+        return pathinfo($template, PATHINFO_FILENAME);
+    }
+
+    protected function getTemplateParts(?string $template): array
+    {
+        if (!$template) {
+            return [];
+        }
+
+        return explode('\\', $template);
+    }
+
+    protected function getTemplateLayoutName(?string $template): ?string
+    {
+        $parts = $this->getTemplateParts($template);
+
+        if (!isset($parts[2]) || !$parts[2]) {
+            return null;
+        }
+
+        return $parts[2];
+    }
+
+    protected function getDefaultTemplateClass(): string
+    {
+        return $this->getLayoutClassName('Default', $this->getBlockTemplateName());
+    }
+
+    protected function isTemplateMissing(): bool
+    {
+        if (!$this->Template) {
+            return false;
+        }
+
+        $availableTemplates = $this->getAvailableTemplateClasses($this->getBlockTemplateName());
+
+        return !empty($availableTemplates) && !in_array($this->Template, $availableTemplates, true);
+    }
+
+    protected function getTemplateMissingNoticeField(): ?LiteralField
+    {
+        if (!$this->isTemplateMissing()) {
+            return null;
+        }
+
+        $layoutName = htmlspecialchars($this->getTemplateLayoutName($this->Template) ?: $this->Template, ENT_QUOTES);
+        $defaultLayoutName = htmlspecialchars($this->getTemplateLayoutName($this->getDefaultTemplateClass()) ?: 'Default', ENT_QUOTES);
+
+        $html = '<div class="message warning" style="margin-bottom:1em">'
+            . '<strong>Layout not available:</strong> The previously selected layout \'<em>' . $layoutName . '</em>\' '
+            . 'is no longer available. This block is currently rendering with the <strong>' . $defaultLayoutName . '</strong> layout. '
+            . 'Please choose a new layout below and save.'
+            . '</div>';
+
+        return LiteralField::create('TemplateMissingNotice', $html);
+    }
+
+    protected function getAvailableTemplateClasses(string $templateName): array
+    {
+        $classes = [];
+        $layouts = $this->getAvailableLayouts($templateName);
+
+        foreach ($layouts as $layout => $templates) {
+            foreach ($templates as $template) {
+                $fileTemplateName = $this->getTemplateFileName($template);
+                $classes[] = $this->getLayoutClassName($layout, $fileTemplateName);
             }
         }
 
-        // Now set up the $layouts array using the module layouts, and allowing the additional layouts to override them
-        $layouts = array_merge_recursive($moduleLayouts, $additionalLayouts);
+        return array_values(array_unique($classes));
+    }
 
-        if ($className) {
-            $layouts = array_map(function ($layout) use ($className) {
-                return array_filter($layout, function ($item) use ($className) {
-                    $itemName = pathinfo($item, PATHINFO_FILENAME);
-                    return $itemName === $className;
-                });
-            }, $layouts);
+    protected function resolveTemplateWithFallback(?string $template): string
+    {
+        $defaultTemplate = $this->getDefaultTemplateClass();
+        $templateName = $this->getBlockTemplateName();
+        $availableTemplates = $this->getAvailableTemplateClasses($templateName);
+
+        if (empty($availableTemplates)) {
+            return $defaultTemplate;
+        }
+
+        if ($template && in_array($template, $availableTemplates, true)) {
+            return $template;
+        }
+
+        if (in_array($defaultTemplate, $availableTemplates, true)) {
+            return $defaultTemplate;
+        }
+
+        return $availableTemplates[0];
+    }
+
+    protected function getCSSDirectory(): ?string
+    {
+        $cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
+
+        return $cssDir ?: null;
+    }
+
+    protected function getCSSFileName(?string $template = null): ?string
+    {
+        $layoutName = $this->getTemplateLayoutName($template ?: $this->Template);
+
+        if (!$layoutName) {
+            return null;
+        }
+
+        $cssFileName = strtolower($layoutName) . '-' . strtolower($this->getBlockTemplateName()) . '.css';
+
+        $this->extend('updateBlockTemplateCSS', $cssFileName);
+
+        return $cssFileName;
+    }
+
+    protected function getCSSFileAbsolutePath(?string $template = null): ?string
+    {
+        $cssDir = $this->getCSSDirectory();
+        $cssFileName = $this->getCSSFileName($template);
+
+        if (!$cssDir || !$cssFileName) {
+            return null;
+        }
+
+        return BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
+    }
+
+    protected function getCSSFileRelativePath(?string $template = null): ?string
+    {
+        $cssDir = $this->getCSSDirectory();
+        $cssFileName = $this->getCSSFileName($template);
+
+        if (!$cssDir || !$cssFileName) {
+            return null;
+        }
+
+        return $cssDir . '/' . $cssFileName;
+    }
+
+    protected function discoverLayouts(): array
+    {
+        $cacheKey = $this->getLayoutDiscoveryCacheKey();
+
+        if (isset(static::$available_layouts_cache[$cacheKey])) {
+            return static::$available_layouts_cache[$cacheKey];
+        }
+
+        // Keep layouts additive across module + project sources.
+        // Using merge here avoids replacing indexed template arrays for the same folder.
+        $layouts = array_merge_recursive(
+            $this->discoverModuleLayouts(),
+            $this->discoverAdditionalLayouts()
+        );
+
+        foreach ($layouts as $layout => $templates) {
+            $layouts[$layout] = array_values(array_unique($templates));
+        }
+
+        $layouts = array_filter($layouts, function ($templates) {
+            return !empty($templates);
+        });
+
+        static::$available_layouts_cache[$cacheKey] = $layouts;
+
+        return $layouts;
+    }
+
+    protected function discoverModuleLayouts(): array
+    {
+        $directory = BASE_PATH . '/' . TOAST_BLOCKS_DIR . '/' . TOAST_BLOCKS_TEMPLATE_DIR;
+
+        return [
+            basename($directory) => $this->scanTemplateDirectory($directory),
+        ];
+    }
+
+    protected function discoverAdditionalLayouts(): array
+    {
+        $layouts = [];
+        $directory = BASE_PATH . '/' . Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_src');
+
+        if (!is_dir($directory)) {
+            return $layouts;
+        }
+
+        foreach (glob($directory . '/*', GLOB_ONLYDIR) ?: [] as $folderPath) {
+            $layouts[basename($folderPath)] = $this->scanTemplateDirectory($folderPath);
         }
 
         return $layouts;
     }
 
-    public function getOptionsForLayouts($layouts = [])
+    protected function scanTemplateDirectory(string $directory): array
     {
-        // Initialize the $icons array with the same structure as $layouts
-        $icons = [];
-        $optionset = [];
+        if (!is_dir($directory)) {
+            return [];
+        }
+
+        return array_map('basename', glob($directory . '/*.ss') ?: []);
+    }
+
+    protected function filterLayoutsByClassName(array $layouts, string $className): array
+    {
+        foreach ($layouts as $layout => $templates) {
+            $layouts[$layout] = array_values(array_filter($templates, function ($template) use ($className) {
+                return pathinfo($template, PATHINFO_FILENAME) === $className;
+            }));
+        }
+
+        return array_filter($layouts, function ($templates) {
+            return !empty($templates);
+        });
+    }
+
+    protected function filterToConfiguredLayouts(array $layouts): array
+    {
+        $layoutConfig = $this->getLayoutConfig();
+
+        if (empty($layoutConfig)) {
+            return $layouts;
+        }
+
+        $configKeys = array_keys($layoutConfig);
+
+        return array_filter($layouts, function ($templates, $layout) use ($configKeys) {
+            // Match by short layout name key (preferred)
+            if (in_array($layout, $configKeys, true)) {
+                return true;
+            }
+
+            // Match by full class-name key prefix (backward compatibility)
+            $prefix = 'Toast\\Blocks\\' . $layout . '\\';
+            foreach ($configKeys as $key) {
+                if (strpos($key, $prefix) === 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    protected function filterDisabledLayouts(array $layouts): array
+    {
+        if (!$this->getLayoutConfig() && !$this->getExcludedLayouts()) {
+            return $layouts;
+        }
+
+        foreach ($layouts as $layout => $templates) {
+            $layouts[$layout] = array_values(array_filter($templates, function ($template) use ($layout) {
+                $name = pathinfo($template, PATHINFO_FILENAME);
+                return !$this->isLayoutDisabled($layout, $name);
+            }));
+        }
+
+        return array_filter($layouts, function ($templates) {
+            return !empty($templates);
+        });
+    }
+
+    protected function getLayoutIconSourcePath(): ?string
+    {
+        $iconSource = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src');
+
+        if (!$iconSource) {
+            return null;
+        }
+
+        $path = $this->resolvePublicResourcePath($iconSource);
+
+        return $path && is_dir($path) ? $path : null;
+    }
+
+    protected function getDiscoveredLayoutIcon(string $layout, string $templateName, ?string $iconSourcePath): ?string
+    {
+        if (!$iconSourcePath) {
+            return null;
+        }
+
+        $iconPath = $iconSourcePath . '/' . strtolower($layout) . '/' . strtolower($templateName) . '.svg';
+
+        if (!is_file($iconPath)) {
+            return null;
+        }
+
+        $icon = file_get_contents($iconPath);
+
+        return $icon === false ? null : $icon;
+    }
+
+    protected function getConfiguredLayoutIcon(string $layout, string $templateName): ?string
+    {
+        $config = $this->getLayoutConfigEntry($layout, $templateName);
+
+        if (empty($config['layout_icon_path'])) {
+            return null;
+        }
+
+        $iconPath = $this->resolvePublicResourcePath($config['layout_icon_path']);
+
+        if (!$iconPath || !is_file($iconPath)) {
+            return null;
+        }
+
+        $icon = file_get_contents($iconPath);
+
+        return $icon === false ? null : $icon;
+    }
+
+    protected function getLayoutOptionLabel(string $layout, string $templateName): string
+    {
+        $config = $this->getLayoutConfigEntry($layout, $templateName);
+
+        return !empty($config['label']) ? $config['label'] : $layout;
+    }
+
+    protected function getLayoutIconClass(string $layout, string $templateName): ?string
+    {
+        $config = $this->getLayoutConfigEntry($layout, $templateName);
+
+        return !empty($config['layout_icon_class']) ? (string) $config['layout_icon_class'] : null;
+    }
+
+    protected function buildLayoutOption(string $layout, string $template, ?string $iconSourcePath): ?DBField
+    {
+        $templateName = $this->getTemplateFileName($template);
+
+        // Priority: 1) explicit SVG path (icon:), 2) icon class (layout_icon_class:) — both from YAML config
+        // and both override directory discovery. 3) auto-discovered SVG from layout_icon_src directory.
+        $icon = $this->getConfiguredLayoutIcon($layout, $templateName);
+
+        if (!$icon) {
+            $iconClass = $this->getLayoutIconClass($layout, $templateName);
+            if ($iconClass) {
+                // TODO: replace html here to show new layout icon with icon class defined in yml
+                $icon = '<span class="' . htmlspecialchars($iconClass, ENT_QUOTES) . '"></span>';
+            }
+        }
+
+        if (!$icon) {
+            $icon = $this->getDiscoveredLayoutIcon($layout, $templateName, $iconSourcePath);
+        }
+
+        if (!$icon) {
+            return null;
+        }
+
+        $html = '<div class="blockThumbnail">' . $icon . '</div><strong class="title" title="Template file: ' . $template . '">' . $this->getLayoutOptionLabel($layout, $templateName) . '</strong>';
+
+        return DBField::create_field(DBHTMLText::class, $html);
+    }
+
+    protected function getTemplateFieldOptions(array $layouts, string $shortName, array $icons): array
+    {
+        $options = [];
+        $allHaveIcons = true;
 
         foreach ($layouts as $layout => $templates) {
             foreach ($templates as $template) {
-                $icons[$layout][] = (object) [
-                    'template' => $template,
-                    'icon' => null
-                ];
-            }
-        }
+                $templateName = $this->getTemplateFileName($template);
 
-        if ($iconSrcFolder = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_icon_src')) {
-            // Get the full path to the icon folder
-            $iconSrcPath = Director::publicFolder() . '/' . str_replace('[resources]', RESOURCES_DIR, $iconSrcFolder);
-
-            if (file_exists($iconSrcPath)) {
-                // Iterate over the layouts to check for icon files
-                foreach ($layouts as $layout => $templates) {
-                    foreach ($templates as $template) {
-                        $iconFolder = strtolower($layout);
-                        $iconFile = strtolower(pathinfo($template, PATHINFO_FILENAME));
-                        // Construct the path to the icon file
-                        $iconPath = $iconSrcPath . '/' . $iconFolder . '/' . $iconFile . '.svg';
-
-                        // Check if the icon file exists
-                        if (file_exists($iconPath)) {
-                            // Get the icon file contents
-                            $icon = file_get_contents($iconPath);
-
-                            // Update the $icons array with the icon content
-                            foreach ($icons[$layout] as $iconObj) {
-                                if ($iconObj->template === $template) {
-                                    $iconObj->icon = $icon;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                if ($templateName !== $shortName) {
+                    continue;
                 }
+
+                $className = $this->getLayoutClassName($layout, $templateName);
+
+                if (empty($icons[$className])) {
+                    $allHaveIcons = false;
+                }
+
+                $options[$className] = $layout;
             }
         }
 
-        // Generate the $optionset array with HTML
-        foreach ($icons as $layout => $templates) {
-            foreach ($templates as $iconObj) {
-                $template = $iconObj->template;
-                $icon = $iconObj->icon;
-                $className = 'Toast\Blocks\\' . $layout . '\\' . pathinfo($template)['filename'];
+        return [$options, $allHaveIcons];
+    }
 
-                // Generate the HTML for the icon
-                if (!$icon) break;
+    protected function createTemplateOptionsField(array $options, array $icons, bool $allHaveIcons)
+    {
+        if ($allHaveIcons) {
+            return OptionsetField::create('Template', 'Layout', $icons, $this->Template)
+                ->addExtraClass('toast-block-layouts');
+        }
 
-                $html = '<div class="blockThumbnail">' . $icon . '</div><strong class="title" title="Template file: ' . $template . '">' . $layout . '</strong>';
-                $optionset[$className] = DBField::create_field(DBHTMLText::class, $html);
+        return DropdownField::create('Template', 'Layout', $options, $this->Template)
+            ->addExtraClass('toast-block-layouts');
+    }
+
+    public function getAvailableLayouts($className = null)
+    {
+        $layouts = $this->discoverLayouts();
+
+        if ($className) {
+            $layouts = $this->filterLayoutsByClassName($layouts, $className);
+        }
+
+        $layouts = $this->filterToConfiguredLayouts($layouts);
+
+        return $this->filterDisabledLayouts($layouts);
+    }
+
+    public function getOptionsForLayouts($layouts = [])
+    {
+        $optionset = [];
+        $iconSourcePath = $this->getLayoutIconSourcePath();
+
+        foreach ($layouts as $layout => $templates) {
+            foreach ($templates as $template) {
+                $templateName = $this->getTemplateFileName($template);
+                $option = $this->buildLayoutOption($layout, $template, $iconSourcePath);
+
+                if (!$option) {
+                    continue;
+                }
+
+                $optionset[$this->getLayoutClassName($layout, $templateName)] = $option;
             }
         }
 
@@ -319,347 +710,238 @@ class Block extends DataObject
 
     public function getTemplateOptionsField()
     {
-        // Create an array of layout options
-        $options = [];
-        // Get the block's short name
         $shortName = (new ReflectionClass($this))->getShortName();
-        // Get the available layouts
         $layouts = $this->getAvailableLayouts($shortName);
-
-        // Get the icons for the layouts
         $icons = $this->getOptionsForLayouts($layouts);
-
-        // Flag to check if all matching layouts have icons
-        $allHaveIcons = true;
-
-        // Set the field to null by default
         $field = HiddenField::create('Template', 'Layout', $this->Template);
+        [$options, $allHaveIcons] = $this->getTemplateFieldOptions($layouts, $shortName, $icons);
 
-        // Loop all the layouts
-        foreach ($layouts as $folder => $templates) {
-            // Loop all the templates
-            foreach ($templates as $template) {
-                // Get the template name without extension
-                $name = pathinfo($template, PATHINFO_FILENAME);
-
-                $className = 'Toast\Blocks\\' . $folder . '\\' . $name;
-
-                // Check if the template name matches the block's class name
-                if ($name === $shortName) {
-                    // Check if the icon exists for this template
-                    if (empty($icons[$className])) {
-                        $allHaveIcons = false;
-                    }
-                    // Add the template to the options array
-                    $options[$className] = $folder;
-                }
-            }
-        }
-
-        // Return the hidden field if there are no extra options
         if (count($options) < 2) return $field;
 
-        // Create the field based on whether all matching layouts have icons
-        if ($allHaveIcons) {
-            // Create an OptionsetField with the layout options and icons
-            $field = OptionsetField::create('Template', 'Layout', $icons, $this->Template)
-                ->addExtraClass('toast-block-layouts');
-        } else {
-            // Create a DropdownField with the layout options
-            $field = DropdownField::create('Template', 'Layout', $options, $this->Template)
-                ->addExtraClass('toast-block-layouts');
-        }
-
-        // Return the field
-        return $field;
+        return $this->createTemplateOptionsField($options, $icons, $allHaveIcons);
     }
 
     public function getCSSFile()
     {
-        // Get the CSS directory from the configuration
-        $cssDir = Config::inst()->get('Toast\Blocks\Extensions\PageExtension', 'layout_dist_dir');
+        $absolutePath = $this->getCSSFileAbsolutePath();
 
-        // Get the template name
-        $template = $this->Template;
-
-        // If either the CSS directory or the template name is not set, return null
-        if (!$cssDir || !$template) {
+        if (!$absolutePath || !is_file($absolutePath)) {
             return null;
         }
 
-        // Split the template name into parts
-        $templateParts = explode('\\', $template);
-
-        // If the template name doesn't have at least 3 parts, return null
-        if (!isset($templateParts[2])) {
-            return null;
-        }
-
-        // Get the layout name from the template parts and convert it to lowercase
-        $layoutName = strtolower($templateParts[2]);
-
-        // Get the block template name and convert it to lowercase
-        $blockTemplateName = strtolower($this->getBlockTemplateName());
-
-        // Construct the CSS file name
-        $cssFileName = $layoutName . '-' . $blockTemplateName . '.css';
-
-        // Allow other extensions to update the CSS file path
-        $this->extend('updateBlockTemplateCSS', $cssFileName);
-
-        // Construct the full path to the CSS file
-        $cssFilePath = BASE_PATH . '/' . $cssDir . '/' . $cssFileName;
-
-        // If the CSS file doesn't exist, return null
-        if (!file_exists($cssFilePath)) {
-            return null;
-        }
-
-        // Construct the relative path to the CSS file
-        $cssFilePath = $cssDir . '/' . $cssFileName;
-
-        // Return the CSS file path
-        return $cssFilePath;
+        return $this->getCSSFileRelativePath();
     }
 
-    public function isFirstBlock(): bool
+    public function onBeforeWrite()
     {
-        if ($page = $this->getPage()) {
-            if ($firstBlock = $page->ContentBlocks()->Sort('SortOrder')->first()) {
-                return $this->ID === $firstBlock->ID;
-            }
-        }
-
-        return false;
-    }
-
-    public function isLastBlock(): bool
-    {
-        if ($page = $this->getPage()) {
-            if ($lastBlock = $page->ContentBlocks()->Sort('SortOrder', 'DESC')->first()) {
-                return $this->ID === $lastBlock->ID;
-            }
-        }
-
-        return false;
-    }
-
-    public function getExtraClasses(): string
-    {
-        // extra classes as array of strings
-        $extraClasses = [];
-
-        // Read the block's config to get first_block_classes, last_block_classes and block_classes
-        $blockConfig = Config::forClass(get_class($this));
-
-        if ($this->isFirstBlock()) {
-            if ($firstBlockClasses = $blockConfig->get('first_block_classes')) {
-                $extraClasses = array_merge($extraClasses, $firstBlockClasses);
-            }
-        } elseif ($this->isLastBlock()) {
-            if ($lastBlockClasses = $blockConfig->get('last_block_classes')) {
-                $extraClasses = array_merge($extraClasses, $lastBlockClasses);
-            }
-        } else {
-            if ($otherBlockClasses = $blockConfig->get('other_block_classes')) {
-                $extraClasses = array_merge($extraClasses, $otherBlockClasses);
-            }
-        }
-
-        if ($commonBlockClasses = $blockConfig->get('common_block_classes')) {
-            $extraClasses = array_merge($extraClasses, $commonBlockClasses);
-        }
-
-        // Allow extensions to modify the extra classes
-        $extraClasses = $this->updateExtraClasses($extraClasses);
-        // Get any block specific extra classes from extensions / other blocks
-        $blockSpecificClasses = $this->getBlockSpecificExtraClasses();
-
-        // Merge the block specific classes with the other extra classes
-        $extraClasses = array_merge($extraClasses, $blockSpecificClasses);
-
-        // Return the array as a string
-        return implode(' ', $extraClasses);
-    }
-
-    public function updateExtraClasses(array $classes): array
-    {
-        // Allow extensions to modify the extra classes
-        $this->extend('updateExtraClasses', $classes);
-
-        return $classes;
-    }
-
-    public function getBlockSpecificExtraClasses(): array
-    {
-        // Set up an empty array for the classes
-        $classes = [];
-
-        // Return the classes as an array
-        return $this->updateBlockSpecificExtraClasses($classes);
-    }
-
-    public function updateBlockSpecificExtraClasses(array &$classes): array
-    {
-        // Allow extensions to add block specific extra classes
-        $this->extend('updateBlockSpecificExtraClasses', $classes);
-        return $classes;
-    }
-
-    public function onBeforeWrite(): void
-    {
-        if (!$this->Template) {
-            $this->Template =  $this->getTemplateClass();
-        }
+        $this->Template = $this->resolveTemplateWithFallback($this->Template);
 
         $this->CSSFile = $this->getCSSFile();
 
         parent::onBeforeWrite();
     }
 
-    public function getTemplateClass(): string
+    public function getTemplateClass()
     {
-        return 'Toast\Blocks\\Default\\' . $this->getBlockTemplateName();
+        return $this->getDefaultTemplateClass();
     }
 
-    public function populateDefaults(): void
+    public function populateDefaults()
     {
-        if (!$this->Template) {
-            $this->Template =  $this->getTemplateClass();
-        }
+        $this->Template = $this->resolveTemplateWithFallback($this->Template);
         parent::populateDefaults();
     }
 
-    public function getTitle(): string
+    public function getTitle()
     {
-        // If the block exists, return the Title field.
-        if ($this->exists()) return $this->getField('Title');
-        // Otherwise, return the singular name of the block as a default title for new blocks.
-        return $this->getField('Title') ?: $this->i18n_singular_name();
+        if ($this->ID) {
+            return $this->getField('Title') ?: $this->i18n_singular_name();
+        } else {
+            return $this->getField('Title');
+        }
     }
 
-    public function getApiURL(): string
+    public function getApiURL()
     {
         return Controller::join_links(Controller::curr()->AbsoluteLink(), 'Block', $this->ID);
     }
 
-    public function getLink($action = null): string
+    protected function getCurrentCMSRecord()
     {
-        // Get the current controller
         $controller = Controller::curr();
 
-        // Initialise the parent variable
-        $parent = null;
+        if ($controller instanceof CMSMain) {
+            return $controller->currentRecord();
+        }
+
+        return null;
+    }
+
+    protected function getLinkParentPage()
+    {
+        if ($parent = $this->getCurrentCMSRecord()) {
+            return $parent;
+        }
+
+        if ($parent = $this->getParentPage()) {
+            return $parent;
+        }
 
         $pages = $this->getAllPages();
 
-        // Ensure the controller is an instance of CMSMain
-        if ($controller instanceof CMSMain) {
-            // Call the currentRecord() method on the controller instance
-            $parent = $controller->currentRecord();
-        } else {
-            $parent = $this->getParentPage();
-
-            if (!$parent || !$parent->exists()) {
-                if (count($pages) > 0) $parent = $this->getAllPages()[0];
-            }
-        }
-
-        if ($parent && $parent->exists()) {
-            return $parent->Link($action) . '#' . $this->getBlockID();
-        }
-
-        return '';
+        return count($pages) > 0 ? $pages[0] : null;
     }
 
-    public function Link($action = null): string
+    protected function buildBlockLinkFromParent($parent, $action = null): string
+    {
+        if (!$parent || !$parent->exists()) {
+            return '';
+        }
+
+        return $parent->Link($action) . '#' . $this->getBlockID();
+    }
+
+    protected function splitLinkHash(string $link): array
+    {
+        $parts = explode('#', $link, 2);
+
+        return [
+            'location' => $parts[0],
+            'hash' => $parts[1] ?? null,
+        ];
+    }
+
+    protected function appendQueryParams(string $url, array $params): string
+    {
+        $separator = strpos($url, '?') !== false ? '&' : '?';
+
+        return $url . $separator . http_build_query($params);
+    }
+
+    protected function appendSubsitePreviewParam(string $url): string
+    {
+        if (!class_exists(Subsite::class)) {
+            return $url;
+        }
+
+        return $this->appendQueryParams($url, [
+            'SubsiteID' => SubsiteState::singleton()->getSubsiteId(),
+        ]);
+    }
+
+    protected function appendHash(string $url, ?string $hash): string
+    {
+        if (!$hash) {
+            return $url;
+        }
+
+        $normalizedHash = ltrim($hash, '#');
+
+        if ($normalizedHash === '') {
+            return $url;
+        }
+
+        $urlWithoutHash = explode('#', $url, 2)[0];
+
+        return $urlWithoutHash . '#' . $normalizedHash;
+    }
+
+    public function getLink($action = null)
+    {
+        return $this->buildBlockLinkFromParent($this->getLinkParentPage(), $action);
+    }
+
+    public function Link($action = null)
     {
         return $this->getLink($action);
     }
 
     public function getBlockLink($parent)
     {
-        if ($parent && $parent->exists()) {
-            return $parent->Link() . '#' . $this->getBlockID();
-        }
-
-        return '';
+        return $this->buildBlockLinkFromParent($parent);
     }
 
-    public function getBlockPreviewURL($anchor = null): string
+    public function getBlockPreviewURL($anchor = null)
     {
-        // Get the base URL
-        $baseURL = Director::absoluteBaseURL();
+        $splitLink = $this->splitLinkHash($this->getLink());
+        $link = Controller::join_links(Director::absoluteBaseURL(), $splitLink['location']);
+        $link = $this->appendQueryParams($link, ['stage' => 'Stage', 'CMSPreview' => 1]);
+        $link = $this->appendSubsitePreviewParam($link);
 
-        // remove any hash
-        $splitLink = explode('#', $this->getLink());
-
-        $location = $splitLink[0];
-        $hash = $splitLink[1] ?? null;
-
-        $link = Controller::join_links($baseURL, $location);
-
-        // Add the necessary query string parameters
-        $link .= '?stage=Stage&CMSPreview=1';
-
-        if (class_exists(Subsite::class)) {
-            // Get the current subsite ID
-            $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
-            // Add the subsite ID to the query string
-            $link .= '&SubsiteID=' . $currentSubsiteID;
-        }
-
-        if ($anchor) {
-            $link .= '#' . $anchor;
-        } else if ($hash) {
-            $link .= '#' . $hash;
-        }
-
-        return $link;
+        return $this->appendHash($link, $anchor ?: $splitLink['hash']);
     }
 
-    public function getAbsoluteLink($action = null): string
-    {
-        // Get the current controller
-        $controller = Controller::curr();
+    // public function getBlockPreviewURL($anchor = null)
+    // {
+    //     // Get the current controller
+    //     $controller = Controller::curr();
+    //     $path = null;
+    //     // Get the base URL
+    //     $baseURL = Director::absoluteBaseURL();
 
+    //     // // Ensure the controller is an instance of CMSMain
+    //     if ($controller instanceof CMSMain) {
+    //         $path = $controller->currentRecord()->Link();
+    //     }
+
+    //     // Generate the link
+    //     $link = Controller::join_links($baseURL, $path);
+    //     // Add the necessary query string parameters
+    //     $link .= '?stage=Stage&CMSPreview=1';
+
+    //     if (class_exists(Subsite::class)) {
+    //         // Get the current subsite ID
+    //         $currentSubsiteID = SubsiteState::singleton()->getSubsiteId();
+    //         // Add the subsite ID to the query string
+    //         $link .= '&SubsiteID=' . $currentSubsiteID;
+    //     }
+
+    //     // Add the block ID as a hash
+    //     $link .= '#' . ($anchor ?: $this->getBlockID());
+
+    //     return $link;
+    // }
+
+    public function getAbsoluteLink($action = null)
+    {
         $link = Director::absoluteBaseURL();
 
-        // Ensure the controller is an instance of CMSMain
-        if ($controller instanceof CMSMain) {
-            // Call the currentRecord() method on the controller instance
-            $link = $controller->currentRecord()->AbsoluteLink();
+        if ($record = $this->getCurrentCMSRecord()) {
+            $link = $record->AbsoluteLink();
         }
 
-        return $link . '?stage=Stage#' . $this->owner->getBlockID();
+        return $this->appendHash(
+            $this->appendQueryParams($link, ['stage' => 'Stage']),
+            $this->owner->getBlockID()
+        );
     }
 
-    public function AbsoluteLink($action = null): string
+    public function AbsoluteLink($action = null)
     {
         return $this->getAbsoluteLink($action);
     }
 
-    // public function getLinkedPagesList()
-    // {
-    //     $pagesWithBlock = $this->getAllPages();
-    //     // only show pages
-    //     $pages = [];
-    //     foreach ($pagesWithBlock as $page) {
-    //         if ($page instanceof SiteTree && $page->exists()) {
-    //             $pages[] = $page;
-    //         }
-    //     }
-    //     // Sort the pages by title
-    //     usort($pages, function ($a, $b) {
-    //         return strcmp($a->Title, $b->Title);
-    //     });
-    //     // Return the sorted pages in implode format
-    //     return implode(', ', array_map(function ($page) {
-    //         return $page->Title;
-    //     }, $pages));
-    // }
+    public function getLinkedPagesList()
+    {
+        $pagesWithBlock = $this->getAllPages();
+        // only show pages
+        $pages = [];
+        foreach ($pagesWithBlock as $page) {
+            if ($page instanceof SiteTree && $page->exists()) {
+                $pages[] = $page;
+            }
+        }
+        // Sort the pages by title
+        usort($pages, function ($a, $b) {
+            return strcmp($a->Title, $b->Title);
+        });
+        // Return the sorted pages in implode format
+        return implode(', ', array_map(function ($page) {
+            return $page->Title;
+        }, $pages));
+    }
 
-    public function getAllPages(): array
+    public function getAllPages()
     {
         $pages = array_merge($this->getPagesFromMainSite(), $this->getPagesFromSubsites());
 
@@ -667,7 +949,7 @@ class Block extends DataObject
         return array_unique($pages, SORT_REGULAR);
     }
 
-    public function getPagesFromSiteTree(): array
+    public function getPagesFromSiteTree()
     {
         $pages = SiteTree::get()
             ->leftJoin('Page_ContentBlocks', '"Page_ContentBlocks"."PageID" = "SiteTree"."ID"')
@@ -677,7 +959,7 @@ class Block extends DataObject
         return $pages->toArray();
     }
 
-    public function getPagesFromMainSite(): array
+    public function getPagesFromMainSite()
     {
         $pages = $this->getPagesFromSiteTree();
 
@@ -696,7 +978,7 @@ class Block extends DataObject
         return $pages;
     }
 
-    public function getPagesFromSubsites(): array
+    public function getPagesFromSubsites()
     {
         $allPages = [];
 
@@ -728,7 +1010,7 @@ class Block extends DataObject
         return [];
     }
 
-    public function getBlockTemplateName(): string
+    public function getBlockTemplateName()
     {
         $reflect = new ReflectionClass($this);
 
@@ -737,24 +1019,14 @@ class Block extends DataObject
         return $templateName;
     }
 
-    public function getBlockLayoutName(): string
-    {
-        $templateParts = explode('\\', $this->Template);
-        if (count($templateParts) >= 3) {
-            return $templateParts[2];
-        }
-
-        return 'Default';
-    }
-
-    public function getHtmlID(): string
+    public function getHtmlID()
     {
         $templateName = $this->getBlockTemplateName() ?: $this->ClassName;
 
         return $templateName . '_' . $this->ID;
     }
 
-    public function getDisplayTitle(): string
+    public function getDisplayTitle()
     {
         $title = $this->Title;
 
@@ -767,7 +1039,23 @@ class Block extends DataObject
         return $title;
     }
 
-    public function canView($member = null): bool
+    public function getImageFocusPosition($imageid = null)
+    {
+        // If we don't have an image, return nothing
+        if (!$imageid) return;
+        // get image by id
+        if (!$image = Image::get()->byID($imageid)) return;
+        // Make sure the image is an instance of Image
+        if (!$image instanceof Image) return;
+        // Make sure there is a focus point
+        if (!$image->FocusPoint) return;
+
+        // Get the image focus point
+        $focusPoint = $image->FocusPoint;
+        return $focusPoint->PercentageX() . '% ' . $focusPoint->PercentageY() . '%';
+    }
+
+    public function canView($member = null)
     {
         if ($member && Permission::checkMember($member, ["ADMIN", "SITETREE_VIEW_ALL"])) {
             return true;
@@ -782,22 +1070,22 @@ class Block extends DataObject
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canEdit($member = null): bool
+    public function canEdit($member = null)
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canDelete($member = null): bool
+    public function canDelete($member = null)
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canCreate($member = null, $context = []): bool
+    public function canCreate($member = null, $context = [])
     {
         return Permission::check('CMS_ACCESS_CMSMain', 'any', $member);
     }
 
-    public function canDeleteFromLive($member = null): bool
+    public function canDeleteFromLive($member = null)
     {
         $extended = $this->extendedCan('canDeleteFromLive', $member);
 
@@ -808,7 +1096,7 @@ class Block extends DataObject
         return $this->canPublish($member);
     }
 
-    public function canPublish($member = null): bool
+    public function canPublish($member = null)
     {
         if (!$member || !(is_a($member, Member::class)) || is_numeric($member)) {
             $member = Security::getCurrentUser();
@@ -826,7 +1114,7 @@ class Block extends DataObject
         return $this->canEdit($member);
     }
 
-    public function isPublished(): bool
+    public function isPublished()
     {
         if ($this->isNew()) {
             return false;
@@ -837,7 +1125,7 @@ class Block extends DataObject
             : false;
     }
 
-    public function isNew(): bool
+    public function isNew()
     {
         if (empty($this->ID)) {
             return true;
@@ -850,7 +1138,7 @@ class Block extends DataObject
         return stripos($this->ID, 'new') === 0;
     }
 
-    public function getParentPage(): ?SiteTree
+    public function getParentPage()
     {
         if ($controller = Controller::curr()) {
             if (!$controller instanceof CMSPageEditController) {
@@ -864,11 +1152,9 @@ class Block extends DataObject
                 }
             }
         }
-
-        return null;
     }
 
-    public function doArchive(): bool
+    public function doArchive()
     {
         $this->invokeWithExtensions('onBeforeArchive', $this);
 
@@ -887,7 +1173,7 @@ class Block extends DataObject
         return false;
     }
 
-    public function canArchive($member = null): bool
+    public function canArchive($member = null)
     {
         if (!$member) {
             $member = Security::getCurrentUser();
@@ -909,7 +1195,7 @@ class Block extends DataObject
         return true;
     }
 
-    public function getPage(): ?Page
+    public function getPage()
     {
         $currentController = Controller::curr();
 
@@ -925,10 +1211,10 @@ class Block extends DataObject
             }
         }
 
-        return null;
+        return;
     }
 
-    public function getBlockID(): string
+    public function getBlockID()
     {
         // Set an ID var
         $id = '';
@@ -945,7 +1231,7 @@ class Block extends DataObject
         return (strlen($id) > 0) ? $id : $this->getHtmlID();
     }
 
-    public function getExtraRequirements(): mixed
+    public function getExtraRequirements()
     {
         $extraRequirements = null;
 
@@ -958,17 +1244,15 @@ class Block extends DataObject
     {
         if ($parent = $this->getCMSParentPage()) {
             $parentID = $parent->ID;
-            $parentEditLink = $this->getCMSParentPage()->getCMSEditLink();
+            $parentEditLink = $this->getCMSParentPage()->CMSEditLink();
             // Replace /show/$ID with /EditForm/$ID
             $parentEditFormLink = str_replace("/show/$parentID", "/EditForm/$parentID", $parentEditLink);
 
             return $parentEditFormLink . '/field/ContentBlocks/item/' . $this->ID . '/edit';
         }
-
-        return null;
     }
 
-    public function getCMSParentPage(): ?Page
+    public function getCMSParentPage()
     {
         // Get the current controller
         $controller = Controller::curr();
@@ -987,7 +1271,7 @@ class Block extends DataObject
         return null;
     }
 
-    public function getCMSSiblingBlocks(): ?DataList
+    public function getCMSSiblingBlocks()
     {
         $parent = $this->getCMSParentPage();
 
@@ -998,7 +1282,7 @@ class Block extends DataObject
         return null;
     }
 
-    public function getCMSSiblingBlocksLinks(): ?string
+    public function getCMSSiblingBlocksLinks()
     {
         $blocks = $this->getCMSSiblingBlocks();
 
@@ -1015,5 +1299,12 @@ class Block extends DataObject
         }
 
         return null;
+    }
+
+    public function getBlockSpecificExtraClasses()
+    {
+        $classes = [];
+        $this->extend('updateBlockSpecificExtraClasses', $classes);
+        return $classes;
     }
 }
