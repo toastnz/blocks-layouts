@@ -106,6 +106,7 @@ td.col-IconForCMS {
 .toast-block-layouts {
   .blockThumbnail {
     background-color: transparent !important;
+    color: var(--cms-text-colour) !important;
 
     svg {
       color: var(--cms-text-colour) !important;
@@ -114,6 +115,7 @@ td.col-IconForCMS {
 
   input:checked+.blockThumbnail {
     background-color: var(--cms-accent-colour) !important;
+    color: var(--cms-accent-text-colour, var(--cms-background-colour--dark)) !important;
 
     svg {
       color: var(--cms-accent-text-colour, var(--cms-background-colour--dark)) !important;
@@ -298,15 +300,17 @@ $background-colour: var(--cms-background-colour, transparent);
     margin-right: 0;
     margin-bottom: 0;
     text-align: center;
-    width: calc(50% - 40px);
+    width: min-content;
+    // width: 60px;
+    // height: 60px;
 
-    @container (min-width: 640px) {
-      width: calc(25% - 40px);
-    }
+    // @container (min-width: 640px) {
+    //   width: calc(25% - 40px);
+    // }
 
-    @container (min-width: 1280px) {
-      width: calc(20% - 40px);
-    }
+    // @container (min-width: 1280px) {
+    //   width: calc(20% - 40px);
+    // }
 
     label {
       cursor: pointer;
@@ -354,7 +358,8 @@ $background-colour: var(--cms-background-colour, transparent);
       position: relative;
       cursor: pointer;
       display: block;
-      width: 100%;
+      width: 80px;
+      height: 80px;
       border-radius: .3rem;
       overflow: hidden;
       color: #000;
@@ -370,7 +375,7 @@ $background-colour: var(--cms-background-colour, transparent);
         position: relative;
         z-index: 1;
         width: 100%;
-        height: auto;
+        height: 100%;
       }
 
       svg {
@@ -455,4 +460,12 @@ $background-colour: var(--cms-background-colour, transparent);
   &__item + h4 {
     margin-top: 30px;
   }
+}
+
+/* Layout icon styles */
+.layout-icons {
+  display: block;
+  color: inherit;
+  font-size: 40px;
+  line-height: 80px!important;
 }

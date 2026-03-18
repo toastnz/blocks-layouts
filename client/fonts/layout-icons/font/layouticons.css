@@ -70,4 +70,5 @@
 .layout-icons-tabs-left:before { content: "\0056"; }
 .layout-icons-tabs-right:before { content: "\0057"; }
 .layout-icons-tabs-top:before { content: "\0058"; }
-.layout-icons-text:before { content: "\0059"; }
+.layout-icons-text-columns:before { content: "\0059"; }
+.layout-icons-text:before { content: "\005a"; }

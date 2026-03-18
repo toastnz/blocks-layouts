@@ -13,6 +13,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
 use SilverStripe\Control\Director;
 use SilverStripe\Forms\HeaderField;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
@@ -29,10 +30,9 @@ use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Subsites\State\SubsiteState;
+use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
-use SilverStripe\Forms\HiddenField;
-use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
 
 class Block extends DataObject
 {
@@ -46,7 +46,7 @@ class Block extends DataObject
 
     /**
      * Per-layout configuration, keyed by short layout name.
-     * Supports: label (string), icon (path, supports [resources] token), disabled (bool).
+     * Supports: label (string), layout_icon_path (path, supports [resources] token), layout_icon_class (string: CSS class), disabled (bool).
      *
      * Example YAML (in your project's _config/blocks.yml):
      *
@@ -54,16 +54,19 @@ class Block extends DataObject
      *     layout_config:
      *       Default:
      *         label: 'Default'
-     *         layout_icon_path: '[resources]/themes/main/client/images/layout-icons/default/textblock.svg'
-     *       Stacked:
-     *         label: 'Stacked'
-     *         layout_icon_path: '[resources]/themes/main/client/images/layout-icons/stacked/textblock.svg'
+     *         layout_icon_path: '[resources]/path/to/your/icon.svg'
+     *       Split:
+     *         label: 'Split'
+     *         layout_icon_class: 'layout-icons-text-columns'
      *         disabled: true
      *     exclude_layouts:
-     *       - Legacy
+     *       - Other
      *
      * Full class-name keys are still supported for backward compatibility.
+     *
+     * To see available layout_icon_class options refer to client/fonts/layout-icons/font/preview.html
      */
+
     private static $layout_config = [];
 
     private static $exclude_layouts = [];
@@ -150,8 +153,12 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
+        // Load the main blocks css
         Requirements::css('toastnz/blocks-layouts: client/dist/styles/blocks.css');
+        // Load the blocks js
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/blocks.js');
+        // Load the custom icons font for layout options
+        Requirements::css('toastnz/blocks-layouts: client/fonts/layout-icons/font/layouticons.css');
 
         $this->beforeUpdateCMSFields(function ($fields) {
             if ($this->ID) {
@@ -620,7 +627,7 @@ class Block extends DataObject
             $iconClass = $this->getLayoutIconClass($layout, $templateName);
             if ($iconClass) {
                 // TODO: replace html here to show new layout icon with icon class defined in yml
-                $icon = '<span class="' . htmlspecialchars($iconClass, ENT_QUOTES) . '"></span>';
+                $icon = '<span class="layout-icons ' . htmlspecialchars($iconClass, ENT_QUOTES) . '"></span>';
             }
         }
 

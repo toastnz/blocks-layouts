@@ -32,7 +32,8 @@
   "extra": {
     "expose": [
         "client/images",
-        "client/dist"
+        "client/dist",
+        "client/fonts"
     ]
   },
   "config": {

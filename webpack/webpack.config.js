@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
-const postcssUrl = require('postcss-url');
+// const postcssUrl = require('postcss-url');
 const TerserPlugin = require("terser-webpack-plugin");
 const postcssCriticalCSS = require('postcss-critical-css');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -52,6 +52,7 @@ const stats = {
 const dir = path.resolve(__dirname, '../');
 // Our aliases
 const aliases = {
+  'fonts': path.resolve(dir, './client/fonts/'),
   'styles': path.resolve(dir, './client/source/styles/'),
   'scripts': path.resolve(dir, './client/source/scripts/'),
 };
@@ -125,9 +126,9 @@ generateSassIndexFiles([aliases.styles]);
                   sourceMap: isDevelopment,
                   postcssOptions: {
                     plugins: [
-                      postcssUrl({
-                        url: (asset) => asset.url.startsWith('data:') ? asset.url : `/_resources/app/client/${asset.url}?${Date.now()}`,
-                      }),
+                      // postcssUrl({
+                      //   url: (asset) => asset.url.startsWith('data:') ? asset.url : `/_resources/app/client/${asset.url}?${Date.now()}`,
+                      // }),
                       postcssCriticalCSS({
                         outputPath: config.criticalCSSOutput,
                         preserve: false,
