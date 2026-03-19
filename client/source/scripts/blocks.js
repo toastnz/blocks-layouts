@@ -57,8 +57,16 @@ CMSObserver.observe('.toast-block-layouts', (fieldsets) => {
 CMSObserver.observe('.content-block-siblings', (elements) => {
   const element = elements[0];
   const tab = element.closest('.tab-content');
+  const activeTab = element.querySelector('a.active');
 
   tab.insertBefore(element, tab.firstChild);
+
+  // Scroll the element to the activeTab if it exists, otherwise just scroll to the top of the tab
+  if (activeTab) {
+    activeTab.scrollIntoView({ block: 'center', container: 'nearest' });
+  } else {
+    element.scrollTop = 0;
+  }
 });
 
 class BlockPreviewMessenger {
