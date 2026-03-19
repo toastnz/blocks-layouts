@@ -2,9 +2,9 @@
 
 namespace Toast\Blocks\Extensions;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Core\Extension;
 
 class LinkExtension extends Extension
 {
@@ -32,13 +32,40 @@ class LinkExtension extends Extension
         );
     }
 
-    // Override the default TargetAttr method to also return rel="noopener noreferrer" if the link is set to open in a new window
-    public function getTargetAttr()
+    public function getDownloadAttribute(): string
     {
-        return $this->owner->OpenInNewWindow ? " target='_blank' rel='noopener noreferrer'" : '';
+        if ($this->owner->OpenInNew) {
+            return '';
+        }
+
+        if (!$this->owner->FileID) {
+            return '';
+        }
+
+        $file = $this->owner->File();
+
+        if (!$file?->exists()) {
+            return '';
+        }
+
+        return " download='" . $file->getFilename() . "'";
     }
 
-    public function getAccessibilityAttributes()
+    public function getTargetAttribute(): string
+    {
+        return $this->owner->OpenInNew ? " target='_blank' rel='noopener noreferrer'" : '';
+    }
+
+    public function getExternalLinkAttributes(): string
+    {
+        if (!$this->owner->ExternalUrl) {
+            return '';
+        }
+
+        return ' data-external-link';
+    }
+
+    public function getAccessibilityAttributes(): string
     {
         $attributes = ' ';
 
@@ -53,8 +80,15 @@ class LinkExtension extends Extension
         return $attributes;
     }
 
-    public function getLinkAttributes()
+    public function getLinkAttributes(): string
     {
-        return $this->getAccessibilityAttributes() . $this->getTargetAttr();
+        $attributes = [
+            $this->getDownloadAttribute(),
+            $this->getTargetAttribute(),
+            $this->getAccessibilityAttributes(),
+            $this->getExternalLinkAttributes(),
+        ];
+
+        return implode(' ', array_filter($attributes));
     }
 }

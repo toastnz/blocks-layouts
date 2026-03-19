@@ -33,7 +33,7 @@ SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest:
   extensions:
     CmsActionsExtension: Toast\Blocks\Extensions\CmsActionsExtension
 
-Sheadawson\Linkable\Models\Link:
+SilverStripe\LinkField\Models\Link:
   extensions:
     - Toast\Blocks\Extensions\LinkExtension
 
