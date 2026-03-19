@@ -777,7 +777,7 @@ class Block extends DataObject
         // If the block exists, return the Title field.
         if ($this->exists()) return $this->getField('Title');
         // Otherwise, return the singular name of the block as a default title for new blocks.
-        return $this->getField('Title') ?: $this->i18n_singular_name();
+        return $this->getField('Title') ?: $this->i18n_singular_name()?: 'Untitled Block';
     }
 
     public function getApiURL(): string
