@@ -772,7 +772,7 @@ class Block extends DataObject
         parent::populateDefaults();
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         // If the block exists, return the Title field.
         if ($this->exists()) return $this->getField('Title');
