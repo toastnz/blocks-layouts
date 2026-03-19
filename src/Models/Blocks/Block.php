@@ -680,7 +680,7 @@ class Block extends DataObject
                     $allHaveIcons = false;
                 }
 
-                $options[$className] = $layout;
+                $options[$className] = $this->getLayoutOptionLabel($layout, $templateName);
             }
         }
 
