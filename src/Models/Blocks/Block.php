@@ -172,10 +172,6 @@ class Block extends DataObject
 
     public function getCMSFields()
     {
-        // Load the main blocks css
-        Requirements::css('toastnz/blocks-layouts: client/dist/styles/blocks.css');
-        // Load the blocks js
-        Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/blocks.js');
         // Load the custom icons font for layout options
         Requirements::css('toastnz/blocks-layouts: client/fonts/layout-icons/font/layouticons.css');
 
