@@ -126,9 +126,6 @@ class ResourcesBlock extends Block
         // Sort the items
         $items = $items->sort($sort);
 
-        // Limit the number of items if a limit is set
-        $items = $items->limit($this->Limit ?: 4);
-
         return $items;
     }
 
