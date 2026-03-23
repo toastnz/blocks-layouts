@@ -15,6 +15,7 @@ class ResourcesBlock extends Block
     private static $description = 'Resources Block';
     private static $table_name = 'Blocks_ResourcesBlock';
     private static $target_resource_classname = 'Toast\Models\Resources\ResourceItem';
+    private static $target_resource_category = 'Resource Category';
 
     protected static $icon_class = 'font-icon-p-document';
 
@@ -55,8 +56,8 @@ class ResourcesBlock extends Block
      */
     public function getRelevantCategories(): DataList
     {
-        // Get all blog tags
-        $categories = TaxonomyTerm::get()->filter('Type.Name', 'Resource Category');
+        // Get all resource categories from the taxonomies
+        $categories = TaxonomyTerm::get()->filter('Type.Name', $this->Config()->get('target_resource_category') ?? 'Resource Category');
 
         // Allow extensions to modify the list of categories
         return $this->updateRelevantCategories($categories);
