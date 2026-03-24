@@ -940,25 +940,25 @@ class Block extends DataObject
         return $this->getAbsoluteLink($action);
     }
 
-    // public function getLinkedPagesList(): string
-    // {
-    //     $pagesWithBlock = $this->getAllPages();
-    //     // only show pages
-    //     $pages = [];
-    //     foreach ($pagesWithBlock as $page) {
-    //         if ($page instanceof SiteTree && $page->exists()) {
-    //             $pages[] = $page;
-    //         }
-    //     }
-    //     // Sort the pages by title
-    //     usort($pages, function ($a, $b) {
-    //         return strcmp($a->Title, $b->Title);
-    //     });
-    //     // Return the sorted pages in implode format
-    //     return implode(', ', array_map(function ($page) {
-    //         return $page->Title;
-    //     }, $pages));
-    // }
+    public function getLinkedPagesList(): string
+    {
+        $pagesWithBlock = $this->getAllPages();
+        // only show pages
+        $pages = [];
+        foreach ($pagesWithBlock as $page) {
+            if ($page instanceof SiteTree && $page->exists()) {
+                $pages[] = $page;
+            }
+        }
+        // Sort the pages by title
+        usort($pages, function ($a, $b) {
+            return strcmp($a->Title, $b->Title);
+        });
+        // Return the sorted pages in implode format
+        return implode(', ', array_map(function ($page) {
+            return $page->Title;
+        }, $pages));
+    }
 
     public function getAllPages(): array
     {
@@ -1036,6 +1036,16 @@ class Block extends DataObject
         $templateName = $reflect->getShortName() ?: '';
 
         return $templateName;
+    }
+
+    public function getBlockLayoutName(): string
+    {
+        $templateParts = explode('\\', $this->Template);
+        if (count($templateParts) >= 3) {
+            return $templateParts[2];
+        }
+
+        return 'Default';
     }
 
     public function getHtmlID(): string
