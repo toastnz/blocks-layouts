@@ -7,8 +7,6 @@
                         <h2 class="default-gallery__heading">{$Heading}</h2>
                     <% end_if %>
 
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid architecto rem cum explicabo. Odio sint, dolorum illo expedita dignissimos culpa. Quaerat, nobis perspiciatis. Maxime pariatur, excepturi perspiciatis reprehenderit eveniet eum?</p>
-
                     {$Content}
                 </div>
             </div>
