@@ -176,7 +176,7 @@ class PageContentBlock extends Block
     }
 
     // Override this to prevent "Linked Pages" from showing because the list could be massive
-    public function getLinkedPagesList()
+    public function getLinkedPagesList(): string
     {
         return '';
     }
