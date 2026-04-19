@@ -98,24 +98,28 @@ class ResourcesBlock extends Block
         return $items;
     }
 
-    /** Get posts from the relevant items
+    /** Get the items
      * @param string $sort
      * @return ArrayList
      */
     public function getItems($sort = 'SortOrder'): ArrayList
     {
-        // Require categories to be selected - return empty list if none selected
-        if (!$this->Categories()->exists()) {
-            return new ArrayList();
-        }
-
         $items = new ArrayList();
-        $categoryIDs = $this->Categories()->column('ID');
 
-        // Get all the items that are in the selected categories
-        foreach ($this->getResourceItems() as $resourceItem) {
-            $itemCategoryIDs = $resourceItem->ResourceCategories()->column('ID');
-            if (array_intersect($categoryIDs, $itemCategoryIDs)) {
+        // If the user has selected a category, only show items that are in that category/categories. Otherwise show all items
+        if ($this->Categories()->exists()) {
+            $categoryIDs = $this->Categories()->column('ID');
+
+            // Get all the items that are in the selected categories
+            foreach ($this->getResourceItems() as $resourceItem) {
+                $itemCategoryIDs = $resourceItem->ResourceCategories()->column('ID');
+                if (array_intersect($categoryIDs, $itemCategoryIDs)) {
+                    $items->push($resourceItem);
+                }
+            }
+        } else {
+            // Loop all the targetted resource items and add them to the array list
+            foreach ($this->getResourceItems() as $resourceItem) {
                 $items->push($resourceItem);
             }
         }
