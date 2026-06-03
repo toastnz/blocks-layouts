@@ -2,6 +2,7 @@
 
 namespace Toast\Blocks\Helpers;
 
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Subsites\Model\Subsite;
 
 class Helper
@@ -22,7 +23,7 @@ class Helper
             if (class_exists(Subsite::class)) {
                 // Group pages by subsite
                 $groupedPages = [];
-
+                $pages = SiteTree::get()->filter('ID', $pages);
                 foreach ($pages as $page) {
                     $subsiteID = $page->SubsiteID ?: 0; // Use 0 for main site pages
                     if (!isset($groupedPages[$subsiteID])) {

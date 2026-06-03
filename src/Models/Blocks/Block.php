@@ -807,8 +807,10 @@ class Block extends DataObject
         }
 
         $pages = $this->getAllPages();
-
-        return count($pages) > 0 ? $pages[0] : null;
+        if(count($pages) === 0) {
+            return null;
+        }
+        return SiteTree::get()->byID($pages[0]);
     }
 
     protected function buildBlockLinkFromParent($parent, $action = null): string
