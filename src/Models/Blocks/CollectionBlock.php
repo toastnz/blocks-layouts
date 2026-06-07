@@ -29,22 +29,21 @@ class CollectionBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function ($fields) {
+            // Get the available columns
+            $columns = $this->getAvailableColumns();
 
-        // Get the available columns
-        $columns = $this->getAvailableColumns();
-
-        $fields->addFieldsToTab('Root.Main', [
-            TreeDropdownField::create('RelatedPageID', 'Display pages related to:', SiteTree::class)
-                ->setDescription('Select the target page to get the relevant content from. If no page is selected, the current page will be used.'),
-            DropdownField::create('Columns', 'Columns', $columns),
-            DropdownField::create('Type', 'Collection of pages to display', [
-                'siblings' => 'Sibling Pages',
-                'children' => 'Child Pages',
-            ]),
-        ]);
-
-        return $fields;
+            $fields->addFieldsToTab('Root.Main', [
+                TreeDropdownField::create('RelatedPageID', 'Display pages related to:', SiteTree::class)
+                    ->setDescription('Select the target page to get the relevant content from. If no page is selected, the current page will be used.'),
+                DropdownField::create('Type', 'Collection of pages to display', [
+                    'siblings' => 'Sibling Pages',
+                    'children' => 'Child Pages',
+                ]),
+            ]);
+        });
+        
+        return parent::getCMSFields();
     }
 
     /** Get available columns from config or default values
