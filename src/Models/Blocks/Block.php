@@ -807,10 +807,8 @@ class Block extends DataObject
         }
 
         $pages = $this->getAllPages();
-        if(count($pages) === 0) {
-            return null;
-        }
-        return SiteTree::get()->byID($pages[0]);
+
+        return !empty($pages) ? $pages[0] : null;
     }
 
     protected function buildBlockLinkFromParent($parent, $action = null): string
@@ -1159,8 +1157,8 @@ class Block extends DataObject
             if (!$controller instanceof CMSPageEditController) {
                 try {
                     if ($data = $controller->data()) {
-                        if ($data->ID) {
-                            return SiteTree::get()->byID($data->ID);
+                        if ($data instanceof SiteTree && $data->ID) {
+                            return $data;
                         }
                     }
                 } catch (\Exception $e) {
