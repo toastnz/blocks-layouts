@@ -24,7 +24,7 @@
   "require": {
     "php": ">=8.3",
     "silverstripe/cms": "^6",
-    "silverstripe/userforms": "7.0.0-beta1",
+    "silverstripe/userforms": "^7",
     "axllent/silverstripe-form-fields": "^2.0",
     "toastnz/open-cms-preview": "^0.2.2",
     "silverstripe/linkfield": "^5.1"
