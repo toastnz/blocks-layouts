@@ -29,22 +29,22 @@ class CollectionBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function ($fields) {
+            // Get the available columns
+            $columns = $this->getAvailableColumns();
 
-        // Get the available columns
-        $columns = $this->getAvailableColumns();
-
-        $fields->addFieldsToTab('Root.Main', [
-            TreeDropdownField::create('RelatedPageID', 'Display pages related to:', SiteTree::class)
-                ->setDescription('Select the target page to get the relevant content from. If no page is selected, the current page will be used.'),
-            DropdownField::create('Columns', 'Columns', $columns),
-            DropdownField::create('Type', 'Collection of pages to display', [
-                'siblings' => 'Sibling Pages',
-                'children' => 'Child Pages',
-            ]),
-        ]);
-
-        return $fields;
+            $fields->addFieldsToTab('Root.Main', [
+                TreeDropdownField::create('RelatedPageID', 'Display pages related to:', SiteTree::class)
+                    ->setDescription('Select the target page to get the relevant content from. If no page is selected, the current page will be used.'),
+                DropdownField::create('Type', 'Collection of pages to display', [
+                    'siblings' => 'Sibling Pages',
+                    'children' => 'Child Pages',
+                    'same'     => 'Same Type'
+                ])->setDescription('if "Same Type" is selected, all pages of the same page type will be displayed'),
+            ]);
+        });
+        
+        return parent::getCMSFields();
     }
 
     /** Get available columns from config or default values
@@ -75,14 +75,18 @@ class CollectionBlock extends Block
      */
     public function getRelevantPages(): ArrayList
     {
-        // Get the type of pages to return (siblings or children)
+        // Get the type of pages to return (siblings, children or same)
         $type = $this->Type ?: 'siblings';
         // Get the target page, or the page that the block is rendering on
         $page = $this->RelatedPageID ? $this->RelatedPage() : $this->getPage();
         // Get the parent page if there is one, otherwise use the current page
         $parent = $page->Parent() ?? $page;
-        // If the type is children, return the children of the current page, otherwise return the children of the parent page excluding the current page (siblings)
-        $pages = ($type === 'children') ? $page->Children() : $parent->Children()->exclude('ID', $page->ID);
+        // Get the relevant pages based on the type: children of the current page, all pages of the same page type as the current page, or the children of the parent page excluding the current page (siblings)
+        $pages = match ($type) {
+            'children' => $page->Children(),
+            'same'     => SiteTree::get()->filter('ClassName', $page->ClassName),
+            default    => $parent->Children()->exclude('ID', $page->ID),
+        };
 
         // Convert the DataList to an ArrayList
         $pages = ArrayList::create($pages->toArray());

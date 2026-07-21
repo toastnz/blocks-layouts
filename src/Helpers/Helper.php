@@ -2,6 +2,7 @@
 
 namespace Toast\Blocks\Helpers;
 
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Subsites\Model\Subsite;
 
 class Helper
@@ -10,61 +11,44 @@ class Helper
     {
         $pages = $block->getAllPages();
 
-        // Generate HTML for the list of links
-        $linksHtml = '<div class="blocks-layouts-page-links">';
+        $html = '<div class="blocks-layouts-page-links">';
 
-        // Group all the pages by subsiteID
-        $groupedPages = [];
+        if (!$pages) {
+            $html .= '<p class="message warning" style="margin-bottom: 0;">No pages are using this block.</p>';
+            $html .= '</div>';
+            return $html;
+        }
 
-        if ($pages) {
+        if (class_exists(Subsite::class)) {
+            $grouped = [];
+            foreach (SiteTree::get()->filter('ID', $pages) as $page) {
+                $grouped[$page->SubsiteID ?: 0][] = $page;
+            }
 
-            // Check if the Subsites module is installed
-            if (class_exists(Subsite::class)) {
-                // Group pages by subsite
-                $groupedPages = [];
+            foreach ($grouped as $subsiteID => $subsitePages) {
+                $subsiteTitle = $subsiteID === 0
+                    ? 'Main Site'
+                    : (($subsite = Subsite::get()->byID($subsiteID)) ? $subsite->Title : 'Unknown Subsite');
 
-                foreach ($pages as $page) {
-                    $subsiteID = $page->SubsiteID ?: 0; // Use 0 for main site pages
-                    if (!isset($groupedPages[$subsiteID])) {
-                        $groupedPages[$subsiteID] = [];
-                    }
-                    $groupedPages[$subsiteID][] = $page;
-                }
-
-                foreach ($groupedPages as $subsiteID => $subsitePages) {
-                    // Get the subsite title
-                    if ($subsiteID == 0) {
-                        $subsiteTitle = 'Main Site';
-                    } else {
-                        $subsite = Subsite::get()->byID($subsiteID);
-                        $subsiteTitle = $subsite ? $subsite->Title : 'Unknown Subsite';
-                    }
-
-                    $linksHtml .= '<h4>' . $subsiteTitle . '</h4>';
-
-                    foreach ($subsitePages as $page) {
-                        // Get the icon class for the page
-                        $iconClass = $page->config()->get('cms_icon_class');
-
-                        // Construct the HTML with the icon class and link
-                        $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
-                    }
-                }
-            } else {
-                foreach ($pages as $page) {
-                    // Get the icon class for the page
-                    $iconClass = $page->config()->get('cms_icon_class');
-
-                    // Construct the HTML with the icon class and link
-                    $linksHtml .= '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
+                $html .= '<h4>' . $subsiteTitle . '</h4>';
+                foreach ($subsitePages as $page) {
+                    $html .= self::renderPageLink($page);
                 }
             }
         } else {
-            $linksHtml .= '<p class="message warning" style="margin-bottom: 0;">No pages are using this block.</p>';
+            foreach ($pages as $page) {
+                $html .= self::renderPageLink($page);
+            }
         }
 
-        $linksHtml .= '</div>';
+        $html .= '</div>';
 
-        return $linksHtml;
+        return $html;
+    }
+
+    private static function renderPageLink($page): string
+    {
+        $iconClass = $page->config()->get('cms_icon_class');
+        return '<div class="blocks-layouts-page-links__item"><i class="' . $iconClass . '"></i><a href="' . $page->CMSEditLink() . '">' . $page->Title . '</a></div>';
     }
 }
