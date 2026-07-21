@@ -16,7 +16,7 @@
 
     <div class="default-percentage-item__details">
         <% if $Title %>
-            <% if $Top.Heading %>
+            <% if $Parent.Heading %>
                 <h3 class="default-percentage-item__title">{$Title}</h3>
             <% else %>
                 <h2 class="default-percentage-item__title">{$Title}</h2>

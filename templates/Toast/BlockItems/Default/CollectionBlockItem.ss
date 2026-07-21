@@ -17,7 +17,7 @@
 
         <div class="default-collection-item__details">
             <% if $Title %>
-                <% if $Top.Heading %>
+                <% if $Parent.Heading %>
                     <h3 class="default-collection-item__title">{$Title}</h3>
                 <% else %>
                     <h2 class="default-collection-item__title">{$Title}</h2>
