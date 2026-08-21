@@ -1040,9 +1040,11 @@ class Block extends DataObject
 
     public function getBlockLayoutName(): string
     {
-        $templateParts = explode('\\', $this->Template);
-        if (count($templateParts) >= 3) {
-            return $templateParts[2];
+        if($this->Template){
+            $templateParts = explode('\\', $this->Template);
+            if (count($templateParts) >= 3) {
+                return $templateParts[2];
+            }
         }
 
         return 'Default';
