@@ -4,6 +4,7 @@ namespace Toast\Blocks\Extensions;
 
 use SilverStripe\Core\Extension;
 use Toast\Blocks\PageContentBlock;
+use SilverStripe\View\SSViewer;
 
 class PageContentBlockPageExtension extends Extension
 {
@@ -49,11 +50,19 @@ class PageContentBlockPageExtension extends Extension
         }
     }
 
-    public function getHasPageContentBlock()
+    ppublic function getHasPageContentBlock()
     {
-        if (self::$pageContentBlockLinked) return true;
+        if (!$this->owner->config()->get('pageContentBlockLinked')) {
+            return false;
+        }
 
-        return false;
+        if (!$this->owner->isInDB()) {
+            return false;
+        }
+
+        return $this->owner->ContentBlocks()
+            ->filter('ClassName', PageContentBlock::class)
+            ->exists();
     }
 
 
