@@ -50,7 +50,7 @@ class PageContentBlockPageExtension extends Extension
         }
     }
 
-    ppublic function getHasPageContentBlock()
+    public function getHasPageContentBlock()
     {
         if (!$this->owner->config()->get('pageContentBlockLinked')) {
             return false;
