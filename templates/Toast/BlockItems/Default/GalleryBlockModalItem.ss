@@ -1,16 +1,16 @@
-<div class="default-gallery-modal__item">
+<div class="default-gallery-modal__item" role="group" aria-roledescription="slide" aria-label="{$Pos} of {$TotalItems}">
     <div class="default-gallery-modal__media">
         <div class="default-gallery-modal__image <% if $Video %>has-video<% end_if %>">
             <% if $Image %>
                 <% with $Image %>
                     <picture>
                         <% if $Extension="svg" %>
-                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                         <% else %>
                             <% with $Convert('webp') %>
                                 <source media="(max-width: 767px)" srcset="{$ScaleMaxWidth(768).URL}">
                                 <source media="(max-width: 1439px)" srcset="{$ScaleMaxWidth(1440).URL}">
-                                <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" loading="lazy" alt="{$Title.ATT}" style="object-position: {$FocusPosition}">
+                                <img loading="lazy" src="{$ScaleMaxWidth(1920).URL}" alt="{$Title.ATT}" width="{$Width}" height="{$Height}" style="object-position: {$FocusPosition}">
                             <% end_with %>
                         <% end_if %>
                     </picture>
@@ -20,8 +20,8 @@
             <% end_if %>
 
             <% if $Video %>
-                <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}">
-                    <div class="default-gallery-modal__icon"></div>
+                <div class="default-gallery-modal__video" data-video="{$Video.IframeURL}" role="button" tabindex="0" aria-label="Play video<% if $Video.Title %>: {$Video.Title.ATT}<% end_if %>">
+                    <div class="default-gallery-modal__icon" aria-hidden="true"></div>
                 </div>
             <% end_if %>
         </div>

@@ -1,226 +1,259 @@
-const colourBlocks = [];
-const hexColourCache = new Map();
+/*------------------------------------------------------------------
+<colour-block> custom element
 
-let bodyBackgroundColour = null;
-let mutationTimeout = null;
+Adds classes to each block based on its neighbours' background colours,
+so themes can remove doubled-up spacing between same-coloured blocks:
 
-const colourBlockMutationObserver = new MutationObserver((mutations) => {
-  clearTimeout(mutationTimeout);
+- `collapsed-top`     the previous <colour-block> has the same background
+- `collapsed-bottom`  the next <colour-block> has the same background
+- `transparent`       the block has no background colour of its own
 
-  mutationTimeout = setTimeout(() => {
-    let shouldResize = false;
+A transparent block is treated as having the page (body) background.
+All blocks are re-checked together, once per animation frame, whenever
+something that could change a background happens.
 
-    // Determine if any of the mutations affect ColourBlock elements
-    for (let i = 0; i < mutations.length; i++) {
-      const mutation = mutations[i];
-      const addedNodes = [...mutation.addedNodes];
-      const removedNodes = [...mutation.removedNodes];
+Public API (kept for themes and the CMS preview script):
+- block.resize()                        re-check this block and its neighbours
+- block.getCurrentBackgroundColour()    the block's computed background colour
+- block.hasSameColourAsOtherBlock(el)   compare with another <colour-block>
+- block.hasBackgroundColourEqualTo(c)   compare with any CSS colour
+- customElements.get('colour-block').refreshAll()
+------------------------------------------------------------------*/
 
-      if (mutation.target instanceof ColourBlock) {
-        shouldResize = true;
-        break;
-      }
+const TAG_NAME = 'colour-block';
+const MANAGED_CLASSES = ['collapsed-top', 'collapsed-bottom', 'transparent'];
 
-      if (
-        addedNodes.filter(node => node instanceof ColourBlock).length > 0
-        ||
-        removedNodes.filter(node => node instanceof ColourBlock).length > 0
-      ) {
-        shouldResize = true;
-        break;
-      }
+/** Connected blocks, in no particular order */
+const blocks = new Set();
+
+/** Normalised page background, refreshed with every check */
+let pageColour = null;
+
+/** Pending animation frame for the next check */
+let refreshFrame = 0;
+
+/*------------------------------------------------------------------
+Colour helpers
+------------------------------------------------------------------*/
+
+/**
+ * The alpha channel of a computed CSS colour, e.g. 0.5 for
+ * "rgba(0, 0, 0, 0.5)", "rgb(0 0 0 / 50%)" or "oklch(0.5 0.1 20 / 0.5)".
+ */
+function getAlpha(colour) {
+  if (colour === 'transparent') return 0;
+
+  // Modern syntax: "... / alpha)"
+  const modern = /\/\s*([\d.]+)(%?)\s*\)$/.exec(colour);
+  if (modern) return parseFloat(modern[1]) / (modern[2] ? 100 : 1);
+
+  // Legacy syntax: "rgba(r, g, b, alpha)"
+  const legacy = /^(?:rgba|hsla)\(([^)]*)\)$/.exec(colour);
+  if (legacy) {
+    const parts = legacy[1].split(',');
+    if (parts.length === 4) return parseFloat(parts[3]);
+  }
+
+  return 1;
+}
+
+/**
+ * A comparable form of a computed colour. Browsers serialise computed
+ * colours consistently, so equal colours give equal strings. Fully
+ * transparent colours fall back to the page colour.
+ */
+function normaliseComputedColour(colour) {
+  const value = (colour || '').trim().toLowerCase();
+
+  if (!value || getAlpha(value) === 0) return pageColour;
+
+  return value;
+}
+
+/** Resolves arbitrary CSS colours (hex, names, hsl()...) to their computed form */
+const colourProbe = {
+  element: null,
+  cache: new Map(),
+
+  resolve(colour) {
+    if (!colour) return null;
+    if (this.cache.has(colour)) return this.cache.get(colour);
+
+    if (!this.element) {
+      this.element = document.createElement('span');
+      this.element.hidden = true;
+      document.documentElement.appendChild(this.element);
     }
 
-    if (!shouldResize) return;
+    this.element.style.color = '';
+    this.element.style.color = colour;
 
-    colourBlocks.forEach(block => block.resize());
-  }, 100);
+    // An invalid colour leaves the style empty
+    const resolved = this.element.style.color ? getComputedStyle(this.element).color : null;
+    this.cache.set(colour, resolved);
+
+    return resolved;
+  },
+};
+
+/*------------------------------------------------------------------
+Refreshing
+------------------------------------------------------------------*/
+
+/** Check every block in one batch: read all colours first, then write classes */
+function refreshAll() {
+  refreshFrame = 0;
+
+  if (!document.body) return;
+
+  pageColour = normaliseComputedColour(getComputedStyle(document.body).backgroundColor) || null;
+
+  const colours = new Map();
+  blocks.forEach((block) => colours.set(block, block.getNormalisedColour()));
+  blocks.forEach((block) => block.applyColourClasses(colours));
+}
+
+/** Queue a check for the next animation frame (multiple requests are merged) */
+function scheduleRefresh() {
+  if (!refreshFrame) refreshFrame = window.requestAnimationFrame(refreshAll);
+}
+
+/** Whether a class change involved anything other than the classes this script manages */
+function isExternalClassChange(mutation) {
+  const strip = (value) => (value || '')
+    .split(/\s+/)
+    .filter((name) => name && !MANAGED_CLASSES.includes(name))
+    .sort()
+    .join(' ');
+
+  return strip(mutation.oldValue) !== strip(mutation.target.getAttribute('class'));
+}
+
+/** Watches each block for style/class changes, and each block container for added/removed siblings */
+const observer = new MutationObserver((mutations) => {
+  const relevant = mutations.some((mutation) => (
+    mutation.type === 'childList'
+    || mutation.attributeName !== 'class'
+    || isExternalClassChange(mutation)
+  ));
+
+  if (relevant) scheduleRefresh();
 });
 
-// Helper: RGB(A) to hex
-function rgbToHex(r, g, b, a = undefined) {
-  // Clamp values
-  r = Math.max(0, Math.min(255, r));
-  g = Math.max(0, Math.min(255, g));
-  b = Math.max(0, Math.min(255, b));
-  let hex = `#${[r, g, b].map(n => n.toString(16).padStart(2, '0')).join('')}`;
-  if (typeof a === 'number') {
-    // Convert alpha (0-1) to 2-digit hex
-    hex += (Math.round(a * 255)).toString(16).padStart(2, '0');
-  }
-  return hex;
+/** Containers already being watched for sibling changes */
+const observedParents = new WeakSet();
+
+function observeParent(parent) {
+  if (!parent || observedParents.has(parent)) return;
+
+  observedParents.add(parent);
+  observer.observe(parent, { childList: true });
 }
 
-// Utility: Convert rgba() string to hex
-function toRgbaToHex(rgbaStr) {
-  const match = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(rgbaStr.trim().toLowerCase());
-  if (!match) return null;
-  const [, r, g, b, a] = match;
-  if (typeof a !== 'undefined') {
-    return rgbToHex(Number(r), Number(g), Number(b), Number(a));
-  }
-  return rgbToHex(Number(r), Number(g), Number(b));
-}
+/*------------------------------------------------------------------
+Custom element
+------------------------------------------------------------------*/
 
-// Utility: Convert color string to hex
-function toHexColour(colorStr) {
-  // If there is no color string, return
-  if (!colorStr) return;
-  // Always use the original argument as the cache key
-  const cacheKey = colorStr;
-  // Check if the cache has this key and return it if it does
-  if (hexColourCache.has(cacheKey)) return hexColourCache.get(cacheKey);
-
-  // Begin processing the color string
-  let processedColorStr = colorStr.trim().toLowerCase();
-
-  // RGB/RGBA format
-  const rgbaMatch = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(processedColorStr);
-
-  // Hex format (with optional alpha)
-  const hexMatch = /^#([0-9a-f]{3,8})$/i.exec(processedColorStr);
-
-  if (hexMatch) {
-    let hex = hexMatch[1];
-
-    // Expand short hex (#rgb or #rgba)
-    if (hex.length === 3 || hex.length === 4) {
-      hex = hex.split('').map(c => c + c).join('');
-    }
-
-    // Handle 8-digit hex (#RRGGBBAA)
-    if (hex.length === 8) {
-      const alpha = parseInt(hex.slice(6, 8), 16) / 255;
-
-      if (alpha === 0) {
-        hexColourCache.set(cacheKey, bodyBackgroundColour);
-        return bodyBackgroundColour;
-      }
-
-      processedColorStr = `#${hex.slice(0, 6)}${hex.slice(6, 8)}`;
-      hexColourCache.set(cacheKey, processedColorStr);
-      return processedColorStr;
-    }
-
-    // Handle 4-digit hex (#RGBA)
-    if (hex.length === 4) {
-      const alpha = parseInt(hex[3] + hex[3], 16) / 255;
-
-      if (alpha === 0) {
-        hexColourCache.set(cacheKey, bodyBackgroundColour);
-        return bodyBackgroundColour;
-      }
-
-      processedColorStr = `#${hex.slice(0, 3)}${hex[3] + hex[3]}`;
-      hexColourCache.set(cacheKey, processedColorStr);
-      return processedColorStr;
-    }
-
-    // Ensure full 6-digit hex
-    if (hex.length === 6) {
-      processedColorStr = `#${hex}`;
-      hexColourCache.set(cacheKey, processedColorStr);
-      return processedColorStr;
-    }
-  }
-
-  if (rgbaMatch) {
-    const [_, r, g, b, a] = rgbaMatch;
-    const alpha = typeof a !== 'undefined' ? Number(a) : undefined;
-    // If alpha is 0, return body background colour
-    if (alpha === 0) {
-      hexColourCache.set(cacheKey, bodyBackgroundColour);
-      return bodyBackgroundColour;
-    }
-    const hexColour = rgbToHex(Number(r), Number(g), Number(b), alpha);
-    hexColourCache.set(cacheKey, hexColour);
-    return hexColour;
-  }
-
-  console.warn("Unsupported color format", processedColorStr);
-  return null;
-}
-
-// Custom Element: ColourBlock
 class ColourBlock extends HTMLElement {
-  constructor() {
-    super();
+  /** Re-check every block on the page */
+  static refreshAll() {
+    scheduleRefresh();
+  }
 
-    // Store the background colour
-    this.getCurrentBackgroundColour();
+  connectedCallback() {
+    blocks.add(this);
 
-    // Observe this block for background colour changes
-    const ColourObserver = new MutationObserver(() => this.getCurrentBackgroundColour());
-
-    // Store this block element in the global array
-    colourBlocks.push(this);
-
-    // Observe this block for style changes
-    colourBlockMutationObserver.observe(this, {
+    // Style/class changes on the block can change its background
+    observer.observe(this, {
       attributes: true,
-      attributeFilter: ['style'],
-      childList: true,
-      subtree: true
+      attributeFilter: ['style', 'class'],
+      attributeOldValue: true,
     });
 
-    // Observe this block for background style changes
-    ColourObserver.observe(this, { attributes: true, attributeFilter: ['style'] });
-    // Initial resize
-    requestAnimationFrame(() => this.resize());
+    // Adding or removing elements next to the block changes its neighbours
+    observeParent(this.parentElement);
+
+    this.getCurrentBackgroundColour();
+    scheduleRefresh();
   }
 
+  disconnectedCallback() {
+    blocks.delete(this);
+
+    // Former neighbours need re-checking
+    scheduleRefresh();
+  }
+
+  /** The block's computed background colour (also stored as `backgroundColour`) */
   getCurrentBackgroundColour() {
     this.backgroundColour = window.getComputedStyle(this).backgroundColor;
     return this.backgroundColour;
   }
 
-  // Check if this block has the same colour as another block
+  /** The block's background in comparable form; transparent blocks use the page colour */
+  getNormalisedColour() {
+    return normaliseComputedColour(this.getCurrentBackgroundColour());
+  }
+
+  /** Whether another <colour-block> has the same (effective) background colour */
   hasSameColourAsOtherBlock(block) {
-    if (!block) return false;
-    if (!(block instanceof ColourBlock)) return false;
+    if (!blocks.has(block)) return false;
 
-    const hexColour = block.backgroundColour ? toHexColour(block.backgroundColour) : null;
-
-    return this.hasBackgroundColourEqualTo(hexColour);
+    return this.getNormalisedColour() === block.getNormalisedColour();
   }
 
-  // Toggle collapsed classes based on neighbouring block colours
-  resize() {
-    window.requestAnimationFrame(() => {
-      this.classList.toggle('collapsed-top', this.hasSameColourAsOtherBlock(this.previousElementSibling));
-      this.classList.toggle('collapsed-bottom', this.hasSameColourAsOtherBlock(this.nextElementSibling));
-    });
-  }
-
-  // Compare this block's colour to another
+  /**
+   * Whether this block's background matches the given CSS colour. With no
+   * colour, compares against the page background.
+   */
   hasBackgroundColourEqualTo(value) {
-    // Grab the computed background color of this block
-    const backgroundColour = this.backgroundColour;
+    const target = value ? normaliseComputedColour(colourProbe.resolve(value)) : pageColour;
 
-    // If no value provided, use body background color as fallback to test against
-    if (bodyBackgroundColour !== undefined && !value) value = bodyBackgroundColour;
+    return this.getNormalisedColour() === target;
+  }
 
-    // Add a transparent class is this block has a transparent background colour
-    this.classList.toggle('transparent', (backgroundColour === 'rgba(0, 0, 0, 0)' || backgroundColour === 'transparent'));
+  /** Toggle the collapsed/transparent classes using pre-read colours */
+  applyColourClasses(colours) {
+    const colour = colours.get(this);
+    const sameAs = (sibling) => blocks.has(sibling) && colours.get(sibling) === colour;
 
-    // If the block has a background colour, compare it to the provided value
-    if (backgroundColour) return toHexColour(backgroundColour) == value;
+    this.classList.toggle('collapsed-top', sameAs(this.previousElementSibling));
+    this.classList.toggle('collapsed-bottom', sameAs(this.nextElementSibling));
+    this.classList.toggle('transparent', getAlpha((this.backgroundColour || '').trim().toLowerCase()) === 0);
+  }
 
-    // If no background colour, compare to body background colour if defined
-    if (bodyBackgroundColour !== undefined) return bodyBackgroundColour === value;
-
-    return !value;
+  /** Re-check this block and its neighbours */
+  resize() {
+    scheduleRefresh();
   }
 }
 
-// Register custom element
-window.customElements.define('colour-block', ColourBlock);
+/*------------------------------------------------------------------
+Setup
+------------------------------------------------------------------*/
 
-// Observe body for changes and set up null fallback
-function init() {
-  bodyBackgroundColour = toHexColour(window.getComputedStyle(document.body).backgroundColor);
-  colourBlockMutationObserver.observe(document.body, { childList: true, subtree: true });
+// Another script (e.g. a theme) may already provide <colour-block>
+if (!window.customElements.get(TAG_NAME)) {
+  window.customElements.define(TAG_NAME, ColourBlock);
+
+  // Page/theme background changes (e.g. dark mode toggles)
+  [document.documentElement, document.body].forEach((element) => {
+    if (element) observer.observe(element, { attributes: true, attributeFilter: ['style', 'class', 'data-theme'] });
+  });
+
+  // Late stylesheets (deferred CSS, combined files) can change backgrounds
+  document.addEventListener('load', (event) => {
+    if (event.target instanceof HTMLLinkElement) scheduleRefresh();
+  }, true);
+
+  // Media queries can change backgrounds at different sizes and colour schemes
+  let resizeTimeout = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(scheduleRefresh, 150);
+  });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', scheduleRefresh);
+
+  window.addEventListener('load', scheduleRefresh);
+  window.addEventListener('pageshow', scheduleRefresh);
 }
-
-// Init when DOM is ready
-(document.readyState === 'loading') ? document.addEventListener('DOMContentLoaded', init) : init();

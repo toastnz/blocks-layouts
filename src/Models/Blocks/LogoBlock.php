@@ -2,23 +2,21 @@
 
 namespace Toast\Blocks;
 
-use Toast\Blocks\Block;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use Toast\Blocks\Items\LogoBlockItem;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use Toast\Blocks\Traits\HasColumns;
 
 class LogoBlock extends Block
 {
+    use HasColumns;
+
     private static $singular_name = 'Logo Block';
 
     private static $plural_name = 'Logo Blocks';
 
     private static $description = 'Logo Block';
 
+    // Note: no "Blocks_" prefix. Kept as-is so existing data stays in place.
     private static $table_name = 'LogoBlock';
 
     protected static $icon_class = 'font-icon-block-custom';
@@ -33,44 +31,9 @@ class LogoBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
-            // Remove the default Items tab
-            $fields->removeByName('Items');
-
-            // Set up the options array
-            $options = [];
-
-            // Check to see if there are any columns available in the config
-            $columns = Config::inst()->get(LogoBlock::class, 'available_columns') ?? [2, 3, 4];
-
-            foreach ($columns as $column) {
-                $options[$column] = $column;
-            }
-
-            // Add the dropdown field to the main tab
-            if (count($options) > 0) {
-                $fields->addFieldsToTab('Root.Main', [
-                    DropdownField::create('Columns', 'Columns', $options),
-                ]);
-            }
-
-            if ($this->ID) {
-                $percentageConfig = GridFieldConfig_RecordEditor::create(10);
-
-                $percentageConfig->addComponent(GridFieldOrderableRows::create('SortOrder'))
-                    ->removeComponentsByType(GridFieldDeleteAction::class)
-                    ->addComponent(new GridFieldDeleteAction(false))
-                    ->removeComponentsByType('GridFieldAddExistingAutoCompleter');
-
-                $percentageBlockGridField = GridField::create(
-                    'Items',
-                    'Logo Items',
-                    $this->owner->Items(),
-                    $percentageConfig
-                );
-                $fields->addFieldToTab('Root.Main', $percentageBlockGridField);
-            }
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $this->addColumnsField($fields);
+            $this->addItemsGridField($fields, 'Items', 'Logo Items', 10);
         });
 
         return parent::getCMSFields();

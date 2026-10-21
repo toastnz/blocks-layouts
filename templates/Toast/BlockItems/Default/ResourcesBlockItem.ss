@@ -1,5 +1,5 @@
 <a id="{$BlockItemID}" href="{$File.Link}" class="default-resources-item [ js-in-view ]" download="{$Title.ATT}">
-    <div class="default-resources-item__background"></div>
+    <div class="default-resources-item__background" aria-hidden="true"></div>
 
     <div class="default-resources-item__title">
         <span>{$Title}</span>
@@ -15,7 +15,7 @@
         </div>
     <% end_with %>
 
-    <div class="default-resources-item__icon" data-icon="{$Extension.LowerCase}">
+    <div class="default-resources-item__icon" data-icon="{$Extension.LowerCase}" aria-hidden="true">
         <span></span>
     </div>
 </a>

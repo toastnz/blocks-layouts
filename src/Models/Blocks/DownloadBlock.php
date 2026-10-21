@@ -2,14 +2,8 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Forms\FieldList;
 use Toast\Blocks\Items\DownloadBlockItem;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutoCompleter;
-use SilverStripe\Forms\LiteralField;
 
 class DownloadBlock extends Block
 {
@@ -27,26 +21,10 @@ class DownloadBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->removeByName('Items');
-
-            if ($this->ID) {
-                $config = GridFieldConfig_RelationEditor::create(50)
-                    ->removeComponentsByType(GridFieldAddExistingAutoCompleter::class)
-                    ->removeComponentsByType(GridFieldDeleteAction::class)
-                    ->addComponents(new GridFieldDeleteAction())
-                    ->addComponents(GridFieldOrderableRows::create('SortOrder'));
-                $grid = GridField::create('Items', 'Files', $this->Items(), $config);
-                $fields->addFieldToTab('Root.Main', $grid);
-
-            } else {
-                $fields->addFieldToTab('Root.Main', LiteralField::create('', '<div class="message notice">Save this block to show additional options.</div>'));
-            }
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $this->addItemsGridField($fields, 'Items', 'Files');
         });
 
         return parent::getCMSFields();
-
     }
-
 }

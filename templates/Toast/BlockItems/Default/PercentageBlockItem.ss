@@ -4,7 +4,7 @@
             <% with $Image %>
                 <picture>
                     <% if $Extension="svg" %>
-                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="960" height="960" loading="lazy" alt="{$Title.ATT}">
+                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="960" height="960">
                     <% else %>
                         <source media="(max-width: 639px)" srcset="{$FocusFillMax(640,640).Convert('webp').URL}">
                         <img loading="lazy" src="{$FocusFillMax(960,960).Convert('webp').URL}" alt="{$Title.ATT}" width="960" height="960" style="object-position: {$FocusPosition}">

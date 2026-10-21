@@ -2,10 +2,17 @@
 
 namespace Toast\Blocks\Extensions;
 
+use SilverStripe\Core\Convert;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
+use SilverStripe\LinkField\Models\Link;
 
+/**
+ * Accessibility fields and ready-to-use HTML attributes for links, e.g. `<a href="$URL" $LinkAttributes>`.
+ *
+ * @extends Extension<Link>
+ */
 class LinkExtension extends Extension
 {
     private static $db = [
@@ -16,65 +23,62 @@ class LinkExtension extends Extension
     private static $casting = [
         'LinkAttributes' => 'HTMLFragment',
         'AccessibilityAttributes' => 'HTMLFragment',
+        'DownloadAttribute' => 'HTMLFragment',
+        'TargetAttribute' => 'HTMLFragment',
+        'ExternalLinkAttributes' => 'HTMLFragment',
     ];
 
-    // Add the AriaLabel and DescriptiveTitle fields to the CMS
-    public function updateCMSFields(FieldList $fields)
+    protected function updateCMSFields(FieldList $fields): void
     {
-        $fields->addFieldsToTab(
-            'Root.Main',
-            [
-                TextField::create('AriaLabel', 'Aria Label')
-                    ->setDescription('This is used to describe the link to screen readers, and should be used when the link text itself is not descriptive enough, or when the link is an image. It can also be used to warn the user if the link will open in a new window.'),
-                TextField::create('DescriptiveTitle', 'Descriptive Title')
-                    ->setDescription('This is used to provide additional context to the link, and is displayed as a tooltip when the user hovers over the link.'),
-            ]
-        );
+        $fields->addFieldsToTab('Root.Main', [
+            TextField::create('AriaLabel', 'Aria Label')
+                ->setDescription('This is used to describe the link to screen readers, and should be used when the link text itself is not descriptive enough, or when the link is an image. It can also be used to warn the user if the link will open in a new window.'),
+            TextField::create('DescriptiveTitle', 'Descriptive Title')
+                ->setDescription('This is used to provide additional context to the link, and is displayed as a tooltip when the user hovers over the link.'),
+        ]);
     }
 
+    /**
+     * ` download="filename.pdf"` for file links that don't open in a new window.
+     */
     public function getDownloadAttribute(): string
     {
-        if ($this->owner->OpenInNew) {
+        $owner = $this->getOwner();
+
+        if ($owner->OpenInNew || !$owner->FileID) {
             return '';
         }
 
-        if (!$this->owner->FileID) {
-            return '';
-        }
-
-        $file = $this->owner->File();
+        $file = $owner->File();
 
         if (!$file?->exists()) {
             return '';
         }
 
-        return " download='" . $file->getFilename() . "'";
+        return $this->attribute('download', (string) $file->getFilename());
     }
 
     public function getTargetAttribute(): string
     {
-        return $this->owner->OpenInNew ? " target='_blank' rel='noopener noreferrer'" : '';
+        return $this->getOwner()->OpenInNew ? ' target="_blank" rel="noopener noreferrer"' : '';
     }
 
     public function getExternalLinkAttributes(): string
     {
-        if (!$this->owner->ExternalUrl) {
-            return '';
-        }
-
-        return ' data-external-link';
+        return $this->getOwner()->ExternalUrl ? ' data-external-link' : '';
     }
 
     public function getAccessibilityAttributes(): string
     {
+        $owner = $this->getOwner();
         $attributes = ' ';
 
-        if ($this->owner->AriaLabel) {
-            $attributes .= "aria-label='" . $this->owner->AriaLabel . "'";
+        if ($owner->AriaLabel) {
+            $attributes .= ltrim($this->attribute('aria-label', (string) $owner->AriaLabel));
         }
 
-        if ($this->owner->DescriptiveTitle) {
-            $attributes .= " title='" . $this->owner->DescriptiveTitle . "'";
+        if ($owner->DescriptiveTitle) {
+            $attributes .= $this->attribute('title', (string) $owner->DescriptiveTitle);
         }
 
         return $attributes;
@@ -89,6 +93,18 @@ class LinkExtension extends Extension
             $this->getExternalLinkAttributes(),
         ];
 
-        return implode(' ', array_filter($attributes));
+        $html = implode(' ', array_filter(array_map('trim', $attributes)));
+
+        $this->getOwner()->extend('updateLinkAttributes', $html);
+
+        return $html;
+    }
+
+    /**
+     * An escaped ` name="value"` attribute.
+     */
+    private function attribute(string $name, string $value): string
+    {
+        return ' ' . $name . '="' . Convert::raw2att($value) . '"';
     }
 }

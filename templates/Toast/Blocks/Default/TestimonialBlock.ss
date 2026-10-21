@@ -1,10 +1,10 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-testimonial [ js-default-testimonial ] {$IncludeClasses} {$ExtraClasses}">
-    <section>
+<colour-block id="{$BlockID}" tabindex="-1" class="default-testimonial [ js-default-testimonial ] {$IncludeClasses} {$ExtraClasses}">
+    <section aria-roledescription="carousel"<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% else %> aria-label="Testimonials"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-testimonial__header">
                 <div class="default-testimonial__content">
                     <% if $Heading %>
-                        <h2 class="default-testimonial__heading">{$Heading}</h2>
+                        <h2 id="{$BlockID}_heading" class="default-testimonial__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

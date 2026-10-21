@@ -2,14 +2,16 @@
 
 namespace Toast\Blocks\Items;
 
-use SilverStripe\Assets\File;
-use Toast\Blocks\GalleryBlock;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\FieldList;
+use Toast\Blocks\GalleryBlock;
 
 class GalleryBlockItem extends BlockItem
 {
+    // Note: no "Blocks_" prefix. Kept as-is so existing data stays in place.
     private static $table_name = 'GalleryBlockItem';
 
     private static $db = [
@@ -17,7 +19,7 @@ class GalleryBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'  => File::class,
+        'Image' => File::class,
         'Parent' => GalleryBlock::class
     ];
 
@@ -33,17 +35,16 @@ class GalleryBlockItem extends BlockItem
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->addFieldsToTab('Root.Main', [
+                UploadField::create('Image', 'Image')
+                    ->setFolderName('Uploads/Blocks')
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
+                VideoLinkField::create('Video', 'Video')
+                    ->showPreview('100%')
+            ]);
+        });
 
-        $fields->addFieldsToTab('Root.Main',
-        [
-            UploadField::create('Image', 'Image')
-                ->setFolderName('Uploads/Blocks')
-                ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
-            VideoLinkField::create('Video', 'Video')
-                ->showPreview('100%')
-        ]);
-
-        return $fields;
+        return parent::getCMSFields();
     }
 }

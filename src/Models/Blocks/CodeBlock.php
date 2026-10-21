@@ -2,8 +2,7 @@
 
 namespace Toast\Blocks;
 
-
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
 
 class CodeBlock extends Block
@@ -16,33 +15,31 @@ class CodeBlock extends Block
 
     protected static $icon_class = 'font-icon-block-embed';
 
+    /**
+     * Content is also defined on Block. It is redeclared here because existing sites store CodeBlock
+     * content in the Blocks_CodeBlock table; removing it would orphan that data.
+     */
     private static $db = [
         'Content' => 'HTMLText'
     ];
 
+    private static $required_fields = [
+        'Content',
+    ];
+
     public function getCMSFields()
     {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->removeByName('Heading');
 
-        $this->beforeUpdateCMSFields(function ($fields) {
-            // Remove fields
-            $fields->removeByName('Heading', 'Content');
-
-            $fields->addFieldsToTab('Root.Main', [
+            $fields->addFieldToTab(
+                'Root.Main',
                 TextareaField::create('Content', 'Code')
                     ->setAttribute('data-language', 'html')
                     ->setAttribute('spellcheck', 'false')
-            ]);
+            );
         });
 
         return parent::getCMSFields();
-    }
-
-    public function getCMSValidator()
-    {
-        $required = new RequiredFields(['Content']);
-
-        $this->extend('updateCMSValidator', $required);
-
-        return $required;
     }
 }

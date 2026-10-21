@@ -1,14 +1,14 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-media-text [ js-default-media-text ] {$IncludeClasses} {$ExtraClasses}">
-    <section>
+<colour-block id="{$BlockID}" tabindex="-1" class="default-media-text [ js-default-media-text ] {$IncludeClasses} {$ExtraClasses}">
+    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <div class="default-media-text__wrap">
             <div class="default-media-text__media align-{$MediaAlignment}">
                 <% if $Video %>
-                    <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}">
+                    <div class="default-media-text__video" data-video-modal="{$Video.IframeURL}" role="button" tabindex="0" aria-label="Play video<% if $Video.Title %>: {$Video.Title.ATT}<% end_if %>" aria-haspopup="dialog">
                         <% if $Image %>
                             <% with $Image %>
                                 <picture>
                                     <% if $Extension="svg" %>
-                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                                     <% else %>
                                         <% with $Convert('webp') %>
                                             <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).URL}">
@@ -23,7 +23,7 @@
                             <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
                         <% end_if %>
 
-                        <div class="default-media-text__icon"></div>
+                        <div class="default-media-text__icon" aria-hidden="true"></div>
                     </div>
                 <% else %>
                     <div class="default-media-text__image">
@@ -31,7 +31,7 @@
                             <% with $Image %>
                                 <picture>
                                     <% if $Extension="svg" %>
-                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                                     <% else %>
                                         <% with $Convert('webp') %>
                                             <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).URL}">
@@ -50,7 +50,7 @@
             <div class="default-media-text__content">
                 <div class="default-media-text__text">
                     <% if $Heading %>
-                        <h2 class="default-media-text__heading">{$Heading}</h2>
+                        <h2 id="{$BlockID}_heading" class="default-media-text__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

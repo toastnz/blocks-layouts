@@ -2,11 +2,11 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\File;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use Toast\Blocks\Helpers\Helper;
 
 class ImageBlock extends Block
 {
@@ -28,34 +28,29 @@ class ImageBlock extends Block
 
     public function getCMSFields()
     {
-
-        $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->addFieldsToTab('Root.Main', [
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->addFieldToTab(
+                'Root.Main',
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
-                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
-            ]);
+                    ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
+            );
         });
 
         return parent::getCMSFields();
     }
 
+    /**
+     * Thumbnail of the image for CMS lists.
+     *
+     * @return DBHTMLText
+     */
     public function getContentSummary()
     {
-        $content = '';
+        $summary = Helper::getImageThumbnailHTML($this->Image());
 
-        if ($this->Image() && $this->Image()->exists()) {
-            $imageURL = $this->Image()->getAbsoluteURL();
-            $content = "<img src='{$imageURL}' alt='{$this->Image()->Title}' width='80' height='80' style='object-fit: contain' />";
-        }
-        return DBField::create_field(DBHTMLText::class, $content);
-    }
+        $this->extend('updateContentSummary', $summary);
 
-    public function getCMSValidator()
-    {
-        $required = new RequiredFields([Image::class]);
-        $this->extend('updateCMSValidator', $required);
-        return $required;
+        return $summary;
     }
 }

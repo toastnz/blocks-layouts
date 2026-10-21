@@ -1,89 +1,94 @@
 /*------------------------------------------------------------------
-Import styles
+Blocks: CMS scripts
+
+- Inlines SVG layout icons in the layout picker so they can be styled
+- Moves the "sibling blocks" strip to the top of the edit form
+- Talks to the preview iframe (block-preview-receiver.js) to scroll to
+  the hovered block and live-update palette colours
 ------------------------------------------------------------------*/
 
 import 'styles/blocks.scss';
-
-/*------------------------------------------------------------------
-Scripts
-------------------------------------------------------------------*/
-
 import DomObserverController from 'domobserverjs';
 
-/*------------------------------------------------------------------
-Setup
-------------------------------------------------------------------*/
-
-// Create a new instance of the DomObserverController
 const CMSObserver = new DomObserverController();
 
-// Observe the CMS for the toast-block-layouts fieldsets
-CMSObserver.observe('.toast-block-layouts', (fieldsets) => {
-  // Loop through the fieldsets
-  (async () => {
-    for (const fieldset of fieldsets) {
-      // Find all the images in the fieldset
-      const images = fieldset.querySelectorAll('img');
+/*------------------------------------------------------------------
+Layout picker: inline SVG icons
+------------------------------------------------------------------*/
 
-      // Loop the images
-      for (const img of images) {
-        const imgSrc = img.src;
+/** SVG markup by URL, shared across pickers */
+const svgCache = new Map();
 
-        // If the img src does not include .svg, continue to the next image
-        if (!imgSrc.includes('.svg')) continue;
+function fetchSVG(url) {
+  if (!svgCache.has(url)) {
+    svgCache.set(url, fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.text();
+    }));
+  }
 
-        try {
-          // Fetch the svg, convert it to text, and replace the img with the svg
-          const response = await fetch(imgSrc);
-          const svg = await response.text();
+  return svgCache.get(url);
+}
 
-          // Create a new div
-          const div = document.createElement('div');
+async function inlineSVG(img) {
+  try {
+    const markup = await fetchSVG(img.src);
+    const svg = new DOMParser().parseFromString(markup, 'image/svg+xml').documentElement;
 
-          // Set the innerHTML of the div to the svg
-          div.innerHTML = svg;
-
-          // Replace the img with the div
-          img.parentNode.replaceChild(div.firstChild, img);
-        } catch (error) {
-          console.error(`Failed to fetch SVG: ${imgSrc}`, error);
-        }
-      }
+    if (svg && svg.nodeName.toLowerCase() === 'svg' && img.isConnected) {
+      img.replaceWith(document.importNode(svg, true));
     }
-  })();
+  } catch (error) {
+    console.error(`Failed to fetch SVG: ${img.src}`, error);
+  }
+}
+
+CMSObserver.observe('.toast-block-layouts', (fieldsets) => {
+  fieldsets.forEach((fieldset) => {
+    fieldset.querySelectorAll('img').forEach((img) => {
+      if (new URL(img.src, window.location.href).pathname.endsWith('.svg')) inlineSVG(img);
+    });
+  });
 });
 
-// Block siblings script to move siblings to the top of the tab for better styling
+/*------------------------------------------------------------------
+Sibling blocks strip
+------------------------------------------------------------------*/
+
 CMSObserver.observe('.content-block-siblings', (elements) => {
   const element = elements[0];
-  const tab = element.closest('.tab-content');
-  const activeTab = element.querySelector('a.active');
+  const tab = element && element.closest('.tab-content');
+
+  if (!tab) return;
 
   tab.insertBefore(element, tab.firstChild);
 
-  // Scroll the element to the activeTab if it exists, otherwise just scroll to the top of the tab
-  if (activeTab) {
-    activeTab.scrollIntoView({ block: 'center', container: 'nearest' });
+  // Scroll the strip to the current block, otherwise back to the start
+  const activeLink = element.querySelector('a.active');
+
+  if (activeLink) {
+    activeLink.scrollIntoView({ block: 'center', container: 'nearest' });
   } else {
     element.scrollTop = 0;
   }
 });
 
+/*------------------------------------------------------------------
+Preview messaging
+------------------------------------------------------------------*/
+
 class BlockPreviewMessenger {
   constructor() {
     this.initialised = false;
-    this.iframes = [];
+    this.previewIframe = null;
     this.blockID = null;
     this.blockIDElement = null;
-    this.previewIframe = null;
-    this.colours = {
-      queue: [],
-      timeout: null,
-    };
+    this.colourTimeout = null;
 
-    // Listen for the block previews ready message
     window.addEventListener('message', (event) => {
-      if (event.data.action === 'block-previews-ready') this.init();
+      if (event.origin === window.location.origin && event.data && event.data.action === 'block-previews-ready') {
+        this.init();
+      }
     });
   }
 
@@ -92,184 +97,91 @@ class BlockPreviewMessenger {
 
     this.initialised = true;
 
-    // When we receive a ColourPaletteChanged event, run the updateColours method
     window.addEventListener('ColourPaletteChanged', () => this.updateColours());
 
-    // Update the colours
     this.updateColours();
-    // Prepare to scroll to the block
     this.prepareToScroll();
-
-    // Removed because <% require %> statements in the template do not get updated live causing rendering issues
-    // Prepare to update the template
-    // this.prepareTemplateUpdates();
   }
 
-  iframeExists() {
-    // Look for all iframes on the page
-    this.iframes = [...document.querySelectorAll('iframe')];
-    // Find the preview iframe again if it is not found
-    this.previewIframe = this.iframes.find((iframe) => iframe.src.includes('CMSPreview'));
-    // Resturn false if the preview iframe is not found
-    if (!this.previewIframe) return false;
-    // If there is not contentWindow, return false
-    if (!this.previewIframe.contentWindow) return false;
+  /** The CMS preview iframe, if it is open */
+  getPreviewWindow() {
+    if (!this.previewIframe || !this.previewIframe.isConnected) {
+      this.previewIframe = document.querySelector('.cms-preview iframe')
+        || [...document.querySelectorAll('iframe')].find((iframe) => iframe.src.includes('CMSPreview'))
+        || null;
+    }
 
-    return true;
+    return this.previewIframe ? this.previewIframe.contentWindow : null;
   }
 
+  /** Send a message to the preview iframe, if it is open */
+  post(message) {
+    const previewWindow = this.getPreviewWindow();
+
+    if (previewWindow) previewWindow.postMessage(message, window.location.origin);
+  }
+
+  /** The anchor ID of the block being edited, from the "Block ID" field */
   getBlockID() {
-    // Return the block ID if it has already been found
-    if (this.blockID && document.body.contains(this.blockIDElement)) return this.blockID;
-    // Find the block ID element
+    if (this.blockID && this.blockIDElement && this.blockIDElement.isConnected) return this.blockID;
+
     this.blockIDElement = document.querySelector('#Form_ItemEditForm_BlockID');
-    // Return null if the block ID element is not found
-    if (!this.blockIDElement) return null;
-    // Set the block ID
-    this.blockID = this.blockIDElement.innerText.trim();
+    this.blockID = this.blockIDElement ? this.blockIDElement.innerText.trim() : null;
 
     return this.blockID;
   }
 
+  /** Push the CMS palette colours (from the colour palettes module) into the preview */
   updateColours() {
-    // Make sure the iframe exists
-    if (!this.iframeExists()) return;
+    clearTimeout(this.colourTimeout);
 
-    clearTimeout(this.colours.timeout);
+    this.colourTimeout = setTimeout(() => {
+      if (!window.ColourPalettes) return;
 
-    this.colours.timeout = setTimeout(() => {
-      if (window.ColourPalettes) {
-        Object.entries(window.ColourPalettes).forEach(([name, data]) => {
-          this.previewIframe.contentWindow.postMessage({
-            action: 'updateColours',
-            name,
-            value: data.value,
-            brightness: data.brightness,
-            blockID: this.getBlockID(),
-          }, window.location.origin);
+      Object.entries(window.ColourPalettes).forEach(([name, data]) => {
+        this.post({
+          action: 'updateColours',
+          name,
+          value: data.value,
+          brightness: data.brightness,
+          blockID: this.getBlockID(),
         });
-      }
+      });
     }, 200);
   }
 
+  /** Hovering a block row or sibling icon scrolls the preview to that block */
   prepareToScroll() {
     let scrollTimeout = null;
     let clicked = false;
 
-    // Look for block links that will trigger a scroll to method
+    const scrollTo = (blockID, delay) => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => this.post({ action: 'scrollTo', blockID }), delay);
+    };
+
     CMSObserver.observe('.ss-gridfield-item, .content-block-siblings > a', (elements) => {
       elements.forEach((element) => {
-        // Find the element with the block ID
         const blockIDElement = element.querySelector('[data-block-id]');
-        const blockID = (blockIDElement) ? blockIDElement.getAttribute('data-block-id') : null;
+        const blockID = blockIDElement ? blockIDElement.getAttribute('data-block-id') : null;
 
-        // If there is no block ID, return
         if (!blockID) return;
 
-        // When we hover over the element, we want to scroll to the block
-        element.addEventListener('mouseenter', () => {
-
-          clearTimeout(scrollTimeout);
-
-          scrollTimeout = setTimeout(() => {
-            if (!this.iframeExists()) return;
-
-            // Post a message to the iframe
-            this.previewIframe.contentWindow.postMessage({
-              action: 'scrollTo',
-              blockID,
-            }, window.location.origin);
-          }, 300);
-        });
+        element.addEventListener('mouseenter', () => scrollTo(blockID, 300));
 
         element.addEventListener('click', () => {
           clicked = true;
-
           clearTimeout(scrollTimeout);
-
-          scrollTimeout = setTimeout(() => {
-            clicked = false;
-          }, 500);
+          scrollTimeout = setTimeout(() => { clicked = false; }, 500);
         });
 
+        // Scroll back to the current block when the pointer leaves (unless it was a click)
         element.addEventListener('mouseleave', () => {
-          if (clicked) return;
-
-          clearTimeout(scrollTimeout);
-
-          scrollTimeout = setTimeout(() => {
-            if (!this.iframeExists()) return;
-
-            // Post a message to the iframe
-            this.previewIframe.contentWindow.postMessage({
-              action: 'scrollTo',
-            }, window.location.origin);
-          }, 500);
+          if (!clicked) scrollTo(undefined, 500);
         });
       });
     });
   }
-
-  // Removed because <% require %> statements in the template do not get updated live causing rendering issues
-  // prepareTemplateUpdates() {
-  //   const onChange = (input) => {
-  //     if (!this.iframeExists()) return;
-
-  //     // Update the colours
-  //     this.updateColours();
-
-  //     // Post a message to the iframe
-  //     this.previewIframe.contentWindow.postMessage({
-  //       action: 'getTemplate',
-  //       templatePath: input.value,
-  //       blockID: this.getBlockID(),
-  //     }, window.location.origin);
-  //   }
-
-  //   // Watch for changes to the template select field
-  //   CMSObserver.observe('#Form_ItemEditForm_Template_Holder [name="Template"]', (inputs) => {
-  //     if (inputs.length === 0) return;
-
-  //     // If the input is a select element, handle it differently
-  //     if (inputs[0].tagName.toLowerCase() === 'select') {
-  //       const select = inputs[0];
-
-  //       try {
-  //         jQuery(select).on('change', () => onChange(select));
-  //       } catch (err) {
-  //         select.addEventListener('change', () => onChange(select));
-  //       }
-
-  //       // Trigger the onChange event if there is a value
-  //       if (select.value) onChange(select);
-
-  //       if (OpenCMSPreviewController) {
-  //         OpenCMSPreviewController.on('refresh', () => {
-  //           if (select.value) onChange(select);
-  //         });
-  //       }
-
-  //       return;
-  //     }
-
-  //     // Otherwise, assume they are radio inputs
-  //     inputs.forEach((input) => {
-  //       try {
-  //         jQuery(input).on('change', () => onChange(input));
-  //       } catch (err) {
-  //         input.addEventListener('change', () => onChange(input));
-  //       }
-
-  //       if (input.checked) onChange(input);
-
-  //       if (OpenCMSPreviewController) {
-  //         OpenCMSPreviewController.on('refresh', () => {
-  //           if (input.checked) onChange(input);
-  //         });
-  //       }
-  //     });
-  //   });
-  // }
 }
 
 new BlockPreviewMessenger();

@@ -1,10 +1,10 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-percentage [ js-default-percentage ] {$IncludeClasses} {$ExtraClasses}">
-    <section>
+<colour-block id="{$BlockID}" tabindex="-1" class="default-percentage [ js-default-percentage ] {$IncludeClasses} {$ExtraClasses}">
+    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-percentage__header">
                 <div class="default-percentage__content">
                     <% if $Heading %>
-                        <h2 class="default-percentage__heading">{$Heading}</h2>
+                        <h2 id="{$BlockID}_heading" class="default-percentage__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

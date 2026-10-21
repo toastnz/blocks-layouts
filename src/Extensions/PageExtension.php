@@ -2,39 +2,37 @@
 
 namespace Toast\Blocks\Extensions;
 
-use Toast\Blocks\Block;
-use SilverStripe\Forms\Tab;
-use SilverStripe\Assets\File;
+use Page;
 use SilverStripe\Core\Extension;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Model\ArrayData;
-use SilverStripe\Control\Director;
-use Toast\Blocks\PageContentBlock;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridField_ActionMenu;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
+use SilverStripe\Forms\GridField\GridFieldDetailForm_ItemRequest;
+use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Forms\HiddenField;
-use SilverStripe\View\Requirements;
-use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\Forms\GridField\GridField;
-use Toast\Blocks\GridFieldContentBlockState;
-use Toast\Blocks\GridFieldVersionedUnlinkAction;
-use SilverStripe\Core\Manifest\ModuleResourceLoader;
-use SilverStripe\Forms\GridField\GridFieldDetailForm;
-use SilverStripe\Forms\GridField\GridField_ActionMenu;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
-use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use SilverStripe\Forms\GridField\GridFieldFilterHeader;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldSortableHeader;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Versioned\VersionedGridFieldItemRequest;
-use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\View\Requirements;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Toast\Blocks\Block;
+use Toast\Blocks\Helpers\Helper;
+use Toast\Blocks\PageContentBlock;
 
+/**
+ * Adds content blocks to pages: the `ContentBlocks` relation, its CMS GridField and the front-end
+ * stylesheet/preview helpers used in templates.
+ *
+ * @extends Extension<Page>
+ */
 class PageExtension extends Extension
 {
     private static $many_many = [
@@ -47,157 +45,186 @@ class PageExtension extends Extension
         ]
     ];
 
-    public function updateCMSFields(FieldList $fields)
+    /**
+     * How many block stylesheets are inlined as critical CSS by $BlockStyles; the rest are combined into
+     * one file.
+     *
+     * @config
+     */
+    private static $critical_block_stylesheets = 2;
+
+    protected function updateCMSFields(FieldList $fields): void
     {
-        if ($this->owner->exists()) {
-            $fields->removeByName([
-                'ContentBlocks'
-            ]);
-            $config = GridFieldConfig_RelationEditor::create(50);
-            $config->removeComponentsByType(GridFieldAddNewButton::class)
-                ->removeComponentsByType(GridFieldFilterHeader::class)
-                ->removeComponentsByType(GridField_ActionMenu::class);
+        $fields->removeByName('ContentBlocks');
 
-            $self = $this->owner;
-
-            $config->getComponentByType(GridFieldDetailForm::class)
-                ->setItemRequestClass(VersionedGridFieldItemRequest::class)
-                ->setItemEditFormCallback(function ($form, $itemRequest) use ($self) {
-                    if (!$itemRequest->record->exists()) {
-                        $nextSortOrder = $self->ContentBlocks()->max('SortOrder') + 1;
-                        $form->Fields()->add(HiddenField::create('ManyMany[SortOrder]', 'Sort Order', $nextSortOrder));
-                    }
-                });
-
-            $multiClass = new GridFieldAddNewMultiClass();
-
-            $multiClass->setClasses(Config::inst()->get(PageExtension::class, 'available_blocks'));
-
-            $config->addComponent($multiClass);
-
-            $addExisting = $config->getComponentByType(GridFieldAddExistingAutocompleter::class);
-            $addExisting->setSearchFields(['Title:PartialMatch' ]);
-
-            $config->addComponent(new GridFieldOrderableRows('SortOrder'));
-
-
-            $gridField = GridField::create(
-                'ContentBlocks',
-                'Blocks',
-                $this->owner->ContentBlocks(),
-                $config
-            );
-
-            $fields->addFieldToTab('Root.Blocks', $gridField);
+        if ($this->getOwner()->exists()) {
+            $fields->addFieldToTab('Root.Blocks', $this->getContentBlocksGridField());
         }
     }
 
-    public function getBlockStyles()
+    /**
+     * Block classes editors can add to this page. Extensions on the page can change the list with the
+     * `updateAvailableBlocks` hook.
+     *
+     * @return string[]
+     */
+    public function getAvailableBlockClasses(): array
     {
-        $baseFolder = Director::baseFolder();
-        $blocks = $this->owner->ContentBlocks()->sort('SortOrder');
+        $classes = Helper::getAvailableBlockClasses();
 
-        $components = new ArrayList();
-        $components->merge($blocks);
-        $this->owner->extend('updateCombinedBlocks', $components);
+        $this->getOwner()->extend('updateAvailableBlocks', $classes);
+
+        return $classes;
+    }
+
+    /**
+     * The sortable "Blocks" GridField. Extensions on the page can change its config with the
+     * `updateContentBlocksGridFieldConfig` hook.
+     */
+    protected function getContentBlocksGridField(): GridField
+    {
+        $owner = $this->getOwner();
+
+        $config = GridFieldConfig_RelationEditor::create(50)
+            ->removeComponentsByType([
+                GridFieldAddNewButton::class,
+                GridFieldFilterHeader::class,
+                GridField_ActionMenu::class,
+            ])
+            ->addComponent(Helper::createAddNewMultiClass($this->getAvailableBlockClasses()))
+            ->addComponent(GridFieldOrderableRows::create('SortOrder'));
+
+        $config->getComponentByType(GridFieldAddExistingAutocompleter::class)
+            ?->setSearchFields(['Title:PartialMatch']);
+
+        $config->getComponentByType(GridFieldDetailForm::class)
+            ->setItemRequestClass(VersionedGridFieldItemRequest::class)
+            ->setItemEditFormCallback(function (Form $form, GridFieldDetailForm_ItemRequest $itemRequest) use ($owner) {
+                // New blocks are added to the end of the page
+                if (!$itemRequest->getRecord()->exists()) {
+                    $nextSortOrder = (int) $owner->ContentBlocks()->max('SortOrder') + 1;
+                    $form->Fields()->add(HiddenField::create('ManyMany[SortOrder]', 'Sort Order', $nextSortOrder));
+                }
+            });
+
+        $owner->extend('updateContentBlocksGridFieldConfig', $config);
+
+        return GridField::create('ContentBlocks', 'Blocks', $owner->ContentBlocks(), $config);
+    }
+
+    /**
+     * Stylesheets (relative to the project root) used by the layouts of the blocks on this page, in order
+     * and without duplicates. Extensions can add blocks with `updateCombinedBlocks` or change the final
+     * list with `updateBlockStylesheets`.
+     *
+     * @return string[]
+     */
+    public function getBlockStylesheets(): array
+    {
+        $owner = $this->getOwner();
+
+        $components = ArrayList::create();
+        $components->merge($owner->ContentBlocks()->sort('SortOrder'));
+        $owner->extend('updateCombinedBlocks', $components);
 
         $styles = [];
 
         foreach ($components as $block) {
-            // Check if the CSSFile has been stored in the DB, otherwise find it
-            $cachedCSSFile = $block->owner->CSSFile;
-            $cssFile = $cachedCSSFile ? $cachedCSSFile : $block->getCSSFile();
+            // Resolved live (rather than from the stored CSSFile column) so config and hook changes apply
+            $cssFile = $block->hasMethod('getCSSFile') ? $block->getCSSFile() : null;
 
-            // Check if the file exists before adding it to the styles array
-            if ($cssFile && file_exists($baseFolder . '/' . $cssFile) && !in_array($cssFile, $styles)) {
-                $styles[] = $cssFile;
+            if ($cssFile && is_file(BASE_PATH . '/' . $cssFile)) {
+                $styles[$cssFile] = $cssFile;
             }
         }
 
-        if (!empty($styles)) {
-            // Take the first two CSS files for critical CSS
-            $criticalCssFiles = array_splice($styles, 0, 2);
-            $criticalCss = '';
-            foreach ($criticalCssFiles as $cssFile) {
-                $criticalCss .= file_get_contents($baseFolder . '/' . $cssFile) . "\n";
-            }
-            if ($criticalCss) {
-                Requirements::customCSS($criticalCss);
-            }
+        $styles = array_values($styles);
+
+        $owner->extend('updateBlockStylesheets', $styles);
+
+        return $styles;
+    }
+
+    /**
+     * Template helper ($BlockStyles): inlines the first stylesheets as critical CSS and combines the rest
+     * into a single blocks.css file.
+     */
+    public function getBlockStyles(): void
+    {
+        $styles = $this->getBlockStylesheets();
+
+        if (!$styles) {
+            return;
         }
 
-        if (!empty($styles)) {
-            // Now load the rest of the css files as a single file
+        $criticalCount = (int) $this->getOwner()->config()->get('critical_block_stylesheets');
+        $criticalFiles = array_splice($styles, 0, max(0, $criticalCount));
+
+        $criticalCss = implode("\n", array_map(
+            fn (string $cssFile) => (string) file_get_contents(BASE_PATH . '/' . $cssFile),
+            $criticalFiles
+        ));
+
+        if (trim($criticalCss) !== '') {
+            Requirements::customCSS($criticalCss, 'toast-blocks-critical-css');
+        }
+
+        if ($styles) {
             Requirements::combine_files('blocks.css', $styles);
         }
     }
 
-    public function getBlockPreviewJavaScriptPaths()
+    /**
+     * Scripts loaded inside the CMS preview iframe. Extensions can add more paths to the list.
+     */
+    public function getBlockPreviewJavaScriptPaths(): ArrayList
     {
-        $paths = new ArrayList();
-
-        $paths->push(new ArrayData([
-            'Path' => ModuleResourceLoader::resourceURL('toastnz/blocks-layouts: client/dist/scripts/block-preview-receiver.js')
-        ]));
-
-        return $paths;
+        return ArrayList::create([
+            ArrayData::create([
+                'Path' => ModuleResourceLoader::resourceURL('toastnz/blocks-layouts: client/dist/scripts/block-preview-receiver.js'),
+            ]),
+        ]);
     }
 
-    public function getBlockPreviewScripts()
+    /**
+     * Template helper ($BlockPreviewScripts): imports the preview scripts, only when inside the CMS preview.
+     */
+    public function getBlockPreviewScripts(): DBHTMLText
     {
-        // Returns a script tag with: (async function() {
-        // await import(pathA);
-        // await import(pathB);
-        // })();
+        $imports = '';
 
-        $files = $this->owner->getBlockPreviewJavaScriptPaths();
+        foreach ($this->getOwner()->getBlockPreviewJavaScriptPaths() as $file) {
+            $imports .= 'await import(' . json_encode((string) $file->Path, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ');';
+        }
 
-        $script = '<script type="module" defer>if (window.self !== window.top) (async function() {';
-        foreach ($files as $file) $script .= 'await import("' . $file->Path . '");';
-        $script .= '})();</script>';
+        $script = '<script type="module">if (window.self !== window.top) (async function() {' . $imports . '})();</script>';
 
-        // Return as html
-        return DBField::create_field('HTMLText', $script);
+        return DBField::create_field(DBHTMLText::class, $script);
     }
 
-    public function getColourBlockScript()
+    /**
+     * Template helper ($ColourBlockScript): loads the <colour-block> custom element.
+     */
+    public function getColourBlockScript(): void
     {
         Requirements::javascript('toastnz/blocks-layouts: client/dist/scripts/colour-block.js', ['defer' => true]);
     }
 
-     //PAGECONTENTBLOCK: added to remove PageContentBlock if the config variable is false or doesnt no exists on the page type
-    public function onAfterWrite()
+    /**
+     * Removes the PageContentBlock from page types that don't use PageContentBlockPageExtension.
+     */
+    protected function onAfterWrite(): void
     {
-        // how to check if pageContentBlockLinked variable exists
-        if (!$this->owner->config()->get('pageContentBlockLinked')) {
-            // remove PageContentBlock from ContentBlocks relation
-            $blocks = $this->owner->ContentBlocks();
-            if($blocks && $blocks->count()){
-                if($pageContentBlock = $blocks->filter('ClassName', PageContentBlock::class)->first()){
-                    if($pageContentBlock && $pageContentBlock->exists()){
-                        $blocks->remove($pageContentBlock);
-                    }
-                }
-            }
-        }
-    }
-}
+        $owner = $this->getOwner();
 
-class PageControllerExtension extends Extension
-{
-
-    public function contentblock()
-    {
-        if (Director::is_ajax()) {
-            $id = $this->owner->getRequest()->param('ID');
-            $contentBlock = Block::get()->byID($id);
-
-            if ($contentBlock && $contentBlock->exists()) {
-                return $contentBlock->forTemplate();
-            }
+        if ($owner->config()->get('pageContentBlockLinked')) {
+            return;
         }
 
-        return $this->owner->redirect($this->owner->Link());
-    }
+        $pageContentBlock = $owner->ContentBlocks()->filter('ClassName', PageContentBlock::class)->first();
 
+        if ($pageContentBlock) {
+            $owner->ContentBlocks()->remove($pageContentBlock);
+        }
+    }
 }

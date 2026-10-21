@@ -2,16 +2,14 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use Toast\Blocks\Items\LinkBlockItem;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use Toast\Blocks\Traits\HasColumns;
 
 class LinkBlock extends Block
 {
+    use HasColumns;
+
     private static $table_name = 'Blocks_LinkBlock';
 
     private static $singular_name = 'Link';
@@ -30,43 +28,9 @@ class LinkBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->removeByName(['Items', 'Columns']);
-
-            if ($this->ID) {
-                // Set up the options array
-                $options = [];
-
-                // Check to see if there are any columns available in the config
-                $columns = Config::inst()->get(LinkBlock::class, 'available_columns') ?? [2, 3, 4];
-
-                foreach ($columns as $column) {
-                    $options[$column] = $column;
-                }
-
-                // Add the dropdown field to the main tab
-                if (count($options) > 0) {
-                    $fields->addFieldsToTab('Root.Main', [
-                        DropdownField::create('Columns', 'Columns', $options),
-                    ]);
-                }
-
-                $linkConfig = GridFieldConfig_RelationEditor::create(10);
-                $linkConfig->addComponent(GridFieldOrderableRows::create('SortOrder'))
-                    ->removeComponentsByType(GridFieldDeleteAction::class)
-                    ->addComponent(new GridFieldDeleteAction(false))
-                    ->removeComponentsByType('GridFieldAddExistingAutoCompleter');
-
-                $linkBlockGridField = GridField::create(
-                    'Items',
-                    'Link Block Items',
-                    $this->Items(),
-                    $linkConfig
-                );
-                $fields->addFieldToTab('Root.Main', $linkBlockGridField);
-            }
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $this->addColumnsField($fields);
+            $this->addItemsGridField($fields, 'Items', 'Link Block Items', 10);
         });
 
         return parent::getCMSFields();

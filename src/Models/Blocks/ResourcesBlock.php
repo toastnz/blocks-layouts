@@ -2,19 +2,32 @@
 
 namespace Toast\Blocks;
 
-use Toast\Blocks\Block;
-use SilverStripe\ORM\DataList;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ListboxField;
 use SilverStripe\Model\List\ArrayList;
+use SilverStripe\ORM\DataList;
 use SilverStripe\Taxonomy\TaxonomyTerm;
 
 class ResourcesBlock extends Block
 {
     private static $singular_name = 'Resources Block';
+
     private static $plural_name = 'Resources Blocks';
+
     private static $description = 'Resources Block';
+
     private static $table_name = 'Blocks_ResourcesBlock';
+
+    /**
+     * Class of the resource records to list, and the many_many relation on it that holds its categories.
+     */
     private static $target_resource_classname = 'Toast\Models\Resources\ResourceItem';
+
+    private static $target_resource_category_relation = 'ResourceCategories';
+
+    /**
+     * Taxonomy type name whose terms can be picked as categories.
+     */
     private static $target_resource_category = 'Resource Category';
 
     protected static $icon_class = 'font-icon-p-document';
@@ -25,121 +38,92 @@ class ResourcesBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            // Remove the scaffolded Categories tab/GridField; categories are picked from a listbox instead
+            $fields->removeByName('Categories');
 
-        // Get the relevant categories
-        $categories = $this->getRelevantCategories();
+            $fields->addFieldToTab(
+                'Root.Main',
+                ListboxField::create('Categories', 'Filter by Categories', $this->getRelevantCategories())
+                    ->setDescription('Select categories to show resources from. You can add more Resource Categories in the Taxonomies section of the CMS')
+            );
+        });
 
-        $fields->addFieldsToTab('Root.Main', [
-            ListboxField::create('Categories', 'Filter by Categories', $categories)
-                ->setDescription('Select categories to show resources from. You can add more Resource Categories in the Taxonomies section of the CMS'),
-        ]);
-
-        return $fields;
+        return parent::getCMSFields();
     }
 
-    /** Get the relevant resource items to reference in this block
-    * @return DataList
-    */
+    /**
+     * All records of the configured resource class
+     */
     public function getTargettedResourceItems(): DataList
     {
-        // Get the class name of the target resource item from the config
-        $className = $this->Config()->get('target_resource_classname');
-        // Get all the items of the target resource item class
-        $items = $className::get();
+        $className = $this->config()->get('target_resource_classname');
 
-        return $items;
+        return $className::get();
     }
 
-    /** Get all the categories from the taxonomies
-     * @return DataList
+    /**
+     * Taxonomy terms of the configured category type
      */
     public function getRelevantCategories(): DataList
     {
-        // Get all resource categories from the taxonomies
-        $categories = TaxonomyTerm::get()->filter('Type.Name', $this->Config()->get('target_resource_category') ?? 'Resource Category');
+        $categories = TaxonomyTerm::get()->filter(
+            'Type.Name',
+            $this->config()->get('target_resource_category') ?? 'Resource Category'
+        );
 
-        // Allow extensions to modify the list of categories
         return $this->updateRelevantCategories($categories);
     }
 
-    /** Allow extensions to modify relevant categories
-     * @param DataList $categories
-     * @return DataList
+    /**
+     * Allow extensions to modify relevant categories
      */
     public function updateRelevantCategories($categories): DataList
     {
-        // Allow extensions to modify the list of categories
         $this->extend('updateRelevantCategories', $categories);
 
         return $categories;
     }
 
-    /** Get all resource items
-     * @return DataList
+    /**
+     * All resource items, after extensions have had a chance to modify them
      */
     public function getResourceItems(): DataList
     {
-        $items = $this->getTargettedResourceItems();
-
-        // Return the items after allowing extensions to modify them
-        return $this->updateResourceItems($items);
+        return $this->updateResourceItems($this->getTargettedResourceItems());
     }
 
-    /** Allow extensions to modify the list of resource items
-     * @param DataList $items
-     * @return DataList
+    /**
+     * Allow extensions to modify the list of resource items
      */
     public function updateResourceItems($items): DataList
     {
-        // Allow extensions to modify the list of resource items
         $this->extend('updateResourceItems', $items);
 
         return $items;
     }
 
-    /** Get the items
-     * @param string $sort
-     * @return ArrayList
+    /**
+     * Resource items in any of the selected categories (all items when none are selected).
      */
     public function getItems($sort = 'SortOrder'): ArrayList
     {
-        $items = new ArrayList();
+        $items = $this->getResourceItems();
+        $categoryIDs = $this->Categories()->column('ID');
 
-        // If the user has selected a category, only show items that are in that category/categories. Otherwise show all items
-        if ($this->Categories()->exists()) {
-            $categoryIDs = $this->Categories()->column('ID');
-
-            // Get all the items that are in the selected categories
-            foreach ($this->getResourceItems() as $resourceItem) {
-                $itemCategoryIDs = $resourceItem->ResourceCategories()->column('ID');
-                if (array_intersect($categoryIDs, $itemCategoryIDs)) {
-                    $items->push($resourceItem);
-                }
-            }
-        } else {
-            // Loop all the targetted resource items and add them to the array list
-            foreach ($this->getResourceItems() as $resourceItem) {
-                $items->push($resourceItem);
-            }
+        if ($categoryIDs) {
+            $relation = $this->config()->get('target_resource_category_relation') ?: 'ResourceCategories';
+            $items = $items->filter($relation . '.ID', $categoryIDs);
         }
 
-        // Allow extensions to modify the list of items
-        $items = $this->updateItems($items);
-
-        // Sort the items
-        $items = $items->sort($sort);
-
-        return $items;
+        return $this->updateItems(ArrayList::create($items->toArray()))->sort($sort);
     }
 
-    /** Allow extensions to modify the list of items
-     * @param ArrayList $items
-     * @return ArrayList
+    /**
+     * Allow extensions to modify the list of items
      */
     public function updateItems($items): ArrayList
     {
-        // Allow extensions to modify the list of items
         $this->extend('updateItems', $items);
 
         return $items;

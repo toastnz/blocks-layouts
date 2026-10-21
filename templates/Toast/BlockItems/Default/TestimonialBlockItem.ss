@@ -1,7 +1,7 @@
-<div id="{$BlockItemID}" class="default-testimonial-item">
+<div id="{$BlockItemID}" class="default-testimonial-item" role="group" aria-roledescription="slide" aria-label="{$Pos} of {$TotalItems}">
     <div class="default-testimonial-item__wrap">
         <div class="default-testimonial-item__content">
-            <b>&#8220;</b>
+            <b aria-hidden="true">&#8220;</b>
             <p>{$Summary}&#8221;</p>
         </div>
 
@@ -9,9 +9,9 @@
             <% if $Image %>
                 <% with $Image %>
                     <% if $Extension="svg" %>
-                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
+                        <img loading="lazy" src="{$URL}" alt="" width="100" height="100">
                     <% else %>
-                        <img class="default-testimonial-item__image" src="{$FocusFill(200,200).Convert('webp').URL}" width="100" height="100" loading="lazy" alt="{$Title.ATT}">
+                        <img class="default-testimonial-item__image" src="{$FocusFill(200,200).Convert('webp').URL}" width="100" height="100" loading="lazy" alt="">
                     <% end_if %>
                 <% end_with %>
             <% end_if %>

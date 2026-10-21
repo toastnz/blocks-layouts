@@ -5,89 +5,68 @@ namespace Toast\Blocks;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 
 /**
- * Provides a component to the {@link GridField} which shows the publish status of a page.
+ * GridField column showing whether a block is a draft or published (and modified since).
  *
- * @package silverstripe
- * @subpackage lumberjack
- *
- * @author Michael Strong <mstrong@silverstripe.org>
-**/
+ * Based on the Lumberjack module's GridFieldSiteTreeState by Michael Strong.
+ */
 class GridFieldContentBlockState implements GridField_ColumnProvider
 {
-
-    public function augmentColumns($gridField, &$columns)
+    public function augmentColumns($gridField, &$columns): void
     {
         // Ensure Actions always appears as the last column.
-        $key = array_search("Actions", $columns);
-        if ($key !== false) {
-            unset($columns[$key]);
-        }
-
-        $columns = array_merge($columns, array(
-            "State",
-            "Actions",
-        ));
+        $columns = array_values(array_diff($columns, ['Actions']));
+        array_push($columns, 'State', 'Actions');
     }
 
-    public function getColumnsHandled($gridField)
+    public function getColumnsHandled($gridField): array
     {
-        return array("State");
+        return ['State'];
     }
 
-    public function getColumnContent($gridField, $record, $columnName)
+    public function getColumnContent($gridField, $record, $columnName): ?string
     {
-        if ($columnName == "State") {
-            if ($record->hasMethod("isPublished")) {
-                $modifiedLabel = "";
-                if ($record->isModifiedOnStage) {
-                    $modifiedLabel = "<span class='modified'>" . _t("GridFieldContentBlockState.Modified", "Modified") . "</span>";
-                }
-
-                $published = $record->isPublished();
-                if (!$published) {
-                    return _t(
-                        "GridFieldContentBlockState.Draft",
-                        '<i class="btn-icon gridfield-icon btn-icon-pencil"></i> Saved as Draft on {date}',
-                        "State for when a block is saved.",
-                        array(
-                            "date" => $record->dbObject("LastEdited")->Nice()
-                        )
-                    );
-                } else {
-                    return _t(
-                        "GridFieldContentBlockState.Published",
-                        '<i class="btn-icon gridfield-icon btn-icon-accept"></i> Published on {date}',
-                        "State for when a block is published.",
-                        array(
-                            "date" => $record->dbObject("LastEdited")->Nice()
-                        )
-                    ) . $modifiedLabel;
-                }
-            }
+        if ($columnName !== 'State' || !$record->hasMethod('isPublished')) {
+            return null;
         }
+
+        $date = $record->dbObject('LastEdited')->Nice();
+
+        if (!$record->isPublished()) {
+            return _t(
+                'GridFieldContentBlockState.Draft',
+                '<i class="btn-icon gridfield-icon btn-icon-pencil"></i> Saved as Draft on {date}',
+                'State for when a block is saved.',
+                ['date' => $date]
+            );
+        }
+
+        $modifiedLabel = $record->hasMethod('isModifiedOnDraft') && $record->isModifiedOnDraft()
+            ? "<span class='modified'>" . _t('GridFieldContentBlockState.Modified', 'Modified') . '</span>'
+            : '';
+
+        return _t(
+            'GridFieldContentBlockState.Published',
+            '<i class="btn-icon gridfield-icon btn-icon-accept"></i> Published on {date}',
+            'State for when a block is published.',
+            ['date' => $date]
+        ) . $modifiedLabel;
     }
 
-    public function getColumnAttributes($gridField, $record, $columnName)
+    public function getColumnAttributes($gridField, $record, $columnName): array
     {
-        if ($columnName == "State") {
-            if ($record->hasMethod("isPublished")) {
-                $published = $record->isPublished();
-                if (!$published) {
-                    $class = "gridfield-icon draft";
-                } else {
-                    $class = "gridfield-icon published";
-                }
-                return array("class" => $class);
-            }
+        if ($columnName !== 'State' || !$record->hasMethod('isPublished')) {
+            return [];
         }
-        return array();
+
+        return ['class' => 'gridfield-icon ' . ($record->isPublished() ? 'published' : 'draft')];
     }
 
-    public function getColumnMetaData($gridField, $columnName)
+    public function getColumnMetadata($gridField, $columnName): ?array
     {
-        switch ($columnName) {
-            case 'State':
-                return array("title" => _t("GridFieldContentBlockState.StateTitle", "State", "Column title for state"));
+        if ($columnName !== 'State') {
+            return null;
         }
+
+        return ['title' => _t('GridFieldContentBlockState.StateTitle', 'State', 'Column title for state')];
     }
 }

@@ -11,9 +11,9 @@
   "license": "BSD-3-Clause",
   "authors": [
     {
-    "name": "Priscilla Yap",
-    "homepage": "http://toast.co.nz/",
-    "role": "Developer"
+      "name": "Priscilla Yap",
+      "homepage": "http://toast.co.nz/",
+      "role": "Developer"
     },
     {
       "name": "Emmanuel Davies",
@@ -25,15 +25,27 @@
     "php": ">=8.3",
     "silverstripe/cms": "^6",
     "silverstripe/userforms": "^7",
+    "silverstripe/linkfield": "^5.1",
+    "silverstripe/blog": "^5",
+    "silverstripe/taxonomy": "^4",
+    "symbiote/silverstripe-gridfieldextensions": "^5",
+    "bummzack/sortablefile": "^3",
     "axllent/silverstripe-form-fields": "^2.0",
-    "toastnz/open-cms-preview": "^0.2.2",
-    "silverstripe/linkfield": "^5.1"
+    "toastnz/open-cms-preview": "^0.2.2"
+  },
+  "suggest": {
+    "silverstripe/subsites": "Blocks list and link to pages across all subsites when installed"
+  },
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
   },
   "extra": {
     "expose": [
-        "client/images",
-        "client/dist",
-        "client/fonts"
+      "client/images",
+      "client/dist",
+      "client/fonts"
     ]
   },
   "config": {

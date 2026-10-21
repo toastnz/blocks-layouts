@@ -2,11 +2,12 @@
 
 namespace Toast\Blocks\Items;
 
+use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use Toast\Blocks\TestimonialBlock;
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\AssetAdmin\Forms\UploadField;
 
 class TestimonialBlockItem extends BlockItem
 {
@@ -19,7 +20,7 @@ class TestimonialBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'  => File::class,
+        'Image' => File::class,
         'Parent' => TestimonialBlock::class
     ];
 
@@ -41,8 +42,7 @@ class TestimonialBlockItem extends BlockItem
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
@@ -51,7 +51,6 @@ class TestimonialBlockItem extends BlockItem
                 TextField::create('Position', 'Position'),
                 TextareaField::create('Summary', 'Summary')
             ]);
-
         });
 
         return parent::getCMSFields();

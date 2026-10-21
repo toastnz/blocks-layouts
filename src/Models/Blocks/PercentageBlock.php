@@ -2,13 +2,8 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\FieldList;
 use Toast\Blocks\Items\PercentageBlockItem;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 
 class PercentageBlock extends Block
 {
@@ -26,31 +21,10 @@ class PercentageBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
-            $fields->removeByName('Items');
-
-            if ($this->ID) {
-                $percentageConfig = GridFieldConfig_RecordEditor::create(10);
-
-                $percentageConfig->addComponent(GridFieldOrderableRows::create('SortOrder'))
-                    ->removeComponentsByType(GridFieldDeleteAction::class)
-                    ->addComponent(new GridFieldDeleteAction(false))
-                    ->removeComponentsByType('GridFieldAddExistingAutoCompleter');
-
-                $percentageBlockGridField = GridField::create(
-                    'Items',
-                    'Percentage Block Items',
-                    $this->owner->Items(),
-                    $percentageConfig
-                );
-                $fields->addFieldToTab('Root.Main', $percentageBlockGridField);
-            }
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $this->addItemsGridField($fields, 'Items', 'Percentage Block Items', 10);
         });
 
         return parent::getCMSFields();
     }
-
-
 }

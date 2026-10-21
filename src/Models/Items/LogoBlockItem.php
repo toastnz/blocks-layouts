@@ -2,13 +2,13 @@
 
 namespace Toast\Blocks\Items;
 
-use Toast\Blocks\LogoBlock;
-use SilverStripe\Assets\File;
-use SilverStripe\Forms\TextField;
-use Toast\Blocks\Items\BlockItem;
-use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use Toast\Blocks\Helpers\Helper;
+use Toast\Blocks\LogoBlock;
 
 class LogoBlockItem extends BlockItem
 {
@@ -20,7 +20,7 @@ class LogoBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Image'  => File::class,
+        'Image' => File::class,
         'Parent' => LogoBlock::class
     ];
 
@@ -28,13 +28,14 @@ class LogoBlockItem extends BlockItem
         'Title' => 'Title',
         'ContentSummary' => 'Logo',
     ];
+
     private static $owns = [
         'Image',
     ];
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->addFieldsToTab('Root.Main', [
                 TextField::create('Title', 'Title'),
                 TextField::create('BrandLink', 'Brand Link'),
@@ -47,20 +48,13 @@ class LogoBlockItem extends BlockItem
         return parent::getCMSFields();
     }
 
+    /**
+     * Thumbnail of the logo for CMS lists.
+     *
+     * @return DBHTMLText
+     */
     public function getContentSummary()
     {
-        $content = '';
-
-        if ($this->Image() && $this->Image()->exists()) {
-            $imageURL = $this->Image()->getAbsoluteURL();
-            $content = "<img src='{$imageURL}' alt='{$this->Image()->Title}' width='80' height='80' style='object-fit: contain' />";
-        }
-
-        return DBField::create_field(DBHTMLText::class, $content);
+        return Helper::getImageThumbnailHTML($this->Image());
     }
-
-    // public function canCreate($member = null, $context = [])
-    // {
-    //     return parent::canCreate($member);
-    // }
 }

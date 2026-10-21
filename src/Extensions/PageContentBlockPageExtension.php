@@ -2,17 +2,33 @@
 
 namespace Toast\Blocks\Extensions;
 
+use Page;
+use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Extension;
-use Toast\Blocks\PageContentBlock;
 use SilverStripe\View\SSViewer;
+use Toast\Blocks\PageContentBlock;
 
+/**
+ * Lets a page type position its own Layout template among its content blocks, using the shared
+ * {@link PageContentBlock}. The block is linked to the page automatically on save.
+ *
+ * ```yaml
+ * Your\Page\Class:
+ *   extensions:
+ *     - Toast\Blocks\Extensions\PageContentBlockPageExtension
+ * ```
+ *
+ * @extends Extension<Page>
+ */
 class PageContentBlockPageExtension extends Extension
 {
     private static $pageContentBlockLinked = true;
 
-    public function getOrCreatePageContentBlock()
+    /**
+     * The shared PageContentBlock, created and published if it doesn't exist yet.
+     */
+    public function getOrCreatePageContentBlock(): PageContentBlock
     {
-        // Find the first existing block, or create one if none exist
         $block = PageContentBlock::get()->first();
 
         if (!$block) {
@@ -22,76 +38,70 @@ class PageContentBlockPageExtension extends Extension
             $block->publishSingle();
         }
 
-
         return $block;
     }
 
-    public function getPageContentBlock()
+    public function getPageContentBlock(): PageContentBlock
     {
         return $this->getOrCreatePageContentBlock();
     }
 
-    public function addPageContentBlock()
+    /**
+     * Link the shared PageContentBlock to this page if it isn't already.
+     */
+    public function addPageContentBlock(): void
     {
-
         try {
-            // Grab the page content block
             $block = $this->getOrCreatePageContentBlock();
+            $blocks = $this->getOwner()->ContentBlocks();
 
-            // Grab the content blocks
-            $blocks = $this->owner->ContentBlocks();
-
-            // Link the block if not already linked
             if (!$blocks->filter('ID', $block->ID)->exists()) {
                 $blocks->add($block);
             }
         } catch (\Exception $e) {
+            // Never block a page save because the content block couldn't be linked
             return;
         }
     }
 
-    public function getHasPageContentBlock()
+    public function getHasPageContentBlock(): bool
     {
-        if (!$this->owner->config()->get('pageContentBlockLinked')) {
+        $owner = $this->getOwner();
+
+        if (!$owner->config()->get('pageContentBlockLinked') || !$owner->isInDB()) {
             return false;
         }
 
-        if (!$this->owner->isInDB()) {
-            return false;
-        }
-
-        return $this->owner->ContentBlocks()
-            ->filter('ClassName', PageContentBlock::class)
-            ->exists();
+        return $owner->ContentBlocks()->filter('ClassName', PageContentBlock::class)->exists();
     }
 
-
-    public function onBeforeWrite()
+    protected function onBeforeWrite(): void
     {
-        // Check if this is a new record (not yet in database before write)
-        // if (!$this->owner->isInDB()) {
-            $this->owner->addPageContentBlock();
-
-        // }
+        // Called through the owner so page classes can override it
+        $this->getOwner()->addPageContentBlock();
     }
 
-
-    public function getViewerTemplate()
+    public function getViewerTemplate(): array
     {
-        return SSViewer::get_templates_by_class($this->owner->ClassName);
+        return SSViewer::get_templates_by_class($this->getOwner()->ClassName);
     }
 
-    public function getNamespace()
+    /**
+     * Namespace of the page class, e.g. "Toast\Pages"
+     */
+    public function getNamespace(): string
     {
-         // Build layout templates in a namespace-aware way
-        $reflection = new \ReflectionClass($this->owner);
-        return  $reflection->getNamespaceName(); // e.g. Toast\Pages
+        $className = get_class($this->getOwner());
+        $separator = strrpos($className, '\\');
 
+        return $separator === false ? '' : substr($className, 0, $separator);
     }
 
-    public function getShortName()
+    /**
+     * Short class name of the page, e.g. "GeneralHolderPage"
+     */
+    public function getShortName(): string
     {
-        $reflection = new \ReflectionClass($this->owner);
-        return  $reflection->getShortName(); // e.g. GeneralHolderPage
+        return ClassInfo::shortName($this->getOwner());
     }
 }

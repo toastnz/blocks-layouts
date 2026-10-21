@@ -2,23 +2,29 @@
 
 namespace Toast\Blocks;
 
-use Toast\Blocks\Block;
-use SilverStripe\ORM\DataList;
 use SilverStripe\Blog\Model\Blog;
+use SilverStripe\Blog\Model\BlogPost;
 use SilverStripe\Blog\Model\BlogTag;
-use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ListboxField;
 use SilverStripe\Forms\NumericField;
-use SilverStripe\Forms\DropdownField;
 use SilverStripe\Model\List\ArrayList;
+use SilverStripe\ORM\DataList;
+use Toast\Blocks\Traits\HasColumns;
 
 class PostsBlock extends Block
 {
+    use HasColumns;
+
     private static $singular_name = 'Posts Block';
+
     private static $plural_name = 'Posts Blocks';
+
     private static $description = 'Posts Block';
+
     private static $table_name = 'Blocks_PostsBlock';
-    private static $target_blog_classname = 'SilverStripe\Blog\Model\Blog';
+
+    private static $target_blog_classname = Blog::class;
 
     protected static $icon_class = 'font-icon-block-blog-post';
 
@@ -33,76 +39,43 @@ class PostsBlock extends Block
 
     public function getCMSFields()
     {
-        $fields = parent::getCMSFields();
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $limit = $this->getLimitMinMax();
 
-        // Get the relevant tags
-        $tags = $this->getRelevantTags();
+            // Remove the scaffolded Tags tab/GridField; tags are picked from a listbox instead
+            $fields->removeByName('Tags');
 
-        // Get the min and max limit values
-        $limit = $this->getLimitMinMax();
-        $minPosts = $limit['min_posts'];
-        $maxPosts = $limit['max_posts'];
+            $fields->addFieldsToTab('Root.Main', [
+                ListboxField::create('Tags', 'Filter by Tags', $this->getRelevantTags())
+                    ->setDescription('Select tags to filter the posts shown in this block. If no tags are selected, all posts will be shown.'),
+                NumericField::create('Limit', 'Number of posts to show')
+                    ->setAttribute('min', $limit['min_posts'])
+                    ->setAttribute('max', $limit['max_posts'])
+                    ->setAttribute('step', '1'),
+            ]);
 
-        // Get the available columns
-        $columns = $this->getAvailableColumns();
+            $this->addColumnsField($fields);
+        });
 
-        $fields->addFieldsToTab('Root.Main', [
-            ListboxField::create('Tags', 'Filter by Tags', $tags)
-                ->setDescription('Select tags to filter the posts shown in this block. If no tags are selected, all posts will be shown.'),
-            NumericField::create('Limit', 'Number of posts to show')
-                ->setAttribute('min', $minPosts)
-                ->setAttribute('max', $maxPosts)
-                ->setAttribute('step', '1'),
-            DropdownField::create('Columns', 'Columns', $columns),
-        ]);
-
-        return $fields;
+        return parent::getCMSFields();
     }
 
-    /** Get available columns from config or default values
-     * @return array
-     */
-    public function getAvailableColumns(): array
-    {
-        // Check to see if there are any columns available in the config
-        $columns = Config::inst()->get(self::class, 'available_columns') ?? [2, 3, 4];
-        // Return the available columns after allowing extensions to modify them
-        return $this->updateAvailableColumns($columns);
-    }
-
-    /** Allow extensions to modify available columns
-     * @param array $columns
-     * @return array
-     */
-    public function updateAvailableColumns($columns): array
-    {
-        // Allow extensions to modify the available columns
-        $this->extend('updateAvailableColumns', $columns);
-
-        return array_combine($columns, $columns);
-    }
-
-    /** Get min and max limit values from config or defaults
-     * @return array
+    /**
+     * Min and max limit values from config or defaults
      */
     public function getLimitMinMax(): array
     {
-        // Get min and max from config, or use defaults
-        $min = Config::inst()->get(self::class, 'min_posts') ?? 4;
-        $max = Config::inst()->get(self::class, 'max_posts') ?? 12;
-
-        // Return the min and max after allowing extensions to modify them
-        return $this->updateLimitMinMax($min, $max);
+        return $this->updateLimitMinMax(
+            $this->config()->get('min_posts') ?? 4,
+            $this->config()->get('max_posts') ?? 12
+        );
     }
 
-    /** Allow extensions to modify min and max limit values
-     * @param int $min
-     * @param int $max
-     * @return array
+    /**
+     * Allow extensions to modify min and max limit values
      */
     public function updateLimitMinMax($min, $max): array
     {
-        // Allow extensions to modify the min and max values
         $this->extend('updateLimitMinMax', $min, $max);
 
         return [
@@ -111,105 +84,78 @@ class PostsBlock extends Block
         ];
     }
 
-    /** Get all the tags from the relevant blog class
-     * @return array
+    /**
+     * Tags belonging to the target blog class, as [ID => Title]
      */
     public function getRelevantTags(): array
     {
-        // Get all blog tags
-        $tags = BlogTag::get();
+        $tags = BlogTag::get()
+            ->filter('Blog.ClassName', $this->config()->get('target_blog_classname'))
+            ->map('ID', 'Title')
+            ->toArray();
 
-        // Filter to only return tags related to the correct blog class name
-        $tags = $tags->filter('Blog.ClassName', $this->Config()->get('target_blog_classname'));
-
-        // Map to ID => Title array
-        $tags = $tags->map('ID', 'Title')->toArray();
-
-        // Allow extensions to modify the list of tags
         return $this->updateRelevantTags($tags);
     }
 
-    /** Allow extensions to modify relevant tags
-     * @param array $tags
-     * @return array
+    /**
+     * Allow extensions to modify relevant tags
      */
     public function updateRelevantTags($tags): array
     {
-        // Allow extensions to modify the list of tags
         $this->extend('updateRelevantTags', $tags);
 
         return $tags;
     }
 
-    /** Get all blog pages
-     * @return DataList
+    /**
+     * All blog pages of the target blog class
      */
     public function getBlogPages(): DataList
     {
-        $pages = Blog::get();
+        $pages = Blog::get()->filter('ClassName', $this->config()->get('target_blog_classname'));
 
-        // Filter to only return pages with the correct parent page class name
-        $pages = $pages->filter('ClassName', $this->Config()->get('target_blog_classname'));
-
-        // Return the pages after allowing extensions to modify them
         return $this->updateBlogPages($pages);
     }
 
-    /** Allow extensions to modify the list of blog pages
-     * @param DataList $pages
-     * @return DataList
+    /**
+     * Allow extensions to modify the list of blog pages
      */
     public function updateBlogPages($pages): DataList
     {
-        // Allow extensions to modify the list of blog pages
         $this->extend('updateBlogPages', $pages);
 
         return $pages;
     }
 
-    /** Get posts from the relevant blog pages
-     * @param string $sort
-     * @return ArrayList
+    /**
+     * Posts from the relevant blog pages, filtered by the selected tags and limited to Limit (default 4).
      */
     public function getPosts($sort = 'PublishDate DESC'): ArrayList
     {
-        $items = new ArrayList();
+        $items = ArrayList::create();
 
-        // Get all the posts from all the blog pages
         foreach ($this->getBlogPages() as $blogPage) {
-            foreach ($blogPage->getBlogPosts() as $post) {
-                $items->push($post);
-            }
+            $items->merge($blogPage->getBlogPosts());
         }
 
-        // Allow extensions to modify the list of items
-        $items = $this->updatePosts($items);
+        $items = $this->updatePosts($items)->sort($sort);
 
-        // Sort the items
-        $items = $items->sort($sort);
+        $tagIDs = $this->Tags()->column('ID');
 
-        // Filter by tags if any are selected
-        if ($this->Tags()->exists()) {
-            $tagIDs = $this->Tags()->column('ID');
-            $items = $items->filterByCallback(function ($item) use ($tagIDs) {
-                $postTagIDs = $item->Tags()->column('ID');
-                return count(array_intersect($tagIDs, $postTagIDs)) > 0;
-            });
+        if ($tagIDs) {
+            // One query for every tagged post, rather than one per post
+            $taggedPostIDs = BlogPost::get()->filter('Tags.ID', $tagIDs)->column('ID');
+            $items = $items->filterByCallback(fn ($item) => in_array($item->ID, $taggedPostIDs));
         }
 
-        // Limit the number of items if a limit is set
-        $items = $items->limit($this->Limit ?: 4);
-
-        return $items;
+        return $items->limit($this->Limit ?: 4);
     }
 
-    /** Allow extensions to modify the list of posts
-     * @param ArrayList $items
-     * @return ArrayList
+    /**
+     * Allow extensions to modify the list of posts
      */
     public function updatePosts($items): ArrayList
     {
-        // Allow extensions to modify the list of posts
         $this->extend('updatePosts', $items);
 
         return $items;

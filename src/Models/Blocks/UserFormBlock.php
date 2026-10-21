@@ -2,14 +2,15 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Forms\TextField;
 use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\UserForms\Form\UserForm;
 use SilverStripe\UserForms\Model\UserDefinedForm;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
+/**
+ * Renders the form of the User Defined Form page it is placed on.
+ */
 class UserFormBlock extends Block
 {
     private static $table_name = 'Blocks_UserFormBlock';
@@ -22,25 +23,37 @@ class UserFormBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-            $fields->insertAfter('Title',
-                LiteralField::create('', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->insertAfter(
+                'Title',
+                LiteralField::create('UserFormNotice', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
             );
         });
 
         return parent::getCMSFields();
     }
 
+    /**
+     * The page's user form, or null when the block isn't on a User Defined Form page.
+     *
+     * @return UserForm|null
+     */
     public function Form()
     {
-        if ($page = $this->getParentPage()) {
-            if ($page instanceof UserDefinedForm) {
-                $controller = Controller::curr();
-                $form = UserForm::create($controller, 'Form_' . $page->ID);
-                $form->setFormAction(Controller::join_links($page->Link(), 'Form'));
-                $controller->generateConditionalJavascript();
-                return $form;
-            }
+        $page = $this->getParentPage();
+        $controller = Controller::curr();
+
+        if (!$page instanceof UserDefinedForm || !$controller) {
+            return null;
         }
+
+        $form = UserForm::create($controller, 'Form_' . $page->ID);
+        $form->setFormAction(Controller::join_links($page->Link(), 'Form'));
+
+        if ($controller->hasMethod('generateConditionalJavascript')) {
+            $controller->generateConditionalJavascript();
+        }
+
+        return $form;
     }
 }

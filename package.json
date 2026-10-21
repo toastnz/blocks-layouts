@@ -6,6 +6,10 @@
         "watch": "webpack --mode development --progress --watch --config webpack/webpack.config.js",
         "build": "webpack --mode production --progress --config webpack/webpack.config.js"
     },
+    "browserslist": [
+        "defaults and supports es6-module",
+        "not dead"
+    ],
     "author": "Emmanuel Davies",
     "license": "MIT",
     "devDependencies": {

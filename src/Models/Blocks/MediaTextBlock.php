@@ -2,14 +2,14 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\File;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\RequiredFields;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\LinkField\Models\Link;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\LinkField\Form\LinkField;
+use SilverStripe\LinkField\Models\Link;
 
 class MediaTextBlock extends Block
 {
@@ -23,7 +23,7 @@ class MediaTextBlock extends Block
 
     private static $db = [
         'Video' => VideoLink::class,
-        'MediaAlignment'    => 'Enum("left,right", "left")',
+        'MediaAlignment' => 'Enum("left,right", "left")',
     ];
 
     private static $has_one = [
@@ -36,12 +36,15 @@ class MediaTextBlock extends Block
         'CTALink',
     ];
 
+    private static $required_fields = [
+        'Content',
+    ];
+
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->addFieldsToTab('Root.Main', [
-                DropdownField::create('MediaAlignment', 'Media Position', $this->owner->dbObject('MediaAlignment')->enumValues()),
+                DropdownField::create('MediaAlignment', 'Media Position', $this->dbObject('MediaAlignment')->enumValues()),
                 VideoLinkField::create('Video')
                     ->showPreview(500)
                     ->setDescription('This will replace the image on this block'),
@@ -50,17 +53,8 @@ class MediaTextBlock extends Block
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),
                 LinkField::create('CTALink', 'Link'),
             ]);
-
         });
 
         return parent::getCMSFields();
-    }
-
-    public function getCMSValidator()
-    {
-        $required = new RequiredFields([Image::class, 'Content']);
-        $this->extend('updateCMSValidator', $required);
-        return $required;
-
     }
 }

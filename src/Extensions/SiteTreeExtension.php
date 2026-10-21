@@ -2,30 +2,38 @@
 
 namespace Toast\Blocks\Extensions;
 
-use SilverStripe\Core\Extension;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Extension;
 
+/**
+ * Adds every block's anchor (plus any `custom_anchors` from config) to the anchors offered by the CMS
+ * link picker.
+ *
+ * ```yaml
+ * Toast\Blocks\Extensions\SiteTreeExtension:
+ *   custom_anchors:
+ *     - top
+ * ```
+ *
+ * @extends Extension<SiteTree>
+ */
 class SiteTreeExtension extends Extension
 {
-    public function updateAnchorsOnPage(&$anchors)
+    protected function updateAnchorsOnPage(array &$anchors): void
     {
-        // Get custom anchors from the configuration
-        $customAnchors = Config::inst()->get(SiteTree::class, 'custom_anchors');
+        $owner = $this->getOwner();
+        $customAnchors = $owner->config()->get('custom_anchors');
 
         if (is_array($customAnchors)) {
             $anchors = array_merge($customAnchors, $anchors);
         }
 
-        // Get the ContentBlocks for the current page
-        $contentBlocks = $this->owner->ContentBlocks();
-
-        // Loop through each ContentBlock and add its BlockID to the anchors array
-        foreach ($contentBlocks as $block) {
-            $anchors[] = $block->BlockID;
+        if ($owner->hasMethod('ContentBlocks')) {
+            foreach ($owner->ContentBlocks() as $block) {
+                $anchors[] = $block->getBlockID();
+            }
         }
 
-        // Remove duplicates and reindex the array
         $anchors = array_values(array_unique($anchors));
     }
 }

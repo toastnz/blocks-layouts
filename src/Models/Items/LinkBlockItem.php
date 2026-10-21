@@ -2,13 +2,14 @@
 
 namespace Toast\Blocks\Items;
 
-use Toast\Blocks\LinkBlock;
-use SilverStripe\Assets\File;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\TextareaField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\LinkField\Models\Link;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\TextField;
 use SilverStripe\LinkField\Form\LinkField;
+use SilverStripe\LinkField\Models\Link;
+use Toast\Blocks\LinkBlock;
 
 class LinkBlockItem extends BlockItem
 {
@@ -20,14 +21,15 @@ class LinkBlockItem extends BlockItem
     ];
 
     private static $has_one = [
-        'Link'   => Link::class,
-        'Image'  => File::class,
+        'Link' => Link::class,
+        'Image' => File::class,
         'Parent' => LinkBlock::class
     ];
 
     private static $summary_fields = [
         'Title' => 'Title',
     ];
+
     private static $owns = [
         'Image',
         'Link'
@@ -35,8 +37,7 @@ class LinkBlockItem extends BlockItem
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->addFieldsToTab('Root.Main', [
                 UploadField::create('Image', 'Image')
                     ->setFolderName('Uploads/Blocks')
@@ -45,7 +46,6 @@ class LinkBlockItem extends BlockItem
                 TextareaField::create('Summary', 'Summary'),
                 LinkField::create('Link', 'Link'),
             ]);
-
         });
 
         return parent::getCMSFields();

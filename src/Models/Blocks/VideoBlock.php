@@ -2,11 +2,12 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Assets\File;
-use SilverStripe\Forms\CheckboxField;
 use Axllent\FormFields\FieldType\VideoLink;
 use Axllent\FormFields\Forms\VideoLinkField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FieldList;
 
 class VideoBlock extends Block
 {
@@ -33,11 +34,11 @@ class VideoBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->addFieldsToTab('Root.Main', [
                 CheckboxField::create('OpenInModal', 'Open Video In Modal'),
                 VideoLinkField::create('Video')
-                ->showPreview(500),
+                    ->showPreview(500),
                 UploadField::create('Thumbnail', 'Thumbnail Image')
                     ->setFolderName('Uploads/Blocks')
                     ->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp']),

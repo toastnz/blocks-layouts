@@ -2,9 +2,9 @@
 
 namespace Toast\Blocks;
 
-use Toast\Blocks\Block;
-use SilverStripe\Assets\Image;
 use Bummzack\SortableFile\Forms\SortableUploadField;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\FieldList;
 
 class SliderBlock extends Block
 {
@@ -20,7 +20,7 @@ class SliderBlock extends Block
         'Images' => Image::class,
     ];
 
-     private static $many_many_extraFields = [
+    private static $many_many_extraFields = [
         'Images' => [
             'Sort' => 'Int'
         ]
@@ -32,13 +32,13 @@ class SliderBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-            $fields->addFieldsToTab('Root.Main', [
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->addFieldToTab(
+                'Root.Main',
                 SortableUploadField::create('Images', 'Images')->setSortColumn('Sort')
-            ]);
+            );
         });
 
         return parent::getCMSFields();
     }
-
 }

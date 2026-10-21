@@ -1,18 +1,18 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-video [ js-default-video ] {$IncludeClasses} {$ExtraClasses}">
-    <section>
+<colour-block id="{$BlockID}" tabindex="-1" class="default-video [ js-default-video ] {$IncludeClasses} {$ExtraClasses}">
+    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <div class="default-video__wrap">
             <div class="default-video__media">
                 <% if $Heading %>
-                    <h2 class="default-video__heading">{$Heading}</h2>
+                    <h2 id="{$BlockID}_heading" class="default-video__heading">{$Heading}</h2>
                 <% end_if %>
 
-                <a id="{$BlockID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}">
+                <a id="{$BlockID}_{$Video.VideoID}" class="default-video__link" data-video<% if $OpenInModal %>-modal<% end_if %>="{$Video.IframeURL}" role="button" tabindex="0" aria-label="Play video<% if $Video.Title %>: {$Video.Title.ATT}<% end_if %>"<% if $OpenInModal %> aria-haspopup="dialog"<% end_if %>>
                     <div class="default-video__thumbnail">
                         <% if $Thumbnail %>
                             <% with $Thumbnail %>
                                 <picture>
                                     <% if $Extension="svg" %>
-                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                                        <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                                     <% else %>
                                         <% with $Convert('webp') %>
                                             <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).URL}">
@@ -27,7 +27,7 @@
                             <img loading="lazy" src="{$Video.ThumbnailURL('large')}" alt="{$Video.Title}" width="1920" height="1080">
                         <% end_if %>
                     </div>
-                    <div class="default-video__icon"></div>
+                    <div class="default-video__icon" aria-hidden="true"></div>
                 </a>
 
                 <% if $Content %>

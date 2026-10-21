@@ -1,11 +1,11 @@
-<div id="{$BlockItemID}" class="default-gallery-item [ js-in-view ]">
-    <button class="default-gallery-item__action [ js-default-gallery__action ] <% if $Video %>has-video<% end_if %>">
+<div id="{$BlockItemID}" class="default-gallery-item [ js-in-view ]" role="listitem">
+    <button type="button" class="default-gallery-item__action [ js-default-gallery__action ] <% if $Video %>has-video<% end_if %>" aria-haspopup="dialog" aria-label="<% if $Video %>Play video<% else %>View image<% end_if %> {$Pos} of {$TotalItems}">
         <div class="default-gallery-item__media">
             <% if $Image %>
                 <% with $Image %>
                     <picture>
                         <% if $Extension="svg" %>
-                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                            <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                         <% else %>
                             <% with $Convert('webp') %>
                                 <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).URL}">
@@ -19,7 +19,7 @@
             <% end_if %>
 
             <% if $Video %>
-                <div class="default-gallery-item__video">
+                <div class="default-gallery-item__video" aria-hidden="true">
                     <div class="default-gallery-item__icon"></div>
                 </div>
             <% end_if %>

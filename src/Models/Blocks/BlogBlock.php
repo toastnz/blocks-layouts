@@ -2,25 +2,29 @@
 
 namespace Toast\Blocks;
 
-use Toast\Blocks\Block;
-use Toast\Blocks\BlogBlock;
 use SilverStripe\Blog\Model\Blog;
-use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Blog\Model\BlogPost;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\Model\List\SS_List;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Toast\Blocks\Traits\HasColumns;
 
 class BlogBlock extends Block
 {
+    use HasColumns;
+
     private static $table_name = 'Blocks_BlogBlock';
+
     private static $singular_name = 'Blog Posts';
+
     private static $plural_name = 'Blog Posts';
+
     protected static $icon_class = 'font-icon-block-blog-post';
 
     private static $db = [
@@ -43,70 +47,52 @@ class BlogBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->removeByName(['BlogPosts', 'BlogID']);
+            $this->addColumnsField($fields);
 
-            $config = GridFieldConfig_RelationEditor::create(4);
-            $config->removeComponentsByType(GridFieldAddNewButton::class)
+            if (!$this->exists()) {
+                $fields->addFieldToTab('Root.Main', $this->getSaveFirstNoticeField());
+                return;
+            }
+
+            $config = GridFieldConfig_RelationEditor::create(4)
+                ->removeComponentsByType(GridFieldAddNewButton::class)
                 ->addComponent(GridFieldOrderableRows::create('SortOrder'));
 
-            $fields->removeByName(['BlogPosts', 'Columns', 'BlogID']);
-
-            if ($this->exists()) {
-                // Set up the options array
-                $options = [];
-
-                // Check to see if there are any columns available in the config
-                $columns = Config::inst()->get(BlogBlock::class, 'available_columns') ?? [2, 3, 4];
-
-                foreach ($columns as $column) {
-                    $options[$column] = $column;
-                }
-
-                // Add the dropdown field to the main tab
-                if (count($options) > 0) {
-                    $fields->addFieldsToTab('Root.Main', [
-                        DropdownField::create('Columns', 'Columns', $options),
-                    ]);
-                }
-
-                $grid = GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config);
-
-                $fields->addFieldsToTab('Root.Main', [
-                    LiteralField::create('Notice', '<div class="message notice">Select a blog page to automatically pull through the latest blog posts. Alternatively, select the specific posts you wish to display.</div>'),
-                    TreeDropdownField::create('BlogID', 'Parent Page', SiteTree::class)
-                        ->setFilterFunction(function ($node) {
-                            // Filter to only accept pages of type 'Blog' or its subclasses
-                            return is_a($node, \SilverStripe\Blog\Model\Blog::class, true);
-                        }),
-                    $grid
-                ]);
-            } else {
-                $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
-            }
+            $fields->addFieldsToTab('Root.Main', [
+                LiteralField::create('Notice', '<div class="message notice">Select a blog page to automatically pull through the latest blog posts. Alternatively, select the specific posts you wish to display.</div>'),
+                TreeDropdownField::create('BlogID', 'Parent Page', SiteTree::class)
+                    ->setFilterFunction(fn ($node) => $node instanceof Blog),
+                GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config),
+            ]);
         });
 
         return parent::getCMSFields();
     }
 
+    /**
+     * The hand-picked posts, or the latest posts from the selected blog, excluding the current page.
+     *
+     * @param int|string|null $limit Defaults to the number of columns
+     * @return SS_List
+     */
     public function getPosts($limit = null)
     {
-        // if the $limit is a number, use it, otherwise default to $this->Columns
-        $limit = is_numeric($limit) ? (int)$limit : (int)$this->Columns;
+        $limit = is_numeric($limit) ? (int) $limit : (int) $this->Columns;
+        $excludeID = (int) $this->getPage()?->ID;
 
-        if (!$this->BlogPosts()->exists()) {
-            if ($this->BlogID) {
-                return BlogPost::get()
-                    ->filter([
-                        "ParentID" => $this->BlogID,
-                        "ID:not" => $this->getPage()->ID
-                    ])
-                    ->limit($limit);
-            }
+        if (!$this->BlogPosts()->exists() && $this->BlogID) {
+            $posts = BlogPost::get()->filter('ParentID', $this->BlogID);
+        } else {
+            $posts = $this->BlogPosts()->sort('SortOrder');
         }
 
-        return $this->BlogPosts()
-            ->filter(["ID:not" => $this->getPage()->ID])
-            ->sort('SortOrder')
-            ->limit($limit);
+        // A limit of 0 means "no results" in Silverstripe 6, so treat it as "no limit"
+        $posts = $posts->exclude('ID', $excludeID)->limit($limit > 0 ? $limit : null);
+
+        $this->extend('updatePosts', $posts);
+
+        return $posts;
     }
 }

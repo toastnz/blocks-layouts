@@ -1,9 +1,9 @@
-<div class="default-slider-item">
+<div class="default-slider-item" role="group" aria-roledescription="slide" aria-label="{$Pos} of {$TotalItems}">
     <div class="default-slider-item__layout">
         <div class="default-slider-item__media">
             <picture>
                 <% if $Extension="svg" %>
-                    <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr} loading="lazy" alt="{$Title.ATT}">
+                    <img loading="lazy" src="{$URL}" alt="{$Title.ATT}" {$SizeAttr}>
                 <% else %>
                     <% with $Convert('webp') %>
                         <source media="(max-width: 639px)" srcset="{$ScaleMaxWidth(640).URL}">

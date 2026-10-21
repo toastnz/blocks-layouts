@@ -1,5 +1,5 @@
 <a id="{$BlockItemID}" href="{$File.Link}" class="default-download-item [ js-in-view ]" download="{$Title.ATT}">
-    <div class="default-download-item__background"></div>
+    <div class="default-download-item__background" aria-hidden="true"></div>
 
     <div class="default-download-item__title">
         <span>{$Title}</span>
@@ -15,7 +15,7 @@
         </div>
     <% end_with %>
 
-    <div class="default-download-item__icon" data-icon="{$Extension.LowerCase}">
+    <div class="default-download-item__icon" data-icon="{$Extension.LowerCase}" aria-hidden="true">
         <span></span>
     </div>
 </a>

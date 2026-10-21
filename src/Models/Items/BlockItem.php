@@ -2,11 +2,17 @@
 
 namespace Toast\Blocks\Items;
 
-use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
-use Toast\OpenCMSPreview\Fields\OpenCMSPreview;
+use SilverStripe\ORM\CMSPreviewable;
+use SilverStripe\ORM\DataObject;
 
-class BlockItem extends DataObject
+/**
+ * Base class for items that belong to a block through a `Parent` has_one.
+ *
+ * Permissions and the CMS preview follow the parent block.
+ */
+class BlockItem extends DataObject implements CMSPreviewable
 {
     private static $table_name = 'Blocks_BlockItem';
 
@@ -14,76 +20,119 @@ class BlockItem extends DataObject
         'SortOrder' => 'Int'
     ];
 
+    /**
+     * Items aren't versioned, so show a single "Preview" switch in the CMS preview panel.
+     *
+     * @config
+     */
+    private static $show_unversioned_preview_link = true;
+
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-            if ($this->ID) {
-                $fields->addFieldToTab('Root.Main', OpenCMSPreview::create($this->getBlockPreviewURL()),);
-
-                $fields->addFieldsToTab('Root.More', [
-                    ReadonlyField::create('BlockID', 'Item ID', $this->getBlockItemID()),
-                ]);
-            }
-
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->removeByName([
                 'ParentID',
                 'SortOrder',
                 'FileTracking',
                 'LinkTracking'
             ]);
+
+            if ($this->exists()) {
+                $fields->addFieldToTab(
+                    'Root.More',
+                    ReadonlyField::create('BlockID', 'Item ID', $this->getBlockItemID())
+                );
+            }
         });
 
         return parent::getCMSFields();
     }
 
-    public function getBlockItemID()
+    /**
+     * New items go to the end of their parent's list.
+     */
+    protected function onBeforeWrite()
     {
-        return $this->Parent()->getBlockID() . '_' . $this->ID;
+        parent::onBeforeWrite();
+
+        if (!$this->SortOrder && $this->hasField('ParentID')) {
+            $max = (int) static::get()->filter('ParentID', $this->ParentID)->max('SortOrder');
+            $this->SortOrder = $max + 1;
+        }
     }
 
-    public function getBlockPreviewURL()
+    /**
+     * Whether this item belongs to a parent record through a `Parent` relation.
+     */
+    protected function hasParentRelation(): bool
     {
-        if ($this->hasMethod('Parent')) {
-            $id = $this->getBlockItemID();
-            return $this->Parent()->getBlockPreviewURL($id);
+        return $this->hasMethod('Parent');
+    }
+
+    /**
+     * Anchor ID for the item, e.g. "OurTeam_12".
+     */
+    public function getBlockItemID(): string
+    {
+        $parent = $this->hasParentRelation() ? $this->Parent() : null;
+
+        if (!$parent || !$parent->hasMethod('getBlockID')) {
+            return (string) $this->ID;
         }
 
-        return null;
+        return $parent->getBlockID() . '_' . $this->ID;
+    }
+
+    /**
+     * Draft-stage preview URL of the parent block, scrolled to this item.
+     */
+    public function getBlockPreviewURL(): ?string
+    {
+        $parent = $this->hasParentRelation() ? $this->Parent() : null;
+
+        if (!$parent || !$parent->hasMethod('getBlockPreviewURL')) {
+            return null;
+        }
+
+        return $parent->getBlockPreviewURL($this->getBlockItemID());
+    }
+
+    /**
+     * Used by the CMS preview panel (see {@link CMSPreviewable}).
+     */
+    public function PreviewLink($action = null): ?string
+    {
+        $link = $this->exists() ? $this->getBlockPreviewURL() : null;
+
+        $this->extend('updatePreviewLink', $link, $action);
+
+        return $link;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return 'text/html';
     }
 
     public function canView($member = null)
     {
-        if ($this->hasMethod('Parent')) {
-            return $this->Parent()->canView($member);
-        }
-
-        return parent::canView($member);
+        return $this->hasParentRelation() ? $this->Parent()->canView($member) : parent::canView($member);
     }
 
     public function canEdit($member = null)
     {
-        if ($this->hasMethod('Parent')) {
-            return $this->Parent()->canEdit($member);
-        }
-
-        return parent::canEdit($member);
+        return $this->hasParentRelation() ? $this->Parent()->canEdit($member) : parent::canEdit($member);
     }
 
     public function canDelete($member = null)
     {
-        if ($this->hasMethod('Parent')) {
-            return $this->Parent()->canDelete($member);
-        }
-
-        return parent::canEdit($member);
+        return $this->hasParentRelation() ? $this->Parent()->canDelete($member) : parent::canDelete($member);
     }
 
     public function canCreate($member = null, $context = [])
     {
-        if ($this->hasMethod('Parent')) {
-            return $this->Parent()->canCreate($member, $context);
-        }
-
-        return parent::canCreate($member, $context);
+        return $this->hasParentRelation()
+            ? $this->Parent()->canCreate($member, $context)
+            : parent::canCreate($member, $context);
     }
 }

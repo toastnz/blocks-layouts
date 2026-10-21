@@ -1,10 +1,10 @@
-<colour-block id="{$BlockID}" tabIndex="0" class="default-accordion [ js-default-accordion ] {$IncludeClasses} {$ExtraClasses}" data-state="{$AccordionDisplay}">
-    <section>
+<colour-block id="{$BlockID}" tabindex="-1" class="default-accordion [ js-default-accordion ] {$IncludeClasses} {$ExtraClasses}" data-state="{$AccordionDisplay}">
+    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-accordion__header">
                 <div class="default-accordion__content">
                     <% if $Heading %>
-                        <h2 class="default-accordion__heading">{$Heading}</h2>
+                        <h2 id="{$BlockID}_heading" class="default-accordion__heading">{$Heading}</h2>
                     <% end_if %>
 
                     {$Content}

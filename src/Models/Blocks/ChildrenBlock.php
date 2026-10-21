@@ -2,20 +2,23 @@
 
 namespace Toast\Blocks;
 
-use SilverStripe\Core\Config\Config;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TreeDropdownField;
-use Toast\Blocks\Block;
 use SilverStripe\Model\List\ArrayList;
+use Toast\Blocks\Traits\HasColumns;
 
 class ChildrenBlock extends Block
 {
+    use HasColumns;
+
     private static $table_name = 'Blocks_ChildrenBlock';
+
     private static $singular_name = 'Page Links';
+
     private static $plural_name = 'Page Links';
+
     protected static $icon_class = 'font-icon-block-layout-2';
 
     private static $db = [
@@ -29,63 +32,52 @@ class ChildrenBlock extends Block
 
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-            $fields->removeByName(['ParentPageID', 'Columns']);
+        $this->beforeUpdateCMSFields(function (FieldList $fields) {
+            $fields->removeByName('ParentPageID');
+            $this->addColumnsField($fields);
 
-            if ($this->exists()) {
-                // Set up the options array
-                $options = [];
-
-                // Check to see if there are any columns available in the config
-                $columns = Config::inst()->get(ChildrenBlock::class, 'available_columns') ?? [2, 3, 4];
-
-                foreach ($columns as $column) {
-                    $options[$column] = $column;
-                }
-
-                // Add the dropdown field to the main tab
-                if (count($options) > 0) {
-                    $fields->addFieldsToTab('Root.Main', [
-                        DropdownField::create('Columns', 'Columns', $options),
-                    ]);
-                }
-
-                $fields->addFieldsToTab('Root.Main', [
-                    CheckboxField::create('ExcludeMenuHiddenItems', 'Exclude child pages that are hidden from menus (Show in menus: false)'),
-                    TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class)
-                        ->setDescription('Select the parent page to get the children from. If no parent is selected, the current page will be used.')
-                ]);
-            } else {
-                $fields->addFieldToTab('Root.Main', LiteralField::create('Notice', '<div class="message notice">Save this block and more options will become available.</div>'));
-            }
+            $fields->addFieldsToTab('Root.Main', [
+                CheckboxField::create('ExcludeMenuHiddenItems', 'Exclude child pages that are hidden from menus (Show in menus: false)'),
+                TreeDropdownField::create('ParentPageID', 'Parent Page', SiteTree::class)
+                    ->setDescription('Select the parent page to get the children from. If no parent is selected, the current page will be used.'),
+            ]);
         });
+
         return parent::getCMSFields();
     }
 
-    public function getItems()
+    /**
+     * The page whose children are listed: the selected parent page, otherwise the current page.
+     */
+    public function getChildrenParentPage(): ?SiteTree
     {
-        $items = new ArrayList();
-
-        $parent = null;
         $selectedParent = $this->ParentPage();
-        $page = $this->getPage();
 
         if ($selectedParent && $selectedParent->exists()) {
-            // If a parent page is selected, use that
-            $parent = $selectedParent;
-        } elseif ($page && $page->exists()) {
-            // Otherwise, use the current page as the parent
-            $parent = $page;
-        } else {
-            // If no parent page is selected and the current page doesn't exist, return empty items
+            return $selectedParent;
+        }
+
+        $page = $this->getPage();
+
+        return $page && $page->exists() ? $page : null;
+    }
+
+    /**
+     * Child pages to display. Extensions can change the list with the `updateItems` hook.
+     *
+     * @return ArrayList
+     */
+    public function getItems()
+    {
+        $items = ArrayList::create();
+        $parent = $this->getChildrenParentPage();
+
+        if (!$parent) {
             return $items;
         }
 
-        if ($children = ($this->ExcludeMenuHiddenItems) ? $parent->Children() : $parent->AllChildren()) {
-            foreach ($children as $child) {
-                $items->push($child);
-            }
-        }
+        $children = $this->ExcludeMenuHiddenItems ? $parent->Children() : $parent->AllChildren();
+        $items->merge($children);
 
         $this->extend('updateItems', $items, $parent);
 

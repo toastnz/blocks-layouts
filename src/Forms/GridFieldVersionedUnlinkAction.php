@@ -3,103 +3,67 @@
 namespace Toast\Blocks;
 
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Dev\Debug;
-use SilverStripe\Forms\GridField\GridField_FormAction;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ValidationException;
 use SilverStripe\Control\Controller;
-use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
+use SilverStripe\Forms\GridField\GridField_ColumnProvider;
+use SilverStripe\Forms\GridField\GridField_FormAction;
+use SilverStripe\ORM\DataObject;
 
+/**
+ * GridField action that unlinks a block from the page being edited, without deleting or unpublishing it.
+ */
 class GridFieldVersionedUnlinkAction implements GridField_ColumnProvider, GridField_ActionProvider
 {
     /**
-     * Add a column 'Delete'
-     *
-     * @param GridField $gridField
-     * @param array $columns
+     * Add an 'Actions' column
      */
-    public function augmentColumns($gridField, &$columns)
+    public function augmentColumns($gridField, &$columns): void
     {
         if (!in_array('Actions', $columns)) {
             $columns[] = 'Actions';
         }
     }
 
-    /**
-     * Return any special attributes that will be used for FormField::create_tag()
-     *
-     * @param GridField $gridField
-     * @param DataObject $record
-     * @param string $columnName
-     * @return array
-     */
-    public function getColumnAttributes($gridField, $record, $columnName)
+    public function getColumnAttributes($gridField, $record, $columnName): array
     {
         return ['class' => 'grid-field__col-compact'];
     }
 
-    /**
-     * Add the title
-     *
-     * @param GridField $gridField
-     * @param string $columnName
-     * @return array
-     */
-    public function getColumnMetadata($gridField, $columnName)
+    public function getColumnMetadata($gridField, $columnName): ?array
     {
-        if ($columnName == 'Actions') {
-            return ['title' => ''];
-        }
+        return $columnName === 'Actions' ? ['title' => ''] : null;
     }
 
-    /**
-     * Which columns are handled by this component
-     *
-     * @param GridField $gridField
-     * @return array
-     */
-    public function getColumnsHandled($gridField)
+    public function getColumnsHandled($gridField): array
     {
         return ['Actions'];
     }
 
     /**
-     *
-     * @param GridField $gridField
-     * @param DataObject $record
-     * @param string $columnName
-     * @return string|null the HTML for the column
+     * @return \SilverStripe\ORM\FieldType\DBHTMLText|null the HTML for the column
      */
     public function getColumnContent($gridField, $record, $columnName)
     {
-        $field = $this->getUnlinkAction($gridField, $record, $columnName);
-
-        if ($field) {
-            return $field->Field();
-        }
-
-        return null;
+        return $this->getUnlinkAction($gridField, $record, $columnName)?->Field();
     }
 
     /**
-     * @param GridField  $gridField
+     * @param GridField $gridField
      * @param DataObject $record
-     * @param string     $columnName
-     * @return GridField_FormAction
      */
-    public function getUnlinkAction($gridField, $record, $columnName)
+    public function getUnlinkAction($gridField, $record, $columnName): ?GridField_FormAction
     {
         if (!$record->canEdit()) {
-            return;
+            return null;
         }
 
-        $field = GridField_FormAction::create(
+        return GridField_FormAction::create(
             $gridField,
             'UnlinkAction' . $record->ID,
             false,
-            "unlink",
+            'unlink',
             ['RecordID' => $record->ID]
         )
             ->addExtraClass('btn btn--no-text btn--icon-md font-icon-link-broken grid-field__icon-action gridfield-button-unlink action-menu--handled')
@@ -107,82 +71,54 @@ class GridFieldVersionedUnlinkAction implements GridField_ColumnProvider, GridFi
             ->setAttribute('title', 'Unlink')
             ->setDescription('Unlink')
             ->setAttribute('aria-label', 'Unlink');
-
-        return $field;
     }
 
-    public function getActions($gridField)
+    public function getActions($gridField): array
     {
         return ['unlink'];
     }
 
-    public function handleAction(GridField $gridField, $actionName, $arguments, $data)
+    public function handleAction(GridField $gridField, $actionName, $arguments, $data): void
     {
-        if ($actionName == 'unlink') {
-            /** @var Block|SiteTree $item */
-            $item = $gridField->getList()->byID($arguments['RecordID']);
-            if (!$item) {
-                return;
-            }
+        if ($actionName !== 'unlink') {
+            return;
+        }
 
-            if (!$item->canEdit()) {
-                throw new ValidationException(
-                    _t('GridFieldAction_Edit.EditPermissionsFailure', "No permission to unlink record"), 0);
-            }
+        $item = $gridField->getList()->byID($arguments['RecordID']);
 
-            // RecordID = CB ID
+        if (!$item) {
+            return;
+        }
 
-            // Page = $data['ID']
-
-            if (isset($data['ID'])) {
-                // Perform a deletion
-                $page = SiteTree::get()->byID($data['ID']);
-
-                if ($page && $page->exists()) {
-                    $page->ContentBlocks()->remove($item);
-                }
-            }
-
-            Controller::curr()->getResponse()->setStatusCode(
-                200,
-                'Record unlinked.'
+        if (!$item->canEdit()) {
+            throw new ValidationException(
+                _t('GridFieldAction_Edit.EditPermissionsFailure', 'No permission to unlink record')
             );
         }
+
+        // $data['ID'] is the page being edited
+        $page = isset($data['ID']) ? SiteTree::get()->byID($data['ID']) : null;
+
+        if ($page && $page->exists()) {
+            $page->ContentBlocks()->remove($item);
+        }
+
+        Controller::curr()->getResponse()->setStatusCode(200, 'Record unlinked.');
     }
 
     /**
-     * Gets the title for this menu item
-     *
-     * @see {@link GridField_ActionMenu->getColumnContent()}
-     *
-     * @param GridField  $gridField
-     * @param DataObject $record
-     *
-     * @return string $title
+     * Title for this action in the GridField action menu.
      */
-    public function getTitle($gridField, $record, $columnName)
+    public function getTitle($gridField, $record, $columnName): string
     {
         return 'Unlink';
     }
 
     /**
-     * Gets any extra data that could go in to the schema that the menu generates
-     *
-     * @see {@link GridField_ActionMenu->getColumnContent()}
-     *
-     * @param GridField  $gridField
-     * @param DataObject $record
-     *
-     * @return array $data
+     * Extra data for the GridField action menu schema.
      */
-    public function getExtraData($gridField, $record, $columnName)
+    public function getExtraData($gridField, $record, $columnName): ?array
     {
-        $field = $this->getUnlinkAction($gridField, $record, $columnName);
-
-        if ($field) {
-            return $field->getAttributes();
-        }
-
-        return null;
+        return $this->getUnlinkAction($gridField, $record, $columnName)?->getAttributes();
     }
 }
