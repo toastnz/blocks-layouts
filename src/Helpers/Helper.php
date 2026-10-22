@@ -6,6 +6,7 @@ use SilverStripe\Assets\File;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
@@ -71,11 +72,44 @@ class Helper
     /**
      * The block classes editors may add, from PageExtension.available_blocks.
      *
+     * A listed block that extends another listed block under the same short name replaces it: both render
+     * with the same templates and layouts, so only the replacement is offered. Existing blocks of the hidden
+     * class are not affected.
+     *
      * @return string[]
      */
     public static function getAvailableBlockClasses(): array
     {
-        return (array) (Config::inst()->get(PageExtension::class, 'available_blocks') ?: []);
+        $classes = array_values(array_unique(
+            (array) (Config::inst()->get(PageExtension::class, 'available_blocks') ?: [])
+        ));
+
+        return array_values(array_filter(
+            $classes,
+            fn (string $class) => !self::isReplacedByListedSubclass($class, $classes)
+        ));
+    }
+
+    /**
+     * @param string[] $classes
+     */
+    private static function isReplacedByListedSubclass(string $class, array $classes): bool
+    {
+        if (!class_exists($class)) {
+            return false;
+        }
+
+        foreach ($classes as $other) {
+            if ($other !== $class
+                && class_exists($other)
+                && is_subclass_of($other, $class)
+                && ClassInfo::shortName($other) === ClassInfo::shortName($class)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

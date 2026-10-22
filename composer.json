@@ -41,6 +41,11 @@
       "src/"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Toast\\Blocks\\Tests\\": "tests/php/"
+    }
+  },
   "extra": {
     "expose": [
       "client/images",

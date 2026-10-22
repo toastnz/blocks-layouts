@@ -69,6 +69,36 @@ Toast\Blocks\Extensions\PageExtension:
 
 Page types can change the list with the `updateAvailableBlocks(array &$classes)` extension hook.
 
+### Override a module block in your project
+
+Extend the module block, keeping the same short class name, and add it to `available_blocks`. The module stops offering its original, so editors only see yours.
+
+```php
+<?php
+
+namespace App\Blocks;
+
+use Toast\Blocks\TextBlock as ModuleTextBlock;
+
+class TextBlock extends ModuleTextBlock
+{
+    private static $singular_name = 'Text Block (Custom)';
+}
+```
+
+```yaml
+Toast\Blocks\Extensions\PageExtension:
+  available_blocks:
+    - App\Blocks\TextBlock
+```
+
+- Don't copy the parent's `table_name`. Leave it out (or pick a new one), otherwise Silverstripe reports "Multiple classes map to the same table".
+- Set a different `singular_name` so the two are easy to tell apart in reports.
+- Templates, layouts, CSS and icons are looked up by short class name, so your block shares the module block's layouts, and any template override you already have for `TextBlock`.
+- Only the "add block" lists change. Existing blocks of the module class keep that class and keep working; switching them to your class is a separate data change.
+- A block with a different short name (e.g. `NewsBlock extends PostsBlock`) doesn't replace its parent; both are offered.
+- If a page type builds its own "add block" list, call `Toast\Blocks\Helpers\Helper::getAvailableBlockClasses()` rather than reading the `available_blocks` config directly.
+
 ### Required fields
 
 Each block class lists the fields that must be filled in before it can be saved. `TextBlock`, `CodeBlock` and `MediaTextBlock` require `Content`.
@@ -424,6 +454,12 @@ The `Toast\Blocks\Block` class exposes the following methods.
 ```sh
 npm ci
 npm run build   # or: npm run watch
+```
+
+Tests live in `tests/php` and run with PHPUnit from a Silverstripe project that has the module installed:
+
+```sh
+vendor/bin/phpunit vendor/toastnz/blocks-layouts/tests/php
 ```
 
 Source scripts and styles live in `client/source`; the built files in `client/dist` are committed.
