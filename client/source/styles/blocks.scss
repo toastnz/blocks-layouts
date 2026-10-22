@@ -70,6 +70,52 @@ td.col-IconForCMS {
   }
 }
 
+// Block icon markup comes from templates/Toast/Blocks/Includes/BlockIcon.ss
+.toast-block-icon {
+  margin: 0 auto;
+  text-align: center;
+
+  &__media {
+    position: relative;
+    font-size: 40px;
+    line-height: 0;
+  }
+
+  &__image {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &-title {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 10px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}
+
+// Icons set with the block-icon config are a fixed size, centred in their container
+td.col-IconForCMS .toast-block-icon--image,
+.content-block-siblings .toast-block-icon--image {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+  white-space: nowrap;
+}
+
+td.col-IconForCMS .toast-block-icon:not(.toast-block-icon--image) {
+  padding: 10px;
+}
+
+.blocks-layouts-thumbnail {
+  object-fit: contain;
+}
+
 // ===============================
 // Block Toolbar & Pull Right
 // ===============================
@@ -414,6 +460,10 @@ $background-colour: var(--cms-background-colour, transparent);
   margin-bottom: 20px;
   padding-bottom: 30px;
   border-bottom: 1px solid var(--cms-border-colour, #ccc);
+
+  &__empty {
+    margin-bottom: 0;
+  }
 
   &__item {
     color: var(--cms-text-colour, #000);

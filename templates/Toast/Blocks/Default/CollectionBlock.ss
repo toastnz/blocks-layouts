@@ -1,5 +1,5 @@
 <colour-block id="{$BlockID}" tabindex="-1" class="default-collection {$IncludeClasses} {$ExtraClasses}">
-    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
+    <section <% if $Heading %>aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-collection__header">
                 <div class="default-collection__content">

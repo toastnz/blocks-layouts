@@ -4,9 +4,9 @@ namespace Toast\Blocks;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\UserForms\Form\UserForm;
 use SilverStripe\UserForms\Model\UserDefinedForm;
+use Toast\Blocks\Helpers\Helper;
 
 /**
  * Renders the form of the User Defined Form page it is placed on.
@@ -26,7 +26,7 @@ class UserFormBlock extends Block
         $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->insertAfter(
                 'Title',
-                LiteralField::create('UserFormNotice', '<div class="message warning"><strong>Note:</strong><br />Form must be configured from the <strong>Form Fields</strong> page tab and only applies to <strong>User Defined Form</strong> page types.</div>')
+                Helper::createCMSNoticeField('UserFormNotice', 'Form must be configured from the Form Fields page tab and only applies to User Defined Form page types.', 'warning', 'Note:')
             );
         });
 

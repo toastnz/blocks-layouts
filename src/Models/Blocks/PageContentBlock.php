@@ -5,8 +5,8 @@ namespace Toast\Blocks;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\View\SSViewer;
+use Toast\Blocks\Helpers\Helper;
 
 /**
  * Placeholder block that marks where a page's own Layout template renders among its blocks.
@@ -38,7 +38,7 @@ class PageContentBlock extends Block
 
         $fields->addFieldToTab(
             'Root.Main',
-            LiteralField::create('Info', '<p class="message">This block is used to position the main page content within the flexible content area. It does not have its own editable content.</p>')
+            Helper::createCMSNoticeField('Info', 'This block is used to position the main page content within the flexible content area. It does not have its own editable content.')
         );
 
         return $fields;

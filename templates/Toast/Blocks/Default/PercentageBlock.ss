@@ -1,5 +1,5 @@
 <colour-block id="{$BlockID}" tabindex="-1" class="default-percentage [ js-default-percentage ] {$IncludeClasses} {$ExtraClasses}">
-    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
+    <section <% if $Heading %>aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-percentage__header">
                 <div class="default-percentage__content">

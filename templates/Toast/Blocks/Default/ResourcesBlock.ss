@@ -1,5 +1,5 @@
 <colour-block id="{$BlockID}" tabindex="-1" class="default-resources [ js-default-resources ] {$IncludeClasses} {$ExtraClasses}">
-    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
+    <section <% if $Heading %>aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <% if $Heading || $Content %>
             <div class="default-resources__header">
                 <div class="default-resources__content">

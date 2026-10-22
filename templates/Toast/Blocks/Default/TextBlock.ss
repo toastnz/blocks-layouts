@@ -1,5 +1,5 @@
 <colour-block id="{$BlockID}" tabindex="-1" class="default-text [ js-default-text ] {$IncludeClasses} {$ExtraClasses}">
-    <section<% if $Heading %> aria-labelledby="{$BlockID}_heading"<% end_if %>>
+    <section <% if $Heading %>aria-labelledby="{$BlockID}_heading"<% end_if %>>
         <div class="default-text__wrap">
             <% if $Heading %>
                 <div class="default-text__content">

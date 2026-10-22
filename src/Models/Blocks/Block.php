@@ -3,6 +3,8 @@
 namespace Toast\Blocks;
 
 use Page;
+use SilverStripe\Admin\CMSEditLinkExtension;
+use SilverStripe\Admin\Forms\UsedOnTable;
 use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\CMS\Controllers\CMSPageEditController;
 use SilverStripe\CMS\Model\SiteTree;
@@ -11,6 +13,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormField;
@@ -19,12 +22,15 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\HeaderField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\Forms\HTMLReadonlyField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\Validation\CompositeValidator;
 use SilverStripe\Forms\Validation\RequiredFieldsValidator;
+use SilverStripe\Model\ArrayData;
+use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\CMSPreviewable;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
@@ -37,8 +43,8 @@ use SilverStripe\Security\Security;
 use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\Subsites\State\SubsiteState;
 use SilverStripe\Versioned\Versioned;
-use SilverStripe\View\Requirements;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Toast\Blocks\Admin\BlocksAdmin;
 use Toast\Blocks\Extensions\PageExtension;
 use Toast\Blocks\Helpers\Helper;
 
@@ -143,8 +149,23 @@ class Block extends DataObject implements CMSPreviewable
     ];
 
     private static $extensions = [
-        Versioned::class
+        Versioned::class,
+        CMSEditLinkExtension::class,
     ];
+
+    /**
+     * Where blocks are edited when they aren't being edited through a page.
+     *
+     * @see CMSEditLinkExtension
+     */
+    private static string $cms_edit_owner = BlocksAdmin::class;
+
+    /**
+     * Show Silverstripe's built-in "Used on" table instead of the module's own list of pages using the block.
+     *
+     * @config
+     */
+    private static $use_native_used_on_table = false;
 
     private static $versioned_gridfield_extensions = true;
 
@@ -174,21 +195,14 @@ class Block extends DataObject implements CMSPreviewable
 
     public function getIconForCMS(): ?DBField
     {
-        $blockID = Convert::raw2att($this->getBlockID());
-        $name = Convert::raw2xml($this->i18n_singular_name());
         $iconPath = $this->config()->get('block-icon');
 
-        if ($iconPath) {
-            $html = '<div data-block-id="' . $blockID . '" title="' . Convert::raw2att($this->i18n_singular_name()) . '" style="margin: 0 auto;width:50px; height:50px; white-space:nowrap; ">'
-                . '<img style="width:100%;height:100%;display:inline-block !important" src="' . Convert::raw2att(Helper::resolveResourceURL($iconPath)) . '">'
-                . '</div>'
-                . '<span style="font-weight:bold;color:#377cff;display:block;line-height:10px;text-align:center;margin:0px 0 0;padding:0;font-size:10px;text-transform:uppercase;">' . $name . '</span>';
-        } else {
-            $html = '<div data-block-id="' . $blockID . '" class="toast-block-icon" style="text-align: center; margin: 0 auto; padding: 10px;">'
-                . '<span class="toast-block-icon__media ' . Convert::raw2att(static::$icon_class) . '" style="position: relative; font-size: 40px; line-height: 0;"></span>'
-                . '</div>'
-                . '<span class="toast-block-title" style="display: block; font-size: 10px; font-weight: bold; line-height: 10px; text-transform: uppercase; text-align: center; margin: 0; padding: 0;">' . $name . '</span>';
-        }
+        $html = (string) Helper::renderTemplate('BlockIcon', [
+            'BlockID' => $this->getBlockID(),
+            'Name' => $this->i18n_singular_name(),
+            'IconURL' => $iconPath ? Helper::resolveResourceURL($iconPath) : null,
+            'IconClass' => static::$icon_class,
+        ]);
 
         $this->extend('updateIconForCMS', $html);
 
@@ -214,9 +228,6 @@ class Block extends DataObject implements CMSPreviewable
      */
     public function getCMSFields()
     {
-        // Load the custom icons font for layout options
-        Requirements::css('toastnz/blocks-layouts: client/fonts/layout-icons/font/layouticons.css');
-
         $this->beforeUpdateCMSFields(function (FieldList $fields) {
             $fields->removeByName(['Template', 'CSSFile']);
 
@@ -241,21 +252,34 @@ class Block extends DataObject implements CMSPreviewable
                 return;
             }
 
-            $absoluteLink = Convert::raw2att($this->AbsoluteLink());
+            $absoluteLink = $this->AbsoluteLink();
 
             $fields->addFieldsToTab('Root.More', [
                 HeaderField::create('UsageHeading', 'Link to this block'),
-                LiteralField::create('BlockLink', 'Block Link <br><a href="' . $absoluteLink . '" target="_blank" rel="noopener">' . $absoluteLink . '</a><hr>'),
+                HTMLReadonlyField::create('BlockLinkURL', 'Block Link', Helper::renderTemplate('BlockLink', ['URL' => $absoluteLink])),
                 ReadonlyField::create('Shortcode', 'Shortcode', '[block,id=' . $this->ID . ']'),
                 ReadonlyField::create('BlockID', 'Block ID', $this->getBlockID()),
             ]);
 
             $fields->insertBefore('Title', HeaderField::create('PageLinksHeading', 'Pages using this block'));
-            $fields->insertBefore('Title', LiteralField::create('PageLinks', Helper::getBlockPageLinksHTMLForCMS($this)));
+            $fields->insertBefore('Title', $this->getPageLinksField());
             $fields->insertBefore('Title', HeaderField::create('BlockSettingsHeading', 'Block Settings'));
         });
 
         return parent::getCMSFields();
+    }
+
+    /**
+     * The "Pages using this block" field: the module's own list (grouped by subsite), or Silverstripe's
+     * built-in "Used on" table when `use_native_used_on_table` is set.
+     */
+    protected function getPageLinksField(): FormField
+    {
+        if ($this->config()->get('use_native_used_on_table')) {
+            return UsedOnTable::create('PageLinks');
+        }
+
+        return LiteralField::create('PageLinks', Helper::getBlockPageLinksHTMLForCMS($this));
     }
 
     /* ------------------------------------------------------------------
@@ -296,9 +320,9 @@ class Block extends DataObject implements CMSPreviewable
 
     protected function getSaveFirstNoticeField(): LiteralField
     {
-        return LiteralField::create(
+        return Helper::createCMSNoticeField(
             'SaveFirstNotice',
-            '<div class="message notice">Save this block and more options will become available.</div>'
+            'Save this block and more options will become available.'
         );
     }
 
@@ -416,8 +440,18 @@ class Block extends DataObject implements CMSPreviewable
         return $path ? str_replace('[resources]', $replacement, $path) : null;
     }
 
+    /**
+     * Filesystem path of a configured resource: module resource syntax ("vendor/module: path") or a path
+     * starting with the legacy "[resources]" token.
+     */
     protected function resolvePublicResourcePath(?string $path): ?string
     {
+        if ($path && Helper::isModuleResource($path)) {
+            $relativePath = ModuleResourceLoader::resourcePath($path);
+
+            return $relativePath ? BASE_PATH . '/' . $relativePath : null;
+        }
+
         $resolvedPath = $this->replaceResourcesToken($path, RESOURCES_DIR);
 
         return $resolvedPath ? Director::publicFolder() . '/' . $resolvedPath : null;
@@ -469,16 +503,19 @@ class Block extends DataObject implements CMSPreviewable
             return null;
         }
 
-        $layoutName = Convert::raw2xml($this->getTemplateLayoutName($this->Template) ?: $this->Template);
-        $defaultLayoutName = Convert::raw2xml($this->getTemplateLayoutName($this->getDefaultTemplateClass()) ?: 'Default');
+        $layoutName = $this->getTemplateLayoutName($this->Template) ?: $this->Template;
+        $defaultLayoutName = $this->getTemplateLayoutName($this->getDefaultTemplateClass()) ?: 'Default';
 
-        $html = '<div class="message warning" style="margin-bottom:1em">'
-            . '<strong>Layout not available:</strong> The previously selected layout \'<em>' . $layoutName . '</em>\' '
-            . 'is no longer available. This block is currently rendering with the <strong>' . $defaultLayoutName . '</strong> layout. '
-            . 'Please choose a new layout below and save.'
-            . '</div>';
-
-        return LiteralField::create('TemplateMissingNotice', $html);
+        return Helper::createCMSNoticeField(
+            'TemplateMissingNotice',
+            sprintf(
+                "The previously selected layout '%s' is no longer available. This block is currently rendering with the %s layout. Please choose a new layout below and save.",
+                $layoutName,
+                $defaultLayoutName
+            ),
+            'warning',
+            'Layout not available:'
+        );
     }
 
     protected function getAvailableTemplateClasses(string $templateName): array
@@ -776,19 +813,18 @@ class Block extends DataObject implements CMSPreviewable
         $iconClass = $this->getLayoutIconClass($layout, $templateName);
 
         $icon = $this->getConfiguredLayoutIcon($layout, $templateName)
-            ?? ($iconClass ? '<span class="layout-icons ' . Convert::raw2att($iconClass) . '"></span>' : null)
+            ?? ($iconClass ? sprintf('<span class="layout-icons %s"></span>', Convert::raw2att($iconClass)) : null)
             ?? $this->getDiscoveredLayoutIcon($layout, $templateName, $iconSourcePath);
 
         if (!$icon) {
             return null;
         }
 
-        $html = '<div class="blockThumbnail">' . $icon . '</div>'
-            . '<strong class="title" title="Template file: ' . Convert::raw2att($template) . '">'
-            . Convert::raw2xml($this->getLayoutOptionLabel($layout, $templateName))
-            . '</strong>';
-
-        return DBField::create_field(DBHTMLText::class, $html);
+        return DBField::create_field(DBHTMLText::class, Helper::renderTemplate('BlockLayoutOption', [
+            'Icon' => DBField::create_field(DBHTMLText::class, $icon),
+            'TemplateFile' => $template,
+            'Label' => $this->getLayoutOptionLabel($layout, $templateName),
+        ])->forTemplate());
     }
 
     protected function getTemplateFieldOptions(array $layouts, string $shortName, array $icons): array
@@ -1390,21 +1426,25 @@ class Block extends DataObject implements CMSPreviewable
      * CMS navigation
      * ------------------------------------------------------------------ */
 
+    /**
+     * Link to edit this block in the CMS: through the page being edited when there is one, otherwise
+     * through {@link BlocksAdmin} (see `cms_edit_owner`).
+     */
     public function getCMSEditLink(): ?string
     {
         $link = null;
 
         if ($parent = $this->getCMSParentPage()) {
-            // Replace /show/$ID with /EditForm/$ID
-            $parentEditFormLink = str_replace(
-                "/show/{$parent->ID}",
-                "/EditForm/{$parent->ID}",
-                (string) $parent->getCMSEditLink()
-            );
-
-            $link = $parentEditFormLink . '/field/ContentBlocks/item/' . $this->ID . '/edit';
+            $link = Director::absoluteURL(CMSPageEditController::singleton()->Link(Controller::join_links(
+                'EditForm',
+                $parent->ID,
+                'field/ContentBlocks/item',
+                $this->ID,
+                'edit'
+            )));
         }
 
+        // Adds the BlocksAdmin link if none was set above (CMSEditLinkExtension)
         $this->extend('updateCMSEditLink', $link);
 
         return $link;
@@ -1433,19 +1473,18 @@ class Block extends DataObject implements CMSPreviewable
             return null;
         }
 
-        $links = '';
+        $items = [];
 
         foreach ($blocks as $block) {
-            $links .= sprintf(
-                '<a class="%s" href="%s" data-block-id="%s">%s</a>',
-                (int) $block->ID === (int) $this->ID ? 'active' : '',
-                Convert::raw2att((string) $block->getCMSEditLink()),
-                Convert::raw2att($block->getBlockID()),
-                $block->getIconForCMS()
-            );
+            $items[] = ArrayData::create([
+                'Active' => (int) $block->ID === (int) $this->ID,
+                'Link' => $block->getCMSEditLink(),
+                'BlockID' => $block->getBlockID(),
+                'Icon' => $block->getIconForCMS(),
+            ]);
         }
 
-        return '<div class="content-block-siblings">' . $links . '</div>';
+        return (string) Helper::renderTemplate('BlockSiblings', ['Blocks' => ArrayList::create($items)]);
     }
 
     /* ------------------------------------------------------------------

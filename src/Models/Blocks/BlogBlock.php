@@ -9,10 +9,10 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TreeDropdownField;
 use SilverStripe\Model\List\SS_List;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use Toast\Blocks\Helpers\Helper;
 use Toast\Blocks\Traits\HasColumns;
 
 class BlogBlock extends Block
@@ -61,7 +61,7 @@ class BlogBlock extends Block
                 ->addComponent(GridFieldOrderableRows::create('SortOrder'));
 
             $fields->addFieldsToTab('Root.Main', [
-                LiteralField::create('Notice', '<div class="message notice">Select a blog page to automatically pull through the latest blog posts. Alternatively, select the specific posts you wish to display.</div>'),
+                Helper::createCMSNoticeField('Notice', 'Select a blog page to automatically pull through the latest blog posts. Alternatively, select the specific posts you wish to display.'),
                 TreeDropdownField::create('BlogID', 'Parent Page', SiteTree::class)
                     ->setFilterFunction(fn ($node) => $node instanceof Blog),
                 GridField::create('BlogPosts', 'Blog Posts', $this->BlogPosts(), $config),

@@ -18,7 +18,6 @@ use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
-use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Versioned\VersionedGridFieldItemRequest;
 use SilverStripe\View\Requirements;
@@ -191,15 +190,9 @@ class PageExtension extends Extension
      */
     public function getBlockPreviewScripts(): DBHTMLText
     {
-        $imports = '';
-
-        foreach ($this->getOwner()->getBlockPreviewJavaScriptPaths() as $file) {
-            $imports .= 'await import(' . json_encode((string) $file->Path, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ');';
-        }
-
-        $script = '<script type="module">if (window.self !== window.top) (async function() {' . $imports . '})();</script>';
-
-        return DBField::create_field(DBHTMLText::class, $script);
+        return Helper::renderTemplate('BlockPreviewScripts', [
+            'Paths' => $this->getOwner()->getBlockPreviewJavaScriptPaths(),
+        ]);
     }
 
     /**

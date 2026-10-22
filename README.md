@@ -208,8 +208,42 @@ Set the icon font class in a subclass, or point to an image with the `block-icon
 
 ```yaml
 Toast\Blocks\AccordionBlock:
-  block-icon: '[resources]/toastnz/blocks-layouts/client/images/block-icons/accordion.svg'
+  block-icon: 'toastnz/blocks-layouts: client/images/block-icons/accordion.svg'
 ```
+
+Paths use Silverstripe's module resource syntax (`vendor/module: path/to/file`). The older `[resources]/...` token and plain URLs still work, as do `layout_icon_path` values (see above).
+
+### Pages using this block
+
+The block edit form lists the pages using the block (grouped by subsite when subsites is installed). To show Silverstripe's built-in "Used on" table instead:
+
+```yaml
+Toast\Blocks\Block:
+  use_native_used_on_table: true
+```
+
+The built-in table only lists pages in the current subsite.
+
+### CMS edit links
+
+`getCMSEditLink()` links through the page being edited. When there is no page context it falls back to the Blocks admin section, using Silverstripe's `CMSEditLinkExtension` (`cms_edit_owner`). The `updateCMSEditLink` hook still applies.
+
+### CMS templates
+
+The markup the module adds to the CMS (block icons, the "pages using this block" list, sibling block links, layout picker options, notices) is rendered from templates in `templates/Toast/Blocks/Includes/`. Override any of them by adding a file with the same name to your theme or `app/templates/Toast/Blocks/Includes/`.
+
+| Template | Used for |
+|---|---|
+| `BlockIcon.ss` | `Block::getIconForCMS()` (GridField "Type" column and sibling strip) |
+| `BlockSiblings.ss` | `Block::getCMSSiblingBlocksLinks()` |
+| `BlockPageLinks.ss` | The "Pages using this block" list |
+| `BlockLayoutOption.ss` | One option in the layout picker |
+| `BlockLink.ss` | The block link on the More tab |
+| `CMSNotice.ss` | Info/warning notices in block edit forms (`Helper::createCMSNoticeField()`) |
+| `ImageThumbnail.ss` | Image previews in GridField summaries |
+| `BlockPreviewScripts.ss` | `$BlockPreviewScripts` |
+
+The module's CMS stylesheet and script are registered with `LeftAndMain.extra_requirements_css` / `extra_requirements_javascript`. `Toast\Blocks\Extensions\LeftAndMainExtension` is deprecated and does nothing.
 
 ### Create a custom block
 
@@ -359,7 +393,7 @@ The `Toast\Blocks\Block` class exposes the following methods.
 - `getCMSParentPage(): ?SiteTree` - Current CMS parent page.
 - `getCMSEditLink(): ?string` - Direct CMS edit URL for this block.
 - `getCMSSiblingBlocks(): ?DataList` - Sibling blocks on the same page.
-- `getCMSSiblingBlocksLinks(): ?string` - HTML list of sibling block links.
+- `getCMSSiblingBlocksLinks(): ?string` - HTML list of sibling block links (rendered from `BlockSiblings.ss`).
 - `isFirstBlock(): bool` / `isLastBlock(): bool`
 
 #### Permissions and lifecycle
